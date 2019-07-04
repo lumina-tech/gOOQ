@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"text/template"
 
-	"github.com/lumina-tech/lumina/apps/server/pkg/common"
+	"github.com/lumina-tech/gooq/common"
 )
 
 func getTemplate(

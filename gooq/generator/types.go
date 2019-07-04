@@ -1,8 +1,8 @@
 package generator
 
 import (
-	"github.com/lumina-tech/lumina/apps/server/pkg/gooq/loader"
-	"github.com/lumina-tech/lumina/apps/server/pkg/gooq/meta"
+	"github.com/lumina-tech/gooq/meta"
+	"github.com/lumina-tech/gooq/loader"
 )
 
 type TablesTemplateArgs struct {

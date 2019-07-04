@@ -6,8 +6,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/lumina-tech/lumina/apps/server/pkg/common"
-	"github.com/lumina-tech/lumina/apps/server/pkg/gooq/meta"
+	"github.com/lumina-tech/gooq/common"
+	"github.com/lumina-tech/gooq/meta"
 )
 
 type PredicateInfo struct {

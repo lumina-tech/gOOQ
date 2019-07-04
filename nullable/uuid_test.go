@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/lumina-tech/lumina/apps/server/pkg/gooq/nullable"
+	"github.com/lumina-tech/gooq/nullable"
 	"github.com/stretchr/testify/require"
 )
 

@@ -8,8 +8,8 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/knq/snaker"
-	"github.com/lumina-tech/lumina/apps/server/pkg/common"
-	"github.com/lumina-tech/lumina/apps/server/pkg/gooq/loader"
+	"github.com/lumina-tech/gooq/common"
+	"github.com/lumina-tech/gooq/loader"
 )
 
 const (
