@@ -9,6 +9,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/knq/snaker v0.0.0-20181215144011-2bc8a4db4687
 	github.com/lib/pq v1.1.1
+	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.3.0
 	github.com/stretchrcom/testify v1.3.0 // indirect
 	github.com/vektah/gqlparser v1.1.2
