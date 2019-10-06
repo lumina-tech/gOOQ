@@ -181,12 +181,8 @@ func (s *selection) Offset(offset int) SelectFinalStep {
 // Aliasable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *selection) Alias() null.String {
+func (s *selection) GetAlias() null.String {
 	return s.alias
-}
-
-func (s *selection) QualifiedName() string {
-	return s.alias.String
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -242,14 +238,14 @@ func (s *selection) Render(
 	builder.Print(" FROM ")
 	switch sub := s.selection.(type) {
 	case Table:
-		builder.Print(sub.Name())
+		builder.Print(sub.GetName())
 	case *selection:
 		builder.Print("(")
 		sub.Render(builder)
 		builder.Print(")")
 	}
 
-	alias := s.selection.Alias()
+	alias := s.selection.GetAlias()
 	if alias.Valid {
 		builder.Printf(" AS %s", alias.String)
 	}
@@ -267,11 +263,11 @@ func (s *selection) Render(
 		builder.Printf(" %s ", joinString)
 		switch sub := join.target.(type) {
 		case Table:
-			builder.Print(sub.QualifiedName())
+			builder.Print(sub.GetAliasOrName())
 		case *selection:
 			builder.Print("(")
 			sub.Render(builder)
-			builder.Printf(") AS %s", sub.Alias().String)
+			builder.Printf(") AS %s", sub.GetAlias().String)
 		}
 		builder.Print(" ON ")
 		builder.RenderConditions(join.conditions)

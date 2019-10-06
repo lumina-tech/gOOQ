@@ -177,7 +177,7 @@ func (i *insert) Render(
 	builder *Builder,
 ) {
 	// INSERT INTO table_name
-	builder.Printf("INSERT INTO %s ", i.table.Name())
+	builder.Printf("INSERT INTO %s ", i.table.GetName())
 
 	if i.selection != nil {
 		// handle INSERT ...SELECT

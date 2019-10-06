@@ -4,16 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
+	"gopkg.in/guregu/null.v3"
 )
 
 type DatabaseConstraint struct {
-	Name    string
-	Columns []Field
+	Name      string
+	Columns   []Field
+	Predicate null.String
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// Query
-///////////////////////////////////////////////////////////////////////////////
 
 type DBInterface interface {
 	Exec(query string, args ...interface{}) (sql.Result, error)

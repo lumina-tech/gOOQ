@@ -1,29 +1,30 @@
 package gooq
 
 import (
-	"fmt"
-
 	"gopkg.in/guregu/null.v3"
 )
 
 type Selectable interface {
-	Alias() null.String
-	QualifiedName() string
+	GetAlias() null.String
 }
 
 type Table interface {
 	Selectable
-	Name() string
+	GetAliasOrName() string
+	GetName() string
+	GetSchema() string
 }
 
 type tableImpl struct {
-	name  string
-	alias null.String
+	name   string
+	schema string
+	alias  null.String
 }
 
 func NewTable(name string) Table {
 	return &tableImpl{
-		name: name,
+		name:   name,
+		schema: "public",
 	}
 }
 
@@ -33,7 +34,18 @@ func (t *tableImpl) initTable(
 	t.name = name
 }
 
-func (t tableImpl) Name() string {
+func (t tableImpl) GetAliasOrName() string {
+	if t.alias.Valid {
+		return t.alias.String
+	}
+	return t.name
+}
+
+func (t tableImpl) GetName() string {
+	return t.name
+}
+
+func (t tableImpl) GetSchema() string {
 	return t.name
 }
 
@@ -44,13 +56,6 @@ func (t tableImpl) As(alias string) Selectable {
 	}
 }
 
-func (t tableImpl) Alias() null.String {
+func (t tableImpl) GetAlias() null.String {
 	return t.alias
-}
-
-func (t tableImpl) QualifiedName() string {
-	if t.alias.Valid {
-		return fmt.Sprintf("%s AS %s", t.Name(), t.alias.String)
-	}
-	return t.Name()
 }

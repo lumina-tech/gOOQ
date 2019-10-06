@@ -145,7 +145,7 @@ func (u *update) Render(
 	builder *Builder,
 ) {
 	// UPDATE table_name SET
-	builder.Printf("UPDATE %s", u.table.Name())
+	builder.Printf("UPDATE %s", u.table.GetName())
 
 	if len(u.setPredicates) > 0 {
 		// render SET clause
@@ -163,7 +163,7 @@ func (u *update) Render(
 		builder.Print(" FROM ")
 		switch sub := u.fromSelection.(type) {
 		case Table:
-			builder.Print(sub.Name())
+			builder.Print(sub.GetName())
 		case *selection:
 			builder.Print("(")
 			sub.Render(builder)

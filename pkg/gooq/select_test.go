@@ -142,7 +142,7 @@ var selectTestCases = []TestCase{
 	//	"SELECT time_bucket('5 minutes', table1.creation_date) AS five_min, AVG(table1.column2) FROM table1",
 	//},
 	//{
-	//	Select(TimeBucket("5 minutes", Table1.CreationDate), Table1.Column1.Last(Table1.CreationDate.Name()).As("last"), Table1.Column1.First(Table1.CreationDate.Name()).As("first")).From(Table1),
+	//	Select(TimeBucket("5 minutes", Table1.CreationDate), Table1.Column1.Last(Table1.CreationDate.GetName()).As("last"), Table1.Column1.First(Table1.CreationDate.GetName()).As("first")).From(Table1),
 	//	"SELECT time_bucket('5 minutes', table1.creation_date), last(table1.column1, creation_date) AS last, first(table1.column1, creation_date) AS first FROM table1",
 	//},
 	//{

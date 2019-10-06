@@ -115,18 +115,18 @@ func (d *deletion) Render(
 ) {
 
 	// DELETE FROM table_name
-	builder.Printf("DELETE FROM %s", d.table.Name())
+	builder.Printf("DELETE FROM %s", d.table.GetName())
 
 	if d.using != nil {
 		// render USING clause
 		builder.Printf(" USING ")
 		switch sub := d.using.(type) {
 		case Table:
-			builder.Printf("%s ", sub.Name())
+			builder.Printf("%s ", sub.GetName())
 		case *selection:
 			builder.Printf("(")
 			sub.Render(builder)
-			builder.Printf(") AS %s ", sub.Alias().String)
+			builder.Printf(") AS %s ", sub.GetAlias().String)
 		}
 		// render ON clause
 		if len(d.usingPredicate) > 0 {
