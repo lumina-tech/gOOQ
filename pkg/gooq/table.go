@@ -34,6 +34,17 @@ func (t *tableImpl) initTable(
 	t.name = name
 }
 
+func (t tableImpl) As(alias string) Selectable {
+	return tableImpl{
+		name:  t.name,
+		alias: null.StringFrom(alias),
+	}
+}
+
+func (t tableImpl) GetAlias() null.String {
+	return t.alias
+}
+
 func (t tableImpl) GetAliasOrName() string {
 	if t.alias.Valid {
 		return t.alias.String
@@ -46,16 +57,5 @@ func (t tableImpl) GetName() string {
 }
 
 func (t tableImpl) GetSchema() string {
-	return t.name
-}
-
-func (t tableImpl) As(alias string) Selectable {
-	return tableImpl{
-		name:  t.name,
-		alias: null.StringFrom(alias),
-	}
-}
-
-func (t tableImpl) GetAlias() null.String {
-	return t.alias
+	return t.schema
 }
