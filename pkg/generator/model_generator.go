@@ -18,7 +18,7 @@ const (
 )
 
 func GenerateModel(
-	db *sqlx.DB, templatePath, outputPath string, dbName string,
+	db *sqlx.DB, templateString, outputPath string, dbName string,
 ) {
 	dbLoader := postgres.NewPostgresLoader()
 	schema, err := dbLoader.Schema()
@@ -60,7 +60,7 @@ func GenerateModel(
 		}
 		args.Tables = append(args.Tables, tableTemplateArgs)
 	}
-	schemaTemplate := getTemplate(templatePath)
+	schemaTemplate := getTemplate(templateString)
 	err = RenderToFile(schemaTemplate, outputPath, args)
 	check(err)
 }

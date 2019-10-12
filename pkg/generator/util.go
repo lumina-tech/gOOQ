@@ -46,7 +46,7 @@ func RenderToFile(tpl *template.Template, filename string, data interface{}) err
 func gofmt(filename string, b []byte) ([]byte, error) {
 	out, err := imports.Process(filename, b, nil)
 	if err != nil {
-		return b, errors.New("unable to gofmt")
+		return b, fmt.Errorf("unable to gofmt: %s", err.Error())
 	}
 	return out, nil
 }
@@ -100,13 +100,11 @@ func dictionary(values ...interface{}) (map[string]interface{}, error) {
 }
 
 func getTemplate(
-	templatePath string,
+	templateString string,
 ) *template.Template {
 	templateFuncMap := GetTemplateFuncs()
-	schemaTmplateFile, err := ioutil.ReadFile(templatePath)
-	check(err)
 	return template.Must(template.New(ModelTemplateFilename).
-		Funcs(templateFuncMap).Parse(string(schemaTmplateFile)))
+		Funcs(templateFuncMap).Parse(string(templateString)))
 }
 
 func check(e error) {

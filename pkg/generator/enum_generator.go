@@ -17,10 +17,10 @@ const (
 )
 
 type EnumGenerator struct {
-	db                *sqlx.DB
-	modelTemplatePath string
-	modelOutputFile   string
-	dbname            string
+	db                  *sqlx.DB
+	modelTemplateString string
+	modelOutputFile     string
+	dbname              string
 }
 
 func NewEnumGenerator(
@@ -40,7 +40,7 @@ func NewEnumGenerator(
 
 func (generator *EnumGenerator) Run() {
 	args := generator.getTemplateArguments()
-	enumTemplate := getTemplate(generator.modelTemplatePath)
+	enumTemplate := getTemplate(generator.modelTemplateString)
 	err := RenderToFile(enumTemplate, generator.modelOutputFile, args)
 	check(err)
 

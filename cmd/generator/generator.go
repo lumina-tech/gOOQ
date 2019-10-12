@@ -3,8 +3,8 @@ package generator
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
+	"github.com/lumina-tech/gooq/pkg/generator/templates"
 	"github.com/spf13/viper"
 
 	"github.com/jmoiron/sqlx"
@@ -72,15 +72,11 @@ func initConfig() error {
 func generateModelsForDB(
 	db *sqlx.DB, config *database.DatabaseConfig,
 ) {
-	templateDir := "./pkg/generator/templates"
-	enumTemplatePath := filepath.Join(templateDir, generator.EnumTemplateFilename)
-	generator.NewEnumGenerator(db, enumTemplatePath, config.ModelPath, config.DatabaseName).Run()
+	generator.NewEnumGenerator(db, templates.EnumTemplate, config.ModelPath, config.DatabaseName).Run()
 
-	modelTemplatePath := filepath.Join(templateDir, generator.ModelTemplateFilename)
 	generatedModelFilename := fmt.Sprintf("%s/%s_model.generated.go", config.ModelPath, config.DatabaseName)
-	generator.GenerateModel(db, modelTemplatePath, generatedModelFilename, config.DatabaseName)
+	generator.GenerateModel(db, templates.ModelTemplate, generatedModelFilename, config.DatabaseName)
 
-	tableTemplatePath := filepath.Join(templateDir, generator.TableTemplateFilename)
 	generatedTableFilename := fmt.Sprintf("%s/%s_table.generated.go", config.TablePath, config.DatabaseName)
-	generator.GenerateModel(db, tableTemplatePath, generatedTableFilename, config.DatabaseName)
+	generator.GenerateModel(db, templates.TableTemplate, generatedTableFilename, config.DatabaseName)
 }
