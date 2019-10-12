@@ -2,7 +2,7 @@
 
 package model
 
-import "github.com/google/uuid"
+import "github.com/gofrs/uuid"
 
 type Person struct {
 	ID        uuid.UUID `db:"id" json:"id"`

@@ -16,7 +16,7 @@ func init() {
 	generateDatabaseModelCommand.PersistentFlags().BoolVarP(
 		&generateDatabaseModelCommandUseDocker, "docker", "d", true, "whether to use dockerize db")
 	generateDatabaseModelCommand.PersistentFlags().StringVarP(
-		&generateDatabaseModelCommandUseDocker, "config-file", "f", "", "path to configuration file")
+		&generateDatabaseModelConfigFilePath, "config-file", "f", "", "path to configuration file")
 	rootCmd.AddCommand(generateDatabaseModelCommand)
 }
 

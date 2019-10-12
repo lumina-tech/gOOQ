@@ -51,7 +51,7 @@ var generateDatabaseModelCommand = &cobra.Command{
 }
 
 func initConfig() error {
-	viper.SetDefault("dockerTag", "alpine-11.4")
+	viper.SetDefault("dockerTag", "11.4-alpine")
 
 	if len(generateDatabaseModelConfigFilePath) != 0 {
 		viper.SetConfigFile(generateDatabaseModelConfigFilePath)

@@ -1,3 +1,3 @@
 
 generate-database-models:
-	go run cmd/main.go generate-database-model --docker
+	go run ../../cmd/main.go generate-database-model --docker

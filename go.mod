@@ -22,6 +22,7 @@ require (
 	github.com/ory/dockertest v3.3.5+incompatible
 	github.com/sirupsen/logrus v1.4.2 // indirect
 	github.com/spf13/cobra v0.0.5
+	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/tools v0.0.0-20190927191325-030b2cf1153e
 	gopkg.in/guregu/null.v3 v3.4.0
