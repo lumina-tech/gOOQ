@@ -19,7 +19,6 @@ type DatabaseConfig struct {
 	Port          int64
 	Username      string
 	Password      string
-	Version       string
 	DatabaseName  string
 	SSLMode       string
 	MigrationPath string
@@ -28,13 +27,13 @@ type DatabaseConfig struct {
 }
 
 func NewDockerizedDB(
-	config *DatabaseConfig,
+	config *DatabaseConfig, dockerTag string,
 ) *DockerizedDB {
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		panic(fmt.Sprintf("Could not connect to docker: %s", err))
 	}
-	resource, err := pool.Run("postgres", fmt.Sprintf("%s-alpine", config.Version), []string{
+	resource, err := pool.Run("postgres", dockerTag, []string{
 		fmt.Sprintf("POSTGRES_USER=%s", config.Username),
 		fmt.Sprintf("POSTGRES_PASSWORD=%s", config.Password),
 		fmt.Sprintf("POSTGRES_DB=%s", config.DatabaseName),

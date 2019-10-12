@@ -32,15 +32,14 @@ var generateDatabaseModelCommand = &cobra.Command{
 			Port:          viper.GetInt64("port"),
 			Username:      viper.GetString("username"),
 			Password:      viper.GetString("password"),
-			Version:       viper.GetString("version"),
 			DatabaseName:  viper.GetString("databaseName"),
-			SSLMode:       viper.GetString("disable"),
+			SSLMode:       viper.GetString("sslmode"),
 			MigrationPath: viper.GetString("migrationPath"),
 			ModelPath:     viper.GetString("modelPath"),
 			TablePath:     viper.GetString("tablePath"),
 		}
 		if generateDatabaseModelCommandUseDocker {
-			db := database.NewDockerizedDB(&config)
+			db := database.NewDockerizedDB(&config, viper.GetString("dockerTag"))
 			defer db.Close()
 			database.MigrateDatabase(db.DB.DB, config.MigrationPath)
 			generateModelsForDB(db.DB, &config)
@@ -52,6 +51,8 @@ var generateDatabaseModelCommand = &cobra.Command{
 }
 
 func initConfig() error {
+	viper.SetDefault("dockerTag", "alpine-11.4")
+
 	if len(generateDatabaseModelConfigFilePath) != 0 {
 		viper.SetConfigFile(generateDatabaseModelConfigFilePath)
 		return viper.ReadInConfig()
