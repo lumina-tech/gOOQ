@@ -36,7 +36,7 @@ func new{{ snakeToCamelID $table.Name }}Constraints() *{{ $table.Name }}Constrai
 func new{{ $table.ModelType }}() *{{ $table.Name }} {
   instance := &{{ $table.Name }}{}
   {{ range $_, $f := $table.Fields -}}
-  instance.{{ snakeToCamelID $f.Name }} = gooq.New{{ $f.GooqType }}Field(instance, "{{ snakeToCamelID $f.Name }}")
+  instance.{{ snakeToCamelID $f.Name }} = gooq.New{{ $f.GooqType }}Field(instance, "{{ $f.Name }}")
   {{ end -}}
   instance.Constraints = new{{ $table.ModelType }}Constraints()
   return instance

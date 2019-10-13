@@ -190,17 +190,11 @@ func (s *selection) GetAlias() null.String {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (s *selection) Fetch(d Dialect, db DBInterface) (*sqlx.Rows, error) {
-	//var buf bytes.Buffer
-	//args := s.Render(d, &buf)
-	//return db.Queryx(buf.String(), args...)
-	return nil, nil
+	return db.Queryx(s.String(d))
 }
 
 func (s *selection) FetchRow(d Dialect, db DBInterface) (*sqlx.Row, error) {
-	//var buf bytes.Buffer
-	//args := s.Render(d, &buf)
-	//return db.QueryRowx(buf.String(), args...), nil
-	return nil, nil
+	return db.QueryRowx(s.String(d)), nil
 }
 
 ///////////////////////////////////////////////////////////////////////////////

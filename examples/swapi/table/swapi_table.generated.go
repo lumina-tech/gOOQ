@@ -39,16 +39,16 @@ func newPersonConstraints() *personConstraints {
 
 func newPerson() *person {
 	instance := &person{}
-	instance.ID = gooq.NewUUIDField(instance, "ID")
-	instance.Name = gooq.NewStringField(instance, "Name")
-	instance.Height = gooq.NewStringField(instance, "Height")
-	instance.Mass = gooq.NewStringField(instance, "Mass")
-	instance.HairColor = gooq.NewStringField(instance, "HairColor")
-	instance.SkinColor = gooq.NewStringField(instance, "SkinColor")
-	instance.EyeColor = gooq.NewStringField(instance, "EyeColor")
-	instance.BirthYear = gooq.NewStringField(instance, "BirthYear")
-	instance.Gender = gooq.NewStringField(instance, "Gender")
-	instance.HomeWorld = gooq.NewStringField(instance, "HomeWorld")
+	instance.ID = gooq.NewUUIDField(instance, "id")
+	instance.Name = gooq.NewStringField(instance, "name")
+	instance.Height = gooq.NewStringField(instance, "height")
+	instance.Mass = gooq.NewStringField(instance, "mass")
+	instance.HairColor = gooq.NewStringField(instance, "hair_color")
+	instance.SkinColor = gooq.NewStringField(instance, "skin_color")
+	instance.EyeColor = gooq.NewStringField(instance, "eye_color")
+	instance.BirthYear = gooq.NewStringField(instance, "birth_year")
+	instance.Gender = gooq.NewStringField(instance, "gender")
+	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
 	instance.Constraints = newPersonConstraints()
 	return instance
 }

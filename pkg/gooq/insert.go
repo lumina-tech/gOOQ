@@ -150,17 +150,11 @@ func (i *insert) Exec(d Dialect, db DBInterface) (sql.Result, error) {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (i *insert) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.Queryx(buf.String(), args...)
-	return nil, nil
+	return db.Queryx(i.String(dl))
 }
 
 func (i *insert) FetchRow(dl Dialect, db DBInterface) (*sqlx.Row, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.QueryRowx(buf.String(), args...), nil
-	return nil, nil
+	return db.QueryRowx(i.String(dl)), nil
 }
 
 ///////////////////////////////////////////////////////////////////////////////
