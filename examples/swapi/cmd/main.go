@@ -19,6 +19,8 @@ func main() {
 		DatabaseName: "swapi",
 		SSLMode:      "disable",
 	}, "11.4-alpine")
+	defer dockerDB.Close()
+
 	database.MigrateDatabase(dockerDB.DB.DB, "migrations")
 
 	stmt := gooq.InsertInto(model.Person).
@@ -32,7 +34,7 @@ func main() {
 		Set(model.Person.HomeWorld, "Runescape").
 		Set(model.Person.Mass, "100").
 		Set(model.Person.SkinColor, "#f0d7b9").
-		Returning(gooq.String("*"))
+		Returning(model.Person.Asterisk)
 
 	builder := gooq.Builder{}
 	stmt.Render(&builder)

@@ -15,6 +15,8 @@ type {{ $table.Name }}Constraints struct {
 }
 
 type {{ $table.Name }} struct {
+	gooq.TableImpl
+	Asterisk gooq.StringField
   {{ range $_, $f := $table.Fields -}}
   {{ snakeToCamelID $f.Name }} gooq.{{ $f.GooqType }}Field
   {{ end }}
@@ -35,6 +37,8 @@ func new{{ snakeToCamelID $table.Name }}Constraints() *{{ $table.Name }}Constrai
 
 func new{{ $table.ModelType }}() *{{ $table.Name }} {
   instance := &{{ $table.Name }}{}
+	instance.Initialize("{{ $schema }}", "{{ $table.Name }}")
+	instance.Asterisk = gooq.NewStringField(instance, "*")
   {{ range $_, $f := $table.Fields -}}
   instance.{{ snakeToCamelID $f.Name }} = gooq.New{{ $f.GooqType }}Field(instance, "{{ $f.Name }}")
   {{ end -}}
@@ -46,25 +50,6 @@ func (t *{{ $table.Name }}) As(alias string) gooq.Selectable {
   instance := new{{ $table.ModelType }}()
   instance.alias = null.StringFrom(alias)
   return instance
-}
-
-func (t *{{ $table.Name }}) GetAlias() null.String {
-  return t.alias
-}
-
-func (t *{{ $table.Name }}) GetAliasOrName() string {
-  if t.alias.Valid {
-    return t.alias.String
-  }
-  return t.GetName()
-}
-
-func (t *{{ $table.Name }}) GetName() string {
-  return gooq.GetQualifiedName("{{ $schema }}", "{{ $table.Name }}")
-}
-
-func (t *{{ $table.Name }}) GetSchema() null.String {
-  return "{{ $schema }}"
 }
 
 func (t *{{ $table.Name }}) ScanRow(

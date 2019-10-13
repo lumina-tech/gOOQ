@@ -67,7 +67,6 @@ type SelectOffsetStep interface {
 type SelectFinalStep interface {
 	Selectable
 	Fetchable
-	As(alias string) SelectFinalStep
 	Union(SelectFinalStep) SelectOrderByStep
 }
 
@@ -142,7 +141,7 @@ func (s *selection) On(c ...Expression) SelectJoinStep {
 	return s
 }
 
-func (s *selection) As(alias string) SelectFinalStep {
+func (s *selection) As(alias string) Selectable {
 	s.alias = null.StringFrom(alias)
 	return s
 }
@@ -189,22 +188,24 @@ func (s *selection) GetAlias() null.String {
 // Fetchable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *selection) Fetch(d Dialect, db DBInterface) (*sqlx.Rows, error) {
-	return db.Queryx(s.String(d))
+func (s *selection) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
+	builder := s.Build(dl)
+	return db.Queryx(builder.String(), builder.arguments...)
 }
 
-func (s *selection) FetchRow(d Dialect, db DBInterface) (*sqlx.Row, error) {
-	return db.QueryRowx(s.String(d)), nil
+func (s *selection) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
+	builder := s.Build(dl)
+	return db.QueryRowx(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Renderable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *selection) String(d Dialect) string {
+func (s *selection) Build(d Dialect) *Builder {
 	builder := Builder{}
 	s.Render(&builder)
-	return builder.String()
+	return &builder
 }
 
 func (s *selection) Render(
@@ -232,7 +233,7 @@ func (s *selection) Render(
 	builder.Print(" FROM ")
 	switch sub := s.selection.(type) {
 	case Table:
-		builder.Print(sub.GetName())
+		builder.Print(sub.GetQualifiedName())
 	case *selection:
 		builder.Print("(")
 		sub.Render(builder)
@@ -257,7 +258,7 @@ func (s *selection) Render(
 		builder.Printf(" %s ", joinString)
 		switch sub := join.target.(type) {
 		case Table:
-			builder.Print(sub.GetAliasOrName())
+			builder.Print(sub.GetAliasOrQualifiedName())
 		case *selection:
 			builder.Print("(")
 			sub.Render(builder)

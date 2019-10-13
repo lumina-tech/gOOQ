@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	EnumTemplateFilename = "enum.go.tmpl"
 	referenceTableSuffix = "_reference_table"
 )
 
@@ -43,18 +42,6 @@ func (generator *EnumGenerator) Run() {
 	enumTemplate := getTemplate(generator.modelTemplateString)
 	err := RenderToFile(enumTemplate, generator.modelOutputFile, args)
 	check(err)
-
-	fmt.Println()
-	fmt.Println("################################################################################")
-	fmt.Println("NOTE: copy the following to gqlgen.yml. This part has yet to be automated")
-	fmt.Println("################################################################################")
-	fmt.Println()
-	for _, enum := range args.Enums {
-		enumName := snaker.SnakeToCamelIdentifier(enum.Name)
-		fmt.Printf("  %s:\n", enumName)
-		fmt.Printf("    model: 'github.com/lumina-tech/lumina/apps/server/model.%s'\n", enumName)
-	}
-	fmt.Println()
 }
 
 func (generator *EnumGenerator) getTemplateArguments() EnumsTemplateArgs {

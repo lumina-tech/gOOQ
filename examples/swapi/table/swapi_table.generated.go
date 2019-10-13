@@ -13,6 +13,8 @@ type personConstraints struct {
 }
 
 type person struct {
+	gooq.TableImpl
+	Asterisk  gooq.StringField
 	ID        gooq.UUIDField
 	Name      gooq.StringField
 	Height    gooq.StringField
@@ -39,6 +41,8 @@ func newPersonConstraints() *personConstraints {
 
 func newPerson() *person {
 	instance := &person{}
+	instance.Initialize("public", "person")
+	instance.Asterisk = gooq.NewStringField(instance, "*")
 	instance.ID = gooq.NewUUIDField(instance, "id")
 	instance.Name = gooq.NewStringField(instance, "name")
 	instance.Height = gooq.NewStringField(instance, "height")
@@ -57,14 +61,6 @@ func (t *person) As(alias string) gooq.Selectable {
 	instance := newPerson()
 	instance.alias = null.StringFrom(alias)
 	return instance
-}
-
-func (t *person) GetAlias() null.String {
-	return t.alias
-}
-
-func (t *person) GetName() string {
-	return gooq.GetQualifiedName("public", "person")
 }
 
 func (t *person) ScanRow(

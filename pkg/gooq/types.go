@@ -34,5 +34,5 @@ type Executable interface {
 type Fetchable interface {
 	Renderable
 	Fetch(Dialect, DBInterface) (*sqlx.Rows, error)
-	FetchRow(Dialect, DBInterface) (*sqlx.Row, error)
+	FetchRow(Dialect, DBInterface) *sqlx.Row
 }

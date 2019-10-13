@@ -14,7 +14,6 @@ import (
 
 const (
 	ModelTemplateFilename = "model.go.tmpl"
-	TableTemplateFilename = "table.go.tmpl"
 )
 
 func GenerateModel(
