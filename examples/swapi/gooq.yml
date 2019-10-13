@@ -1,0 +1,9 @@
+host: "localhost"
+port: 5432
+username: "postgres"
+password: "password"
+databaseName: "swapi"
+sslmode: "disable"
+migrationPath: "migrations"
+modelPath: "model"
+tablePath: "table"

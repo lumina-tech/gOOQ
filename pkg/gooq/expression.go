@@ -35,11 +35,11 @@ type Expression interface {
 
 	// IMPORTANT: this is for internal use only.
 	// original returns a reference to the original expression. This allows us to recover
-	// an expression's original type. e.g. when we call tableImpl.column1.Eq(String("foo")
-	// a newBooleanExpression is created with the operands tableImpl.column1 and
-	// String("foo"). In the new boolean expression tableImpl.column1 is stored as a
+	// an expression's original type. e.g. when we call TableImpl.column1.Eq(String("foo")
+	// a newBooleanExpression is created with the operands TableImpl.column1 and
+	// String("foo"). In the new boolean expression TableImpl.column1 is stored as a
 	// stringExpressionImpl and has lost its original stringFieldImpl type. When
-	// we render the expression it renders <nil> = 'foo' instead of tableImpl.column1 = 'foo'
+	// we render the expression it renders <nil> = 'foo' instead of TableImpl.column1 = 'foo'
 	// because the stringExpressionImpl renderer was used.
 	original() Expression
 }

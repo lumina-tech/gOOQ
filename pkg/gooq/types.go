@@ -4,16 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
+	"gopkg.in/guregu/null.v3"
 )
 
 type DatabaseConstraint struct {
-	Name    string
-	Columns []Field
+	Name      string
+	Columns   []Field
+	Predicate null.String
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// Query
-///////////////////////////////////////////////////////////////////////////////
 
 type DBInterface interface {
 	Exec(query string, args ...interface{}) (sql.Result, error)
@@ -36,5 +34,5 @@ type Executable interface {
 type Fetchable interface {
 	Renderable
 	Fetch(Dialect, DBInterface) (*sqlx.Rows, error)
-	FetchRow(Dialect, DBInterface) (*sqlx.Row, error)
+	FetchRow(Dialect, DBInterface) *sqlx.Row
 }

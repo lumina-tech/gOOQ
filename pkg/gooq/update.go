@@ -118,34 +118,30 @@ func (u *update) Exec(d Dialect, db DBInterface) (sql.Result, error) {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (u *update) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.Queryx(buf.String(), args...)
-	return nil, nil
+	builder := u.Build(dl)
+	return db.Queryx(builder.String(), builder.arguments...)
 }
 
-func (u *update) FetchRow(dl Dialect, db DBInterface) (*sqlx.Row, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.QueryRowx(buf.String(), args...), nil
-	return nil, nil
+func (u *update) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
+	builder := u.Build(dl)
+	return db.QueryRowx(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Renderable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (u *update) String(dl Dialect) string {
+func (u *update) Build(d Dialect) *Builder {
 	builder := Builder{}
 	u.Render(&builder)
-	return builder.String()
+	return &builder
 }
 
 func (u *update) Render(
 	builder *Builder,
 ) {
 	// UPDATE table_name SET
-	builder.Printf("UPDATE %s", u.table.Name())
+	builder.Printf("UPDATE %s", u.table.GetQualifiedName())
 
 	if len(u.setPredicates) > 0 {
 		// render SET clause
@@ -163,7 +159,7 @@ func (u *update) Render(
 		builder.Print(" FROM ")
 		switch sub := u.fromSelection.(type) {
 		case Table:
-			builder.Print(sub.Name())
+			builder.Print(sub.GetQualifiedName())
 		case *selection:
 			builder.Print("(")
 			sub.Render(builder)

@@ -121,7 +121,7 @@ func (i *insert) SetUpdates(
 func (i *insert) SetUpdateColumns(
 	fields ...Field,
 ) InsertOnConflictSetStep {
-	excludedTable := NewTable("EXCLUDED")
+	excludedTable := NewTable("", "EXCLUDED")
 	for _, field := range fields {
 		i.conflictSetPredicates = append(i.conflictSetPredicates, setPredicate{
 			field: field,
@@ -150,34 +150,30 @@ func (i *insert) Exec(d Dialect, db DBInterface) (sql.Result, error) {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (i *insert) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.Queryx(buf.String(), args...)
-	return nil, nil
+	builder := i.Build(dl)
+	return db.Queryx(builder.String(), builder.arguments...)
 }
 
-func (i *insert) FetchRow(dl Dialect, db DBInterface) (*sqlx.Row, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.QueryRowx(buf.String(), args...), nil
-	return nil, nil
+func (i *insert) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
+	builder := i.Build(dl)
+	return db.QueryRowx(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Renderable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (i *insert) String(d Dialect) string {
+func (i *insert) Build(d Dialect) *Builder {
 	builder := Builder{}
 	i.Render(&builder)
-	return builder.String()
+	return &builder
 }
 
 func (i *insert) Render(
 	builder *Builder,
 ) {
 	// INSERT INTO table_name
-	builder.Printf("INSERT INTO %s ", i.table.Name())
+	builder.Printf("INSERT INTO %s ", i.table.GetQualifiedName())
 
 	if i.selection != nil {
 		// handle INSERT ...SELECT
@@ -222,7 +218,7 @@ func (i *insert) renderColumnsAndValues(
 	if len(columns) > 0 {
 		builder.Print("(")
 		for index, column := range columns {
-			builder.Printf(column.QualifiedName())
+			builder.Printf(column.Name())
 			if index != len(columns)-1 {
 				builder.Print(", ")
 			}

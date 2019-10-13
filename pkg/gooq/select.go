@@ -67,7 +67,6 @@ type SelectOffsetStep interface {
 type SelectFinalStep interface {
 	Selectable
 	Fetchable
-	As(alias string) SelectFinalStep
 	Union(SelectFinalStep) SelectOrderByStep
 }
 
@@ -142,7 +141,7 @@ func (s *selection) On(c ...Expression) SelectJoinStep {
 	return s
 }
 
-func (s *selection) As(alias string) SelectFinalStep {
+func (s *selection) As(alias string) Selectable {
 	s.alias = null.StringFrom(alias)
 	return s
 }
@@ -181,40 +180,32 @@ func (s *selection) Offset(offset int) SelectFinalStep {
 // Aliasable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *selection) Alias() null.String {
+func (s *selection) GetAlias() null.String {
 	return s.alias
-}
-
-func (s *selection) QualifiedName() string {
-	return s.alias.String
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Fetchable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *selection) Fetch(d Dialect, db DBInterface) (*sqlx.Rows, error) {
-	//var buf bytes.Buffer
-	//args := s.Render(d, &buf)
-	//return db.Queryx(buf.String(), args...)
-	return nil, nil
+func (s *selection) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
+	builder := s.Build(dl)
+	return db.Queryx(builder.String(), builder.arguments...)
 }
 
-func (s *selection) FetchRow(d Dialect, db DBInterface) (*sqlx.Row, error) {
-	//var buf bytes.Buffer
-	//args := s.Render(d, &buf)
-	//return db.QueryRowx(buf.String(), args...), nil
-	return nil, nil
+func (s *selection) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
+	builder := s.Build(dl)
+	return db.QueryRowx(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Renderable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *selection) String(d Dialect) string {
+func (s *selection) Build(d Dialect) *Builder {
 	builder := Builder{}
 	s.Render(&builder)
-	return builder.String()
+	return &builder
 }
 
 func (s *selection) Render(
@@ -242,14 +233,14 @@ func (s *selection) Render(
 	builder.Print(" FROM ")
 	switch sub := s.selection.(type) {
 	case Table:
-		builder.Print(sub.Name())
+		builder.Print(sub.GetQualifiedName())
 	case *selection:
 		builder.Print("(")
 		sub.Render(builder)
 		builder.Print(")")
 	}
 
-	alias := s.selection.Alias()
+	alias := s.selection.GetAlias()
 	if alias.Valid {
 		builder.Printf(" AS %s", alias.String)
 	}
@@ -267,11 +258,11 @@ func (s *selection) Render(
 		builder.Printf(" %s ", joinString)
 		switch sub := join.target.(type) {
 		case Table:
-			builder.Print(sub.QualifiedName())
+			builder.Print(sub.GetAliasOrQualifiedName())
 		case *selection:
 			builder.Print("(")
 			sub.Render(builder)
-			builder.Printf(") AS %s", sub.Alias().String)
+			builder.Printf(") AS %s", sub.GetAlias().String)
 		}
 		builder.Print(" ON ")
 		builder.RenderConditions(join.conditions)

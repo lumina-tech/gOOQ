@@ -26,7 +26,16 @@ func (field *fieldImpl) Name() string {
 }
 
 func (field *fieldImpl) QualifiedName() string {
-	selectableName := field.selectable.QualifiedName()
+	var selectableName string
+	switch selectable := field.selectable.(type) {
+	case Table:
+		selectableName = selectable.GetName()
+	default:
+		if selectable.GetAlias().Valid {
+			selectableName = selectable.GetAlias().String
+		}
+		// TODO(Peter): can selectable is a anonymous select statement?
+	}
 	if selectableName == "" {
 		return field.name
 	} else {
@@ -91,6 +100,26 @@ type defaultStringField struct {
 }
 
 func NewStringField(
+	table Table, name string,
+) StringField {
+	field := &defaultStringField{
+		fieldImpl: initFieldImpl(table, name),
+	}
+	field.expressionImpl.initFieldExpressionImpl(field)
+	return field
+}
+
+type UUIDField interface {
+	StringExpression
+	Field
+}
+
+type defaultUUIDField struct {
+	stringExpressionImpl
+	fieldImpl
+}
+
+func NewUUIDField(
 	table Table, name string,
 ) StringField {
 	field := &defaultStringField{
