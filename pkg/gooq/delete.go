@@ -86,27 +86,23 @@ func (d *deletion) Exec(dl Dialect, db DBInterface) (sql.Result, error) {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (d *deletion) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.Queryx(buf.String(), args...)
-	return nil, nil
+	builder := d.Build(dl)
+	return db.Queryx(builder.String(), builder.arguments...)
 }
 
-func (d *deletion) FetchRow(dl Dialect, db DBInterface) (*sqlx.Row, error) {
-	//var buf bytes.Buffer
-	//args := d.Render(dl, &buf)
-	//return db.QueryRowx(buf.String(), args...), nil
-	return nil, nil
+func (d *deletion) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
+	builder := d.Build(dl)
+	return db.QueryRowx(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Renderable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (d *deletion) String(dl Dialect) string {
+func (d *deletion) Build(dl Dialect) *Builder {
 	builder := Builder{}
 	d.Render(&builder)
-	return builder.String()
+	return &builder
 }
 
 // https://www.postgresql.org/docs/10/sql-delete.html
@@ -115,14 +111,14 @@ func (d *deletion) Render(
 ) {
 
 	// DELETE FROM table_name
-	builder.Printf("DELETE FROM %s", d.table.GetName())
+	builder.Printf("DELETE FROM %s", d.table.GetQualifiedName())
 
 	if d.using != nil {
 		// render USING clause
 		builder.Printf(" USING ")
 		switch sub := d.using.(type) {
 		case Table:
-			builder.Printf("%s ", sub.GetName())
+			builder.Printf("%s ", sub.GetQualifiedName())
 		case *selection:
 			builder.Printf("(")
 			sub.Render(builder)

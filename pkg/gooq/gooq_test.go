@@ -8,24 +8,28 @@ import (
 )
 
 type testTable struct {
-	tableImpl
+	TableImpl
 	Column1      StringField
 	Column2      StringField
 	Column3      IntField
 	Column4      DecimalField
 	CreationDate TimeField
-	alias        null.String
-	name         string
 }
 
 func newTestTable(name string) *testTable {
 	instance := &testTable{}
-	instance.tableImpl.initTable(name)
+	instance.TableImpl.Initialize("public", name)
 	instance.Column1 = NewStringField(instance, "column1")
 	instance.Column2 = NewStringField(instance, "column2")
 	instance.Column3 = NewIntField(instance, "column3")
 	instance.Column4 = NewDecimalField(instance, "column4")
 	instance.CreationDate = NewTimeField(instance, "creation_date")
+	return instance
+}
+
+func (t *testTable) As(alias string) Selectable {
+	instance := newTestTable(t.name)
+	instance.alias = null.StringFrom(alias)
 	return instance
 }
 
