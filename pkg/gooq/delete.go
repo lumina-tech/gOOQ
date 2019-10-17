@@ -11,14 +11,14 @@ type DeleteUsingStep interface {
 	Using(Selectable) DeleteOnStep
 }
 
+type DeleteOnStep interface {
+	DeleteWhereStep
+	On(...Expression) DeleteWhereStep
+}
+
 type DeleteWhereStep interface {
 	DeleteResultStep
 	Where(...Expression) DeleteReturningStep
-}
-
-type DeleteOnStep interface {
-	DeleteResultStep
-	On(...Expression) DeleteReturningStep
 }
 
 type DeleteReturningStep interface {
@@ -28,10 +28,12 @@ type DeleteReturningStep interface {
 
 type DeleteResultStep interface {
 	Fetchable
+	Renderable
 }
 
 type DeleteFinalStep interface {
 	Executable
+	Renderable
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,7 +59,7 @@ func (d *deletion) Using(s Selectable) DeleteOnStep {
 	return d
 }
 
-func (d *deletion) On(c ...Expression) DeleteReturningStep {
+func (d *deletion) On(c ...Expression) DeleteWhereStep {
 	d.usingPredicate = c
 	return d
 }
@@ -77,8 +79,8 @@ func (d *deletion) Returning(f ...Expression) DeleteResultStep {
 ///////////////////////////////////////////////////////////////////////////////
 
 func (d *deletion) Exec(dl Dialect, db DBInterface) (sql.Result, error) {
-	//return exec(dl, d, db)
-	return nil, nil
+	builder := d.Build(dl)
+	return db.Exec(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,32 +115,25 @@ func (d *deletion) Render(
 	// DELETE FROM table_name
 	builder.Printf("DELETE FROM %s", d.table.GetQualifiedName())
 
+	conditions := d.conditions
 	if d.using != nil {
 		// render USING clause
 		builder.Printf(" USING ")
-		switch sub := d.using.(type) {
-		case Table:
-			builder.Printf("%s ", sub.GetQualifiedName())
-		case *selection:
-			builder.Printf("(")
-			sub.Render(builder)
-			builder.Printf(") AS %s ", sub.GetAlias().String)
-		}
-		// render ON clause
-		if len(d.usingPredicate) > 0 {
-			builder.RenderConditions(d.usingPredicate)
-			builder.Print(" ON ")
-			builder.RenderConditions(d.usingPredicate)
-		}
-	} else if len(d.conditions) > 0 {
+		d.using.Render(builder)
+		// there is no "ON" clause in postgres, this is pattern is from jOOQ.
+		// https://www.jooq.org/doc/3.12/manual-single-page/#delete-statement
+		conditions = append(d.usingPredicate, conditions...)
+	}
+
+	if len(conditions) > 0 {
 		// [ WHERE condition ]
 		builder.Print(" WHERE ")
-		builder.RenderConditions(d.conditions)
+		builder.RenderConditions(conditions)
 	}
 
 	// [ RETURNING output_expression ]
 	if d.returning != nil {
 		builder.Print(" RETURNING ")
-		builder.RenderProjections(d.returning)
+		builder.RenderExpressions(d.returning)
 	}
 }

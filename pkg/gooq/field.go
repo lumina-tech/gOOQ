@@ -3,29 +3,28 @@ package gooq
 import "fmt"
 
 type Field interface {
-	Name() string
-	QualifiedName() string
+	Named
 }
 
 type fieldImpl struct {
-	name       string
+	expression Expression
 	selectable Selectable
+	name       string
 }
 
-func initFieldImpl(
-	selectable Selectable, name string,
-) fieldImpl {
-	return fieldImpl{
-		name:       name,
-		selectable: selectable,
-	}
+func (field *fieldImpl) initFieldImpl(
+	expression Expression, selectable Selectable, name string,
+) {
+	field.expression = expression
+	field.selectable = selectable
+	field.name = name
 }
 
-func (field *fieldImpl) Name() string {
+func (field *fieldImpl) GetName() string {
 	return field.name
 }
 
-func (field *fieldImpl) QualifiedName() string {
+func (field *fieldImpl) GetQualifiedName() string {
 	var selectableName string
 	switch selectable := field.selectable.(type) {
 	case Table:
@@ -34,7 +33,7 @@ func (field *fieldImpl) QualifiedName() string {
 		if selectable.GetAlias().Valid {
 			selectableName = selectable.GetAlias().String
 		}
-		// TODO(Peter): can selectable is a anonymous select statement?
+		// TODO(Peter): can selectable be a anonymous select statement?
 	}
 	if selectableName == "" {
 		return field.name
@@ -46,8 +45,31 @@ func (field *fieldImpl) QualifiedName() string {
 func (field *fieldImpl) Render(
 	builder *Builder,
 ) {
-	builder.Print(field.QualifiedName())
+	builder.Print(field.GetQualifiedName())
 }
+
+// BoolField
+
+type BoolField interface {
+	BoolExpression
+	Field
+}
+
+type defaultBoolField struct {
+	boolExpressionImpl
+	fieldImpl
+}
+
+func NewBoolField(
+	table Table, name string,
+) BoolField {
+	field := &defaultBoolField{}
+	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
+	return field
+}
+
+// DecimalField
 
 type DecimalField interface {
 	NumericExpression
@@ -62,12 +84,13 @@ type defaultDecimalField struct {
 func NewDecimalField(
 	table Table, name string,
 ) DecimalField {
-	field := &defaultDecimalField{
-		fieldImpl: initFieldImpl(table, name),
-	}
+	field := &defaultDecimalField{}
 	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
 	return field
 }
+
+// IntField
 
 type IntField interface {
 	NumericExpression
@@ -82,12 +105,34 @@ type defaultIntField struct {
 func NewIntField(
 	table Table, name string,
 ) IntField {
-	field := &defaultIntField{
-		fieldImpl: initFieldImpl(table, name),
-	}
+	field := &defaultIntField{}
 	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
 	return field
 }
+
+// JsonbField
+
+type JsonbField interface {
+	StringExpression
+	Field
+}
+
+type defaultJsonbField struct {
+	stringExpressionImpl
+	fieldImpl
+}
+
+func NewJsonbField(
+	table Table, name string,
+) JsonbField {
+	field := &defaultJsonbField{}
+	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
+	return field
+}
+
+// StringField
 
 type StringField interface {
 	StringExpression
@@ -102,32 +147,55 @@ type defaultStringField struct {
 func NewStringField(
 	table Table, name string,
 ) StringField {
-	field := &defaultStringField{
-		fieldImpl: initFieldImpl(table, name),
-	}
+	field := &defaultStringField{}
 	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
 	return field
 }
 
-type UUIDField interface {
+// StringArrayField
+
+type StringArrayField interface {
 	StringExpression
 	Field
 }
 
-type defaultUUIDField struct {
+type defaultStringArrayField struct {
 	stringExpressionImpl
+	fieldImpl
+}
+
+func NewStringArrayField(
+	table Table, name string,
+) StringArrayField {
+	field := &defaultStringField{}
+	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
+	return field
+}
+
+// UUIDField
+
+type UUIDField interface {
+	UUIDExpression
+	Field
+}
+
+type defaultUUIDField struct {
+	uuidExpressionImpl
 	fieldImpl
 }
 
 func NewUUIDField(
 	table Table, name string,
-) StringField {
-	field := &defaultStringField{
-		fieldImpl: initFieldImpl(table, name),
-	}
+) UUIDField {
+	field := &defaultUUIDField{}
 	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
 	return field
 }
+
+// TimeField
 
 type TimeField interface {
 	DateTimeExpression
@@ -142,9 +210,8 @@ type defaultTimeField struct {
 func NewTimeField(
 	table Table, name string,
 ) TimeField {
-	field := &defaultTimeField{
-		fieldImpl: initFieldImpl(table, name),
-	}
+	field := &defaultTimeField{}
 	field.expressionImpl.initFieldExpressionImpl(field)
+	field.fieldImpl.initFieldImpl(field, table, name)
 	return field
 }

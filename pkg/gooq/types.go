@@ -7,6 +7,25 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
+type Aliasable interface {
+	As(alias string) Selectable
+	GetAlias() null.String
+}
+
+type Named interface {
+	GetName() string
+	GetQualifiedName() string
+}
+
+type Renderable interface {
+	Render(builder *Builder)
+}
+
+type Selectable interface {
+	Aliasable
+	Renderable
+}
+
 type DatabaseConstraint struct {
 	Name      string
 	Columns   []Field
@@ -27,12 +46,10 @@ type TxInterface interface {
 }
 
 type Executable interface {
-	Renderable
 	Exec(Dialect, DBInterface) (sql.Result, error)
 }
 
 type Fetchable interface {
-	Renderable
 	Fetch(Dialect, DBInterface) (*sqlx.Rows, error)
 	FetchRow(Dialect, DBInterface) *sqlx.Row
 }

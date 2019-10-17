@@ -13,17 +13,12 @@ type UpdateSetStep interface {
 
 type UpdateFromStep interface {
 	UpdateWhereStep
-	From(Selectable) UpdateOnStep
+	From(Selectable) UpdateWhereStep
 }
 
 type UpdateWhereStep interface {
 	UpdateOnConflictStep
 	Where(conditions ...Expression) UpdateOnConflictStep
-}
-
-type UpdateOnStep interface {
-	UpdateOnConflictStep
-	On(...Expression) UpdateOnConflictStep
 }
 
 type UpdateOnConflictStep interface {
@@ -39,10 +34,12 @@ type UpdateReturningStep interface {
 
 type UpdateResultStep interface {
 	Fetchable
+	Renderable
 }
 
 type UpdateFinalStep interface {
 	Executable
+	Renderable
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +56,6 @@ type update struct {
 	setPredicates  []setPredicate // set predicates
 	conditions     []Expression   // where conditions
 	fromSelection  Selectable     // selection for from clause
-	joinPredicate  []Expression   // join predicates for from clause
 	conflictAction ConflictAction
 	returning      []Expression
 }
@@ -73,13 +69,8 @@ func (u *update) Set(field Field, value interface{}) UpdateSetStep {
 	return u
 }
 
-func (u *update) From(s Selectable) UpdateOnStep {
+func (u *update) From(s Selectable) UpdateWhereStep {
 	u.fromSelection = s
-	return u
-}
-
-func (u *update) On(c ...Expression) UpdateOnConflictStep {
-	u.joinPredicate = c
 	return u
 }
 
@@ -108,9 +99,9 @@ func (u *update) Returning(f ...Expression) UpdateResultStep {
 // Executable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (u *update) Exec(d Dialect, db DBInterface) (sql.Result, error) {
-	//return exec(dl, d, db)
-	return nil, nil
+func (u *update) Exec(dl Dialect, db DBInterface) (sql.Result, error) {
+	builder := u.Build(dl)
+	return db.Exec(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -147,26 +138,18 @@ func (u *update) Render(
 		// render SET clause
 		builder.Print(" SET ")
 		builder.RenderSetPredicates(u.setPredicates)
-		if len(u.conditions) > 0 {
-			// render WHERE clause
-			builder.Print(" WHERE ")
-			builder.RenderConditions(u.conditions)
-		}
 	}
 
 	if u.fromSelection != nil {
 		// render WHERE clause
 		builder.Print(" FROM ")
-		switch sub := u.fromSelection.(type) {
-		case Table:
-			builder.Print(sub.GetQualifiedName())
-		case *selection:
-			builder.Print("(")
-			sub.Render(builder)
-			builder.Print(")")
-		}
+		u.fromSelection.Render(builder)
+	}
+
+	if len(u.conditions) > 0 {
+		// render WHERE clause
 		builder.Print(" WHERE ")
-		builder.RenderConditions(u.joinPredicate)
+		builder.RenderConditions(u.conditions)
 	}
 
 	// render on conflict
@@ -177,6 +160,6 @@ func (u *update) Render(
 	// render returning
 	if u.returning != nil {
 		builder.Print(" RETURNING ")
-		builder.RenderProjections(u.returning)
+		builder.RenderExpressions(u.returning)
 	}
 }

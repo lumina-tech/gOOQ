@@ -76,7 +76,7 @@ type SelectFinalStep interface {
 
 type selection struct {
 	selection   Selectable
-	projections []Expression
+	projections []Selectable
 	joins       []join
 	joinTarget  Selectable
 	joinType    JoinType
@@ -91,13 +91,13 @@ type selection struct {
 	offset      int
 }
 
-func Select(projections ...Expression) SelectDistinctStep {
+func Select(projections ...Selectable) SelectDistinctStep {
 	return &selection{projections: projections}
 }
 
 func SelectCount() SelectDistinctStep {
 	return &selection{
-		projections: []Expression{Count(Asterisk)},
+		projections: []Selectable{Count(Asterisk)},
 	}
 }
 
@@ -212,6 +212,11 @@ func (s *selection) Render(
 	builder *Builder,
 ) {
 
+	hasAlias := s.alias.Valid
+	if hasAlias {
+		builder.Print("(")
+	}
+
 	builder.Print("SELECT ")
 
 	if s.isDistinct {
@@ -220,7 +225,7 @@ func (s *selection) Render(
 
 	projections := s.projections
 	if len(projections) == 0 {
-		projections = []Expression{Asterisk}
+		projections = []Selectable{Asterisk}
 	}
 	// It is incorrect to always override projection namespace with selection alias.
 	// The original this logic turns the following into
@@ -231,19 +236,7 @@ func (s *selection) Render(
 
 	// render FROM clause
 	builder.Print(" FROM ")
-	switch sub := s.selection.(type) {
-	case Table:
-		builder.Print(sub.GetQualifiedName())
-	case *selection:
-		builder.Print("(")
-		sub.Render(builder)
-		builder.Print(")")
-	}
-
-	alias := s.selection.GetAlias()
-	if alias.Valid {
-		builder.Printf(" AS %s", alias.String)
-	}
+	s.selection.Render(builder)
 
 	// render JOIN/ON clause
 	for _, join := range s.joins {
@@ -256,14 +249,7 @@ func (s *selection) Render(
 		}
 
 		builder.Printf(" %s ", joinString)
-		switch sub := join.target.(type) {
-		case Table:
-			builder.Print(sub.GetAliasOrQualifiedName())
-		case *selection:
-			builder.Print("(")
-			sub.Render(builder)
-			builder.Printf(") AS %s", sub.GetAlias().String)
-		}
+		join.target.Render(builder)
 		builder.Print(" ON ")
 		builder.RenderConditions(join.conditions)
 	}
@@ -277,7 +263,7 @@ func (s *selection) Render(
 	// render GROUP BY clause
 	if (len(s.groups)) > 0 {
 		builder.Print(" GROUP BY ")
-		builder.RenderFields(s.groups)
+		builder.RenderExpressions(s.groups)
 	}
 
 	// render HAVINGS clause
@@ -295,7 +281,7 @@ func (s *selection) Render(
 	// render ORDER BY clause
 	if (len(s.ordering)) > 0 {
 		builder.Print(" ORDER BY ")
-		builder.RenderFields(s.ordering)
+		builder.RenderExpressions(s.ordering)
 	}
 
 	// render LIMIT clause
@@ -307,4 +293,9 @@ func (s *selection) Render(
 	if s.offset > 0 {
 		builder.Printf(" OFFSET %d", s.offset)
 	}
+
+	if hasAlias {
+		builder.Printf(") AS %s", s.alias.String)
+	}
+
 }

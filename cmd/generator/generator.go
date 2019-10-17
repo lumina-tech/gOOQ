@@ -75,8 +75,8 @@ func generateModelsForDB(
 	generator.NewEnumGenerator(db, templates.EnumTemplate, config.ModelPath, config.DatabaseName).Run()
 
 	generatedModelFilename := fmt.Sprintf("%s/%s_model.generated.go", config.ModelPath, config.DatabaseName)
-	generator.GenerateModel(db, templates.ModelTemplate, generatedModelFilename, config.DatabaseName)
+	generator.GenerateModel(db, templates.ModelTemplate, generatedModelFilename, config.DatabaseName, "model")
 
 	generatedTableFilename := fmt.Sprintf("%s/%s_table.generated.go", config.TablePath, config.DatabaseName)
-	generator.GenerateModel(db, templates.TableTemplate, generatedTableFilename, config.DatabaseName)
+	generator.GenerateModel(db, templates.TableTemplate, generatedTableFilename, config.DatabaseName, "table")
 }

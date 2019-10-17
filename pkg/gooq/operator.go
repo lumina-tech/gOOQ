@@ -3,14 +3,17 @@ package gooq
 type Operator string
 
 var (
+	OperatorIsNull    = Operator("IS NULL")
+	OperatorIsNotNull = Operator("IS NOT NULL")
+
 	OperatorAsc  = Operator("ASC")
 	OperatorDesc = Operator("DESC")
 
 	// logical operators
 	// https://www.postgresql.org/docs/11/functions-logical.html
-	OperatorAnd = Operator("And")
-	OperatorOr  = Operator("Or")
-	OperatorNot = Operator("Not")
+	OperatorAnd = Operator("AND")
+	OperatorOr  = Operator("OR")
+	OperatorNot = Operator("NOT")
 
 	// comparison functions and operators
 	// https://www.postgresql.org/docs/11/functions-comparison.html

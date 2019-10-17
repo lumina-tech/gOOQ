@@ -5,10 +5,15 @@ import (
 	"fmt"
 )
 
+var (
+	invalidLiteralValueError = fmt.Errorf("literal value cannot be of kind slice")
+)
+
 type Builder struct {
 	isDebug   bool
 	buffer    bytes.Buffer
 	arguments []interface{}
+	errors    []error
 }
 
 func (builder *Builder) Printf(
@@ -43,12 +48,12 @@ func (builder *Builder) RenderLiteral(
 	}
 }
 
-func (builder *Builder) RenderLiteralArray(
-	array []interface{},
+func (builder *Builder) RenderExpressionArray(
+	array []Expression,
 ) {
 	builder.Print("(")
-	for index, item := range array {
-		builder.RenderLiteral(item)
+	for index, expression := range array {
+		builder.RenderExpression(expression)
 		if index != len(array)-1 {
 			builder.Print(", ")
 		}
@@ -67,19 +72,19 @@ func (builder *Builder) RenderConditions(
 	}
 }
 
-func (builder *Builder) RenderFields(
-	projections []Expression,
+func (builder *Builder) RenderExpressions(
+	expressions []Expression,
 ) {
-	for index, expression := range projections {
+	for index, expression := range expressions {
 		expression.Render(builder)
-		if index != len(projections)-1 {
+		if index != len(expressions)-1 {
 			builder.Print(", ")
 		}
 	}
 }
 
 func (builder *Builder) RenderProjections(
-	projections []Expression,
+	projections []Selectable,
 ) {
 	for index, expression := range projections {
 		expression.Render(builder)
@@ -94,7 +99,9 @@ func (builder *Builder) RenderSetPredicates(
 ) *Builder {
 	for index := range predicates {
 		item := &predicates[index]
-		builder.Printf("%s = ", item.field.QualifiedName())
+		// https://www.postgresql.org/docs/12/sql-update.html
+		// do not include the table's name in the specification of a target column — for example, UPDATE table_name SET table_name.col = 1 is invalid
+		builder.Printf("%s = ", item.field.GetName())
 		switch predicate := item.value.(type) {
 		case *selection:
 			builder.Print("(")

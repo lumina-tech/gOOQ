@@ -122,9 +122,9 @@ func parseType(dataType string) (string, error) {
 	case "jsonb":
 		typ = "Jsonb"
 	case "float":
-		typ = "Float32"
+		typ = "Decimal"
 	case "decimal", "double precision", "numeric":
-		typ = "Float64"
+		typ = "Decimal"
 	case "date", "timestamp with time zone", "time with time zone", "time without time zone", "timestamp without time zone":
 		typ = "Time"
 	case "uuid":

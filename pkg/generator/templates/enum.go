@@ -5,6 +5,8 @@ const EnumTemplate = `
 
 package {{ .Package }}
 
+import "github.com/lumina-tech/gooq/pkg/gooq"
+
 {{ range $_, $enum := .Enums -}}
 {{- $type := (snakeToCamelID $enum.Name) -}}
 type {{ $type }} string

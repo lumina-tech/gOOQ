@@ -41,10 +41,12 @@ type InsertReturningStep interface {
 
 type InsertResultStep interface {
 	Fetchable
+	Renderable
 }
 
 type InsertFinalStep interface {
 	Executable
+	Renderable
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,7 +57,7 @@ type InsertFinalStep interface {
 
 type insert struct {
 	table                 Table
-	selection             *selection
+	selection             Selectable
 	columns               []Field
 	values                [][]interface{}
 	conflictAction        ConflictAction
@@ -69,11 +71,7 @@ func InsertInto(t Table) InsertSetStep {
 }
 
 func (i *insert) Select(s Selectable) InsertOnConflictStep {
-	if selection, ok := s.(*selection); ok {
-		i.selection = selection
-	} else {
-		// TODO(Peter): log warning
-	}
+	i.selection = s
 	return i
 }
 
@@ -125,7 +123,7 @@ func (i *insert) SetUpdateColumns(
 	for _, field := range fields {
 		i.conflictSetPredicates = append(i.conflictSetPredicates, setPredicate{
 			field: field,
-			value: NewStringField(excludedTable, field.Name()),
+			value: NewStringField(excludedTable, field.GetName()),
 		})
 	}
 	return i
@@ -140,9 +138,9 @@ func (i *insert) Returning(f ...Expression) InsertResultStep {
 // Executable
 ///////////////////////////////////////////////////////////////////////////////
 
-func (i *insert) Exec(d Dialect, db DBInterface) (sql.Result, error) {
-	//return exec(dl, d, db)
-	return nil, nil
+func (i *insert) Exec(dl Dialect, db DBInterface) (sql.Result, error) {
+	builder := i.Build(dl)
+	return db.Exec(builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,7 +189,7 @@ func (i *insert) Render(
 		if i.conflictConstraint != nil {
 			builder.Printf(" (")
 			for index, column := range i.conflictConstraint.Columns {
-				builder.Print(column.QualifiedName())
+				builder.Print(column.GetQualifiedName())
 				if index != len(i.conflictConstraint.Columns)-1 {
 					builder.Printf(", ")
 				}
@@ -207,7 +205,7 @@ func (i *insert) Render(
 	// [ RETURNING output_expression ]
 	if i.returning != nil {
 		builder.Print(" RETURNING ")
-		builder.RenderProjections(i.returning)
+		builder.RenderExpressions(i.returning)
 	}
 }
 
@@ -218,7 +216,7 @@ func (i *insert) renderColumnsAndValues(
 	if len(columns) > 0 {
 		builder.Print("(")
 		for index, column := range columns {
-			builder.Printf(column.Name())
+			builder.Printf(column.GetName())
 			if index != len(columns)-1 {
 				builder.Print(", ")
 			}

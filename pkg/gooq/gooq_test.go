@@ -9,11 +9,15 @@ import (
 
 type testTable struct {
 	TableImpl
-	Column1      StringField
-	Column2      StringField
-	Column3      IntField
-	Column4      DecimalField
-	CreationDate TimeField
+	Column1       StringField
+	Column2       StringField
+	Column3       IntField
+	Column4       DecimalField
+	BoolColumn    BoolField
+	DecimalColumn DecimalField
+	StringColumn  StringField
+	TimeColumn    TimeField
+	UUIDColumn    UUIDField
 }
 
 func newTestTable(name string) *testTable {
@@ -23,7 +27,11 @@ func newTestTable(name string) *testTable {
 	instance.Column2 = NewStringField(instance, "column2")
 	instance.Column3 = NewIntField(instance, "column3")
 	instance.Column4 = NewDecimalField(instance, "column4")
-	instance.CreationDate = NewTimeField(instance, "creation_date")
+	instance.BoolColumn = NewBoolField(instance, "bool_column")
+	instance.DecimalColumn = NewDecimalField(instance, "decimal_column")
+	instance.StringColumn = NewStringField(instance, "string_column")
+	instance.TimeColumn = NewTimeField(instance, "time_column")
+	instance.UUIDColumn = NewUUIDField(instance, "uuid_column")
 	return instance
 }
 
@@ -47,6 +55,8 @@ var (
 type TestCase struct {
 	Constructed  Renderable
 	ExpectedStmt string
+	Arguments    interface{}
+	Errors       []error
 	//ExpectedPreparedStmt string
 }
 
@@ -56,6 +66,12 @@ func runTestCases(t *testing.T, testCases []TestCase) {
 			builder := Builder{}
 			rendered.Constructed.Render(&builder)
 			require.Equal(t, rendered.ExpectedStmt, builder.String())
+			if rendered.Errors != nil {
+				require.Equal(t, rendered.Errors, builder.errors)
+			}
+			if rendered.Arguments != nil {
+				require.Equal(t, rendered.Arguments, builder.arguments)
+			}
 		})
 	}
 }

@@ -6,6 +6,8 @@ const ModelTemplate = `
 {{ $schema := .Schema }}
 package {{ .Package }}
 
+import "github.com/lumina-tech/gooq/pkg/gooq"
+
 {{ range $_, $table := .Tables -}}
 type {{ $table.ModelType }} struct {
   {{ range $_, $f := $table.Fields -}}

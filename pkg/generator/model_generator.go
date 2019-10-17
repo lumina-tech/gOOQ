@@ -17,7 +17,7 @@ const (
 )
 
 func GenerateModel(
-	db *sqlx.DB, templateString, outputPath string, dbName string,
+	db *sqlx.DB, templateString, outputPath string, dbName, packageName string,
 ) {
 	dbLoader := postgres.NewPostgresLoader()
 	schema, err := dbLoader.Schema()
@@ -26,7 +26,7 @@ func GenerateModel(
 	check(err)
 	args := TablesTemplateArgs{
 		Timestamp: time.Now().Format(time.RFC3339),
-		Package:   "model",
+		Package:   packageName,
 		Schema:    schema,
 		Tables:    make([]TableTemplateArgs, 0),
 	}

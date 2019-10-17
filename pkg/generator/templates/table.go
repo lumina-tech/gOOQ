@@ -6,6 +6,8 @@ const TableTemplate = `
 {{ $schema := .Schema }}
 package {{ .Package }}
 
+import "github.com/lumina-tech/gooq/pkg/gooq"
+
 {{ range $_, $table := .Tables -}}
 
 type {{ $table.Name }}Constraints struct {
