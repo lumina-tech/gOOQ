@@ -73,6 +73,26 @@ var expressionTestCases = []TestCase{
 		ExpectedStmt: "table1.decimal_column != $1",
 	},
 	{
+		Constructed:  Table1.DecimalColumn.Add(Int64(42)),
+		ExpectedStmt: "table1.decimal_column + $1",
+	},
+	{
+		Constructed:  Table1.DecimalColumn.Sub(Int64(-42)),
+		ExpectedStmt: "table1.decimal_column - $1",
+	},
+	{
+		Constructed:  Table1.DecimalColumn.Mult(Int64(42)),
+		ExpectedStmt: "table1.decimal_column * $1",
+	},
+	{
+		Constructed:  Table1.DecimalColumn.Div(Int64(0)),
+		ExpectedStmt: "table1.decimal_column / $1",
+	},
+	{
+		Constructed:  Table1.DecimalColumn.Sqrt(),
+		ExpectedStmt: "|/ table1.decimal_column",
+	},
+	{
 		Constructed:  Table1.StringColumn.IsEq("foo"),
 		ExpectedStmt: "table1.string_column = $1",
 	},
@@ -129,26 +149,6 @@ var expressionTestCases = []TestCase{
 		Constructed:  Table1.UUIDColumn.IsNotIn(uuid.Nil, uuid.Nil),
 		ExpectedStmt: "table1.uuid_column NOT IN ($1, $2)",
 		Arguments:    []interface{}{uuid.Nil, uuid.Nil},
-	},
-	{
-		Constructed:  Table1.DecimalColumn.Add(Int64(42)),
-		ExpectedStmt: "table1.decimal_column + $1",
-	},
-	{
-		Constructed:  Table1.DecimalColumn.Sub(Int64(-42)),
-		ExpectedStmt: "table1.decimal_column - $1",
-	},
-	{
-		Constructed:  Table1.DecimalColumn.Mult(Int64(42)),
-		ExpectedStmt: "table1.decimal_column * $1",
-	},
-	{
-		Constructed:  Table1.DecimalColumn.Div(Int64(0)),
-		ExpectedStmt: "table1.decimal_column / $1",
-	},
-	{
-		Constructed:  Table1.DecimalColumn.Sqrt(),
-		ExpectedStmt: "|/ table1.decimal_column",
 	},
 }
 
