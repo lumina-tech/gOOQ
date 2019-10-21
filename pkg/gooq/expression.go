@@ -444,6 +444,7 @@ type NumericExpression interface {
 	Sub(rhs NumericExpression) NumericExpression
 	Mult(rhs NumericExpression) NumericExpression
 	Div(rhs NumericExpression) NumericExpression
+	Sqrt() NumericExpression
 }
 
 type numericExpressionImpl struct {
@@ -455,6 +456,14 @@ func NewBinaryNumericExpressionImpl(
 ) NumericExpression {
 	instance := &numericExpressionImpl{}
 	instance.expressionImpl.initBinaryExpression(operator, lhs, rhs)
+	return instance
+}
+
+func NewUnaryPrefixNumericExpressionImpl(
+	operator Operator, operand NumericExpression,
+) NumericExpression {
+	instance := &numericExpressionImpl{}
+	instance.expressionImpl.initUnaryPrefixExpression(operator, operand)
 	return instance
 }
 
@@ -472,6 +481,10 @@ func (expr *numericExpressionImpl) Mult(rhs NumericExpression) NumericExpression
 
 func (expr *numericExpressionImpl) Div(rhs NumericExpression) NumericExpression {
 	return NewBinaryNumericExpressionImpl(OperatorDiv, expr, rhs)
+}
+
+func (expr *numericExpressionImpl) Sqrt() NumericExpression {
+	return NewUnaryPrefixNumericExpressionImpl(OperatorSqrt, expr)
 }
 
 func (expr *numericExpressionImpl) IsIn(value ...float64) BoolExpression {

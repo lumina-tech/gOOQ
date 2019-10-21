@@ -31,6 +31,7 @@ var (
 	OperatorSub  = Operator("-")
 	OperatorMult = Operator("*")
 	OperatorDiv  = Operator("/")
+	OperatorSqrt = Operator("|/")
 
 	// Table 9.13. Bit String Operators
 	// https://www.postgresql.org/docs/11/functions-bitstring.html
