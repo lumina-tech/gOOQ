@@ -130,11 +130,19 @@ func DateTrunc(
 	return NewExpressionFunction("DATE_TRUNC", expressions...)
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Conditional Expressions
-// https://www.postgresql.org/docs/11/functions-conditional.html
-// [Good First Issue][Help Wanted] TODO: implement GREATEST and LEAST
-///////////////////////////////////////////////////////////////////////////////
+func Greatest(
+	expr Expression, rests ...Expression,
+) Expression {
+	expressions := append([]Expression{expr}, rests...)
+	return NewExpressionFunction("GREATEST", expressions...)
+}
+
+func Least(
+	expr Expression, rests ...Expression,
+) Expression {
+	expressions := append([]Expression{expr}, rests...)
+	return NewExpressionFunction("LEAST", expressions...)
+}
 
 // TODO(Peter): implement Case When
 
