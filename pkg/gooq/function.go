@@ -104,6 +104,12 @@ func (expr *expressionFunctionImpl) Render(
 // [Good First Issue][Help Wanted] TODO: implement remaining functions (not operators)
 ///////////////////////////////////////////////////////////////////////////////
 
+func Ascii(
+	text string,
+) Expression {
+	return NewExpressionFunction("ASCII", String(text))
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

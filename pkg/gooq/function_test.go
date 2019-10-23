@@ -23,6 +23,10 @@ var functionTestCases = []TestCase{
 		Constructed:  Least(String("a"), String("b")),
 		ExpectedStmt: "LEAST($1, $2)",
 	},
+	{
+		Constructed:  Ascii("abc"),
+		ExpectedStmt: "ASCII($1)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
