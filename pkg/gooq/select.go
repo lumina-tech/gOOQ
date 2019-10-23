@@ -235,8 +235,10 @@ func (s *selection) Render(
 	builder.RenderProjections(projections)
 
 	// render FROM clause
-	builder.Print(" FROM ")
-	s.selection.Render(builder)
+	if s.selection != nil {
+		builder.Print(" FROM ")
+		s.selection.Render(builder)
+	}
 
 	// render JOIN/ON clause
 	for _, join := range s.joins {

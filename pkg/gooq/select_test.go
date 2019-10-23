@@ -6,6 +6,11 @@ import (
 
 var selectTestCases = []TestCase{
 	{
+		Constructed:  Select(Greatest(Int64(1), Int64(2), Int64(3))),
+		ExpectedStmt: "SELECT GREATEST($1, $2, $3)",
+		Arguments:    []interface{}{int64(1), int64(2), int64(3)},
+	},
+	{
 		Constructed:  Select().From(Table1),
 		ExpectedStmt: "SELECT * FROM public.table1",
 	},
@@ -37,12 +42,12 @@ var selectTestCases = []TestCase{
 		Constructed:  Select(Table1.Column1.Filter(Table1.Column2.Eq(String("foo")))).From(Table1),
 		ExpectedStmt: "SELECT table1.column1 FILTER (WHERE table1.column2 = $1) FROM public.table1",
 	},
-	//{
-	//	Constructed: Select(Table1.Column1).From(Table1).Where(
-	//		Table1.Column2.IsIn("quix", "foo"),
-	//		Table1.Column2.Eq(String("quack"))),
-	//	ExpectedStmt: "SELECT table1.column1 FROM public.table1 WHERE table1.column2 IN ($1, $2) AND table1.column2 = $3",
-	//},
+	{
+		Constructed: Select(Table1.Column1).From(Table1).Where(
+			Table1.Column2.IsIn("quix", "foo"),
+			Table1.Column2.Eq(String("quack"))),
+		ExpectedStmt: "SELECT table1.column1 FROM public.table1 WHERE table1.column2 IN ($1, $2) AND table1.column2 = $3",
+	},
 	{
 		Constructed:  Select(Table1.Column3.Add(Int64(5))).From(Table1),
 		ExpectedStmt: "SELECT table1.column3 + $1 FROM public.table1",
