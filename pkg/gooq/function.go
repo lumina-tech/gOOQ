@@ -105,37 +105,37 @@ func (expr *expressionFunctionImpl) Render(
 ///////////////////////////////////////////////////////////////////////////////
 
 func Ascii(
-	text string,
+	input Expression,
 ) Expression {
-	return NewExpressionFunction("ASCII", String(text))
+	return NewExpressionFunction("ASCII", input)
 }
 
 func BTrim(
-	text string, characters ...string,
+	source Expression, characters ...Expression,
 ) Expression {
-	expressions := []Expression{String(text)}
+	expressions := []Expression{source}
 	if characters != nil {
-		expressions = append(expressions, String(characters[0]))
+		expressions = append(expressions, characters[0])
 	}
 	return NewExpressionFunction("BTRIM", expressions...)
 }
 
 func LTrim(
-	text string, characters ...string,
+	source Expression, characters ...Expression,
 ) Expression {
-	expressions := []Expression{String(text)}
+	expressions := []Expression{source}
 	if characters != nil {
-		expressions = append(expressions, String(characters[0]))
+		expressions = append(expressions, characters[0])
 	}
 	return NewExpressionFunction("LTRIM", expressions...)
 }
 
 func RTrim(
-	text string, characters ...string,
+	source Expression, characters ...Expression,
 ) Expression {
-	expressions := []Expression{String(text)}
+	expressions := []Expression{source}
 	if characters != nil {
-		expressions = append(expressions, String(characters[0]))
+		expressions = append(expressions, characters[0])
 	}
 	return NewExpressionFunction("RTRIM", expressions...)
 }
