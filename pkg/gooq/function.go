@@ -110,6 +110,36 @@ func Ascii(
 	return NewExpressionFunction("ASCII", String(text))
 }
 
+func BTrim(
+	text string, characters ...string,
+) Expression {
+	expressions := []Expression{String(text)}
+	if characters != nil {
+		expressions = append(expressions, String(characters[0]))
+	}
+	return NewExpressionFunction("BTRIM", expressions...)
+}
+
+func LTrim(
+	text string, characters ...string,
+) Expression {
+	expressions := []Expression{String(text)}
+	if characters != nil {
+		expressions = append(expressions, String(characters[0]))
+	}
+	return NewExpressionFunction("LTRIM", expressions...)
+}
+
+func RTrim(
+	text string, characters ...string,
+) Expression {
+	expressions := []Expression{String(text)}
+	if characters != nil {
+		expressions = append(expressions, String(characters[0]))
+	}
+	return NewExpressionFunction("RTRIM", expressions...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

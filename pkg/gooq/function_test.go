@@ -27,6 +27,18 @@ var functionTestCases = []TestCase{
 		Constructed:  Ascii("abc"),
 		ExpectedStmt: "ASCII($1)",
 	},
+	{
+		Constructed:  BTrim("    abc    "),
+		ExpectedStmt: "BTRIM($1)",
+	},
+	{
+		Constructed:  LTrim("xyzxyzabcxyz", "xyz"),
+		ExpectedStmt: "LTRIM($1, $2)",
+	},
+	{
+		Constructed:  RTrim("xyzxyzabcxyz", "xyz", "disregarded"),
+		ExpectedStmt: "RTRIM($1, $2)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
