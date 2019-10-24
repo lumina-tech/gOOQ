@@ -104,6 +104,42 @@ func (expr *expressionFunctionImpl) Render(
 // [Good First Issue][Help Wanted] TODO: implement remaining functions (not operators)
 ///////////////////////////////////////////////////////////////////////////////
 
+func Ascii(
+	input StringExpression,
+) Expression {
+	return NewExpressionFunction("ASCII", input)
+}
+
+func BTrim(
+	source StringExpression, characters ...StringExpression,
+) Expression {
+	expressions := []Expression{source}
+	if characters != nil {
+		expressions = append(expressions, characters[0])
+	}
+	return NewExpressionFunction("BTRIM", expressions...)
+}
+
+func LTrim(
+	source StringExpression, characters ...StringExpression,
+) Expression {
+	expressions := []Expression{source}
+	if characters != nil {
+		expressions = append(expressions, characters[0])
+	}
+	return NewExpressionFunction("LTRIM", expressions...)
+}
+
+func RTrim(
+	source StringExpression, characters ...StringExpression,
+) Expression {
+	expressions := []Expression{source}
+	if characters != nil {
+		expressions = append(expressions, characters[0])
+	}
+	return NewExpressionFunction("RTRIM", expressions...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

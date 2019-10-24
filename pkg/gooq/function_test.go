@@ -23,6 +23,26 @@ var functionTestCases = []TestCase{
 		Constructed:  Least(String("a"), String("b")),
 		ExpectedStmt: "LEAST($1, $2)",
 	},
+	{
+		Constructed:  Ascii(String("abc")),
+		ExpectedStmt: "ASCII($1)",
+	},
+	{
+		Constructed:  Ascii(Table1.Column1),
+		ExpectedStmt: "ASCII(table1.column1)",
+	},
+	{
+		Constructed:  BTrim(String("    abc    ")),
+		ExpectedStmt: "BTRIM($1)",
+	},
+	{
+		Constructed:  LTrim(Table1.Column1, String("xyz")),
+		ExpectedStmt: "LTRIM(table1.column1, $1)",
+	},
+	{
+		Constructed:  RTrim(String("xyzxyzabcxyz"), Table1.Column1),
+		ExpectedStmt: "RTRIM($1, table1.column1)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
