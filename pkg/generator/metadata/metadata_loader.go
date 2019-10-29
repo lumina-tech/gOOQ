@@ -5,6 +5,25 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
+type DataType struct {
+	Name            string
+	Literal         string
+	NullableLiteral string
+}
+
+var (
+	DataTypeBool        = DataType{"Bool", "bool", "null.Bool"}
+	DataTypeFloat32     = DataType{Name: "Float32", Literal: "float32", NullableLiteral: "null.Float"}
+	DataTypeFloat64     = DataType{Name: "Float64", Literal: "float64", NullableLiteral: "null.Float"}
+	DataTypeInt         = DataType{Name: "Int", Literal: "int", NullableLiteral: "null.Int"}
+	DataTypeInt64       = DataType{Name: "Int64", Literal: "int64", NullableLiteral: "null.Int"}
+	DataTypeJSONB       = DataType{Name: "Jsonb", Literal: "[]byte", NullableLiteral: "nullable.Jsonb"}
+	DataTypeString      = DataType{Name: "String", Literal: "string", NullableLiteral: "null.String"}
+	DataTypeStringArray = DataType{Name: "StringArray", Literal: "pq.StringArray", NullableLiteral: "pq.StringArray"}
+	DataTypeTime        = DataType{Name: "Time", Literal: "time.Time", NullableLiteral: "null.Time"}
+	DataTypeUUID        = DataType{Name: "UUID", Literal: "uuid.UUID", NullableLiteral: "nullable.UUID"}
+)
+
 type EnumMetadata struct {
 	EnumName string `db:"enum_name"`
 }
@@ -57,5 +76,5 @@ type DatabaseMetadataLoader struct {
 	EnumList                 func(*sqlx.DB, string) ([]EnumMetadata, error)
 	EnumValueList            func(*sqlx.DB, string, string) ([]EnumValueMetadata, error)
 	ReferenceTableValueList  func(*sqlx.DB, string, string) ([]EnumValueMetadata, error)
-	ParseType                func(string) (string, error)
+	GetDataType              func(string) (DataType, error)
 }

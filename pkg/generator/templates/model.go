@@ -11,7 +11,7 @@ import "github.com/lumina-tech/gooq/pkg/gooq"
 {{ range $_, $table := .Tables -}}
 type {{ $table.ModelType }} struct {
   {{ range $_, $f := $table.Fields -}}
-  {{ snakeToCamelID $f.Name }} {{ $f.Type }} ` + "`db:\"{{ $f.Name }}\" json:\"{{ $f.Name }}\"`" + `
+  {{ snakeToCamelID $f.Name }} {{ $f.Name }} ` + "`db:\"{{ $f.Name }}\" json:\"{{ $f.Name }}\"`" + `
   {{ end }}
 }
 {{ end }}

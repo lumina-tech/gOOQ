@@ -18,7 +18,7 @@ func NewPostgresLoader() *metadata.DatabaseMetadataLoader {
 		ReferenceTableValueList:  getReferenceTableValues,
 		TableList:                getTable,
 		ColumnList:               getColumns,
-		ParseType:                parseType,
+		GetDataType:              parseType,
 	}
 }
 
@@ -104,33 +104,35 @@ func getColumns(
 	return columns, nil
 }
 
-func parseType(dataType string) (string, error) {
-	var typ string
+func parseType(
+	dataType string,
+) (metadata.DataType, error) {
+	var typ metadata.DataType
 	switch strings.ToLower(dataType) {
 	case "array":
-		typ = "StringArray"
+		typ = metadata.DataTypeStringArray
 	case "boolean":
-		typ = "Bool"
+		typ = metadata.DataTypeBool
 	case "character", "character varying", "text", "user-defined":
-		typ = "String"
+		typ = metadata.DataTypeString
 	case "inet":
-		typ = "String"
+		typ = metadata.DataTypeString
 	case "smallint", "integer":
-		typ = "Int"
+		typ = metadata.DataTypeInt
 	case "bigint":
-		typ = "Int64"
+		typ = metadata.DataTypeInt64
 	case "jsonb":
-		typ = "Jsonb"
+		typ = metadata.DataTypeJSONB
 	case "float":
-		typ = "Decimal"
+		typ = metadata.DataTypeFloat32
 	case "decimal", "double precision", "numeric":
-		typ = "Decimal"
+		typ = metadata.DataTypeFloat64
 	case "date", "timestamp with time zone", "time with time zone", "time without time zone", "timestamp without time zone":
-		typ = "Time"
+		typ = metadata.DataTypeTime
 	case "uuid":
-		typ = "UUID"
+		typ = metadata.DataTypeUUID
 	default:
-		return "", fmt.Errorf("Invalid type=%s", dataType)
+		return metadata.DataType{}, fmt.Errorf("invalid type=%s", dataType)
 	}
 	return typ, nil
 }

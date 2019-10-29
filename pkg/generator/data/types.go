@@ -16,6 +16,7 @@ type Data struct {
 	Tables              []Table
 	Enums               []Enum
 	ReferenceTableEnums []Enum
+	Loader              *metadata.DatabaseMetadataLoader
 }
 
 type Enum struct {
@@ -56,6 +57,7 @@ func NewData(
 		Tables:              tables,
 		Enums:               dbEnums,
 		ReferenceTableEnums: refTableEnums,
+		Loader:              loader,
 	}, nil
 }
 

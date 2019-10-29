@@ -1,6 +1,7 @@
-package generator
+package plugin
 
 import (
+	"github.com/lumina-tech/gooq/pkg/generator/data"
 	"github.com/lumina-tech/gooq/pkg/generator/metadata"
 	"gopkg.in/guregu/null.v3"
 )
@@ -41,7 +42,7 @@ type EnumsTemplateArgs struct {
 	Timestamp string
 	Package   string
 	Schema    string
-	Enums     []EnumType
+	Enums     []data.Enum
 }
 
 type EnumType struct {
@@ -53,6 +54,19 @@ type EnumType struct {
 
 // TODO(Peter): refactor this
 // TODO: this is quite jank
+
+type DataType string
+
+const (
+	DataTypeBool    = DataType("bool")
+	DataTypeFloat32 = DataType("float32")
+	DataTypeFloat64 = DataType("float64")
+	DataTypeInt     = DataType("int")
+	DataTypeInt64   = DataType("int64")
+	DataTypeInt64   = DataType("int64")
+	s
+)
+
 var (
 	typesMap map[string]TypeInfo
 )
