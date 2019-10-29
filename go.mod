@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/0x6e6562/gosnow v0.0.0-20130129191532-684868a9eb49
+	github.com/99designs/gqlgen v0.10.1 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect

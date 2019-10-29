@@ -28,8 +28,8 @@ func getSchema() (string, error) {
 
 func getConstraintList(
 	db *sqlx.DB, schema, tableName string,
-) ([]metadata.ConstraintMetaData, error) {
-	constraints := []metadata.ConstraintMetaData{}
+) ([]metadata.ConstraintMetadata, error) {
+	constraints := []metadata.ConstraintMetadata{}
 	err := db.Select(&constraints, constraintValuesQuery, schema, tableName)
 	if err != nil {
 		return nil, err
@@ -39,8 +39,8 @@ func getConstraintList(
 
 func getForeignKeyConstraintList(
 	db *sqlx.DB, tableName string,
-) ([]metadata.ForeignKeyConstraintMetaData, error) {
-	constraints := []metadata.ForeignKeyConstraintMetaData{}
+) ([]metadata.ForeignKeyConstraintMetadata, error) {
+	constraints := []metadata.ForeignKeyConstraintMetadata{}
 	err := db.Select(&constraints, foreignKeyConstraintValuesQuery, tableName)
 	if err != nil {
 		return nil, err

@@ -31,11 +31,9 @@ func GenerateModel(
 		Tables:    make([]TableTemplateArgs, 0),
 	}
 	for _, table := range tables {
-		columns, err := dbLoader.ColumnList(
-			db, schema, table.TableName)
+		columns, err := dbLoader.ColumnList(db, schema, table.TableName)
 		check(err)
-		constraints, err := dbLoader.ConstraintList(
-			db, schema, table.TableName)
+		constraints, err := dbLoader.ConstraintList(db, schema, table.TableName)
 		check(err)
 		tableTemplateArgs := TableTemplateArgs{
 			Name:                   strings.ToLower(table.TableName),
@@ -104,7 +102,7 @@ func getFieldTemplate(
 }
 
 func getConstraintTemplate(
-	constraint metadata.ConstraintMetaData,
+	constraint metadata.ConstraintMetadata,
 ) ConstraintTemplateArgs {
 	columns := []string{}
 	err := json.Unmarshal([]byte(constraint.IndexKeys), &columns)

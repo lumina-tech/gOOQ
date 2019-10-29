@@ -28,7 +28,7 @@ type ColumnMetadata struct {
 	UserDefinedTypeName string `db:"udt_name"`
 }
 
-type ConstraintMetaData struct {
+type ConstraintMetadata struct {
 	Schema         string      `db:"schema"`
 	Table          string      `db:"table"`
 	IndexName      string      `db:"index_name"`
@@ -38,7 +38,7 @@ type ConstraintMetaData struct {
 	IndexKeys      string      `db:"index_keys"`
 }
 
-type ForeignKeyConstraintMetaData struct {
+type ForeignKeyConstraintMetadata struct {
 	TableSchema        string `db:"table_schema"`
 	ConstraintName     string `db:"constraint_name"`
 	TableName          string `db:"table_name"`
@@ -52,8 +52,8 @@ type DatabaseMetadataLoader struct {
 	Schema                   func() (string, error)
 	TableList                func(*sqlx.DB, string) ([]TableMetadata, error)
 	ColumnList               func(*sqlx.DB, string, string) ([]ColumnMetadata, error)
-	ConstraintList           func(*sqlx.DB, string, string) ([]ConstraintMetaData, error)
-	ForeignKeyConstraintList func(*sqlx.DB, string) ([]ForeignKeyConstraintMetaData, error)
+	ConstraintList           func(*sqlx.DB, string, string) ([]ConstraintMetadata, error)
+	ForeignKeyConstraintList func(*sqlx.DB, string) ([]ForeignKeyConstraintMetadata, error)
 	EnumList                 func(*sqlx.DB, string) ([]EnumMetadata, error)
 	EnumValueList            func(*sqlx.DB, string, string) ([]EnumValueMetadata, error)
 	ReferenceTableValueList  func(*sqlx.DB, string, string) ([]EnumValueMetadata, error)
