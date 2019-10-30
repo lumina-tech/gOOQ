@@ -226,6 +226,20 @@ func StartsWith(
 	return NewBoolExpressionFunction("STARTS_WITH", text, prefix)
 }
 
+func Chr(
+	asciiCode NumericExpression,
+) Expression {
+	// TODO: add strict checking on asciiCode (i.e. make sure is not 0)
+	return NewExpressionFunction("CHR", asciiCode)
+}
+
+func Concat(
+	text Expression, moreText ...Expression,
+) Expression {
+	expressions := append([]Expression{text}, moreText...)
+	return NewExpressionFunction("CONCAT", expressions...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions
