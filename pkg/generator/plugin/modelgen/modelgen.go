@@ -15,17 +15,25 @@ type ModelGenerator struct {
 	templateString string
 	outputFile     string
 	packageName    string
-	dbName         string
 }
 
 func NewModelGenerator(
-	templateString, modelOutputPath, packageName, dbname string,
+	outputFile, packageName string,
 ) *ModelGenerator {
 	return &ModelGenerator{
-		templateString: templateString,
-		outputFile:     modelOutputPath,
+		templateString: modelTemplate,
+		outputFile:     outputFile,
 		packageName:    packageName,
-		dbName:         dbname,
+	}
+}
+
+func NewTableGenerator(
+	outputFile, packageName string,
+) *ModelGenerator {
+	return &ModelGenerator{
+		templateString: tableTemplate,
+		outputFile:     outputFile,
+		packageName:    packageName,
 	}
 }
 

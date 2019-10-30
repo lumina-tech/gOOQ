@@ -1,7 +1,6 @@
 package enumgen
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 	"time"
@@ -12,18 +11,14 @@ import (
 )
 
 type EnumGenerator struct {
-	modelTemplateString string
-	modelOutputFile     string
+	outputFile string
 }
 
 func NewEnumGenerator(
-	modelTemplatePath, modelOutputPath, dbname string,
+	outputFile string,
 ) *EnumGenerator {
-	modelOutputFile := fmt.Sprintf("%s/%s_enum.generated.go",
-		modelOutputPath, dbname)
 	return &EnumGenerator{
-		modelTemplateString: modelTemplatePath,
-		modelOutputFile:     modelOutputFile,
+		outputFile: outputFile,
 	}
 }
 
@@ -39,6 +34,6 @@ func (gen *EnumGenerator) GenerateCode(
 		Timestamp: time.Now().Format(time.RFC3339),
 		Enums:     enums,
 	}
-	enumTemplate := utils.GetTemplate(gen.modelTemplateString)
-	return utils.RenderToFile(enumTemplate, gen.modelOutputFile, args)
+	enumTemplate := utils.GetTemplate(enumTemplate)
+	return utils.RenderToFile(enumTemplate, gen.outputFile, args)
 }
