@@ -1,3 +1,19 @@
+CREATE TABLE color_reference_table(
+  value text primary key NOT NULL
+);
+
+INSERT INTO color_reference_table (value) VALUES
+  ('black'),
+  ('brown'),
+  ('red'),
+  ('orange'),
+  ('yellow'),
+  ('green'),
+  ('blue'),
+  ('purple');
+
+CREATE TYPE gender AS ENUM ('male', 'female');
+
 CREATE TABLE person(
   id uuid primary key NOT NULL,
   name text NOT NULL,
@@ -7,8 +23,11 @@ CREATE TABLE person(
   skin_color text NOT NULL,
   eye_color text NOT NULL,
   birth_year text NOT NULL,
-  gender text NOT NULL,
-  home_world text NOT NULL
+  gender gender NOT NULL,
+  home_world text NOT NULL,
+  FOREIGN KEY (hair_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (skin_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (eye_color) REFERENCES color_reference_table(value)
 );
 
 -- type Person struct {

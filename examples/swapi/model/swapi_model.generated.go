@@ -4,15 +4,19 @@ package model
 
 import "github.com/google/uuid"
 
+type ColorReferenceTable struct {
+	Value string `db:"value" json:"value"`
+}
+
 type Person struct {
 	ID        uuid.UUID `db:"id" json:"id"`
 	Name      string    `db:"name" json:"name"`
 	Height    string    `db:"height" json:"height"`
 	Mass      string    `db:"mass" json:"mass"`
-	HairColor string    `db:"hair_color" json:"hair_color"`
-	SkinColor string    `db:"skin_color" json:"skin_color"`
-	EyeColor  string    `db:"eye_color" json:"eye_color"`
+	HairColor Color     `db:"hair_color" json:"hair_color"`
+	SkinColor Color     `db:"skin_color" json:"skin_color"`
+	EyeColor  Color     `db:"eye_color" json:"eye_color"`
 	BirthYear string    `db:"birth_year" json:"birth_year"`
-	Gender    string    `db:"gender" json:"gender"`
+	Gender    Gender    `db:"gender" json:"gender"`
 	HomeWorld string    `db:"home_world" json:"home_world"`
 }
