@@ -8,8 +8,8 @@ import (
 	"github.com/lumina-tech/gooq/pkg/generator/metadata"
 )
 
-func NewPostgresLoader() *metadata.DatabaseMetadataLoader {
-	return &metadata.DatabaseMetadataLoader{
+func NewPostgresLoader() *metadata.Loader {
+	return &metadata.Loader{
 		ConstraintList:           getConstraintList,
 		ForeignKeyConstraintList: getForeignKeyConstraintList,
 		Schema:                   getSchema,

@@ -1,4 +1,4 @@
-package plugin
+package utils
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	templateFuncs = map[string]interface{}{
+	templateFunctions = map[string]interface{}{
 		"capitalize":     capitalize,
 		"dict":           dictionary,
 		"snakeToCamelID": snaker.SnakeToCamelIdentifier,
@@ -25,11 +25,14 @@ var (
 )
 
 func init() {
-	snaker.AddInitialisms("OS")
+	_ = snaker.AddInitialisms("OS")
 }
 
-func GetTemplateFuncs() map[string]interface{} {
-	return templateFuncs
+func GetTemplate(
+	templateString string,
+) *template.Template {
+	return template.Must(template.New("template").
+		Funcs(templateFunctions).Parse(string(templateString)))
 }
 
 func RenderToFile(tpl *template.Template, filename string, data interface{}) error {
@@ -41,6 +44,32 @@ func RenderToFile(tpl *template.Template, filename string, data interface{}) err
 		return err
 	}
 	return nil
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// helpers
+///////////////////////////////////////////////////////////////////////////////
+
+func capitalize(value string) string {
+	if len(value) == 0 {
+		return value
+	}
+	return strings.ToUpper(value[:1]) + value[1:]
+}
+
+func dictionary(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, errors.New("invalid dictionary call")
+	}
+	dict := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, errors.New("dictionary keys must be strings")
+		}
+		dict[key] = values[i+1]
+	}
+	return dict, nil
 }
 
 func gofmt(filename string, b []byte) ([]byte, error) {
@@ -71,44 +100,4 @@ func write(filename string, b []byte) error {
 		return fmt.Errorf("failed to write %s", filename)
 	}
 	return nil
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Template Functions
-///////////////////////////////////////////////////////////////////////////////
-
-func capitalize(value string) string {
-	if len(value) == 0 {
-		return value
-	}
-	return strings.ToUpper(value[:1]) + value[1:]
-}
-
-func dictionary(values ...interface{}) (map[string]interface{}, error) {
-	if len(values)%2 != 0 {
-		return nil, errors.New("invalid dictionary call")
-	}
-	dict := make(map[string]interface{}, len(values)/2)
-	for i := 0; i < len(values); i += 2 {
-		key, ok := values[i].(string)
-		if !ok {
-			return nil, errors.New("dictionary keys must be strings")
-		}
-		dict[key] = values[i+1]
-	}
-	return dict, nil
-}
-
-func getTemplate(
-	templateString string,
-) *template.Template {
-	templateFuncMap := GetTemplateFuncs()
-	return template.Must(template.New(ModelTemplateFilename).
-		Funcs(templateFuncMap).Parse(string(templateString)))
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
 }

@@ -67,7 +67,7 @@ type ForeignKeyConstraintMetadata struct {
 	ForeignColumnName  string `db:"foreign_column_name"`
 }
 
-type DatabaseMetadataLoader struct {
+type Loader struct {
 	Schema                   func() (string, error)
 	TableList                func(*sqlx.DB, string) ([]TableMetadata, error)
 	ColumnList               func(*sqlx.DB, string, string) ([]ColumnMetadata, error)

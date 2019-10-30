@@ -1,4 +1,4 @@
-package plugin
+package modelgen
 
 import (
 	"encoding/json"
@@ -7,11 +7,8 @@ import (
 	"time"
 
 	"github.com/knq/snaker"
-	"github.com/lumina-tech/gooq/pkg/generator/data"
-)
-
-const (
-	ModelTemplateFilename = "model.go.tmpl"
+	"github.com/lumina-tech/gooq/pkg/generator/metadata"
+	"github.com/lumina-tech/gooq/pkg/generator/utils"
 )
 
 type ModelGenerator struct {
@@ -33,9 +30,9 @@ func NewModelGenerator(
 }
 
 func (gen *ModelGenerator) GenerateCode(
-	data *data.Data,
+	data *metadata.Data,
 ) error {
-	args := TablesTemplateArgs{
+	args := TemplateArgs{
 		Timestamp: time.Now().Format(time.RFC3339),
 		Package:   gen.packageName,
 		Schema:    data.Schema,
@@ -43,43 +40,43 @@ func (gen *ModelGenerator) GenerateCode(
 	}
 	for _, table := range data.Tables {
 		tableName := table.Table.TableName
-		tableTemplateArgs := TableTemplateArgs{
-			Name:                   strings.ToLower(tableName),
-			DatabaseName:           fmt.Sprintf("%sDatabase", snaker.SnakeToCamel(gen.dbName)),
-			ModelType:              snaker.SnakeToCamel(tableName),
-			ModelTypeWithPackage:   fmt.Sprintf("%s.%s", "model", snaker.SnakeToCamel(tableName)),
-			ModelTableName:         snaker.SnakeToCamel(tableName),
-			RepositoryName:         fmt.Sprintf("%sRepository", snaker.SnakeToCamel(tableName)),
-			IsReferenceTable:       isReferenceTable(tableName),
-			ReferenceTableEnumType: getReferenceTableEnumType(tableName),
-			//Fields:                 make([]FieldTemplateArgs, len(columns)),
-			//Constraints:            make([]ConstraintTemplateArgs, len(constraints)),
-		}
-		var err error
-		tableTemplateArgs.Fields, err = getFieldArgs(data, table)
+		fields, err := getFieldArgs(data, table)
 		if err != nil {
 			return err
 		}
-		tableTemplateArgs.Constraints = getConstraintArgs(data, table)
+		constraints, err := getConstraintArgs(table)
+		if err != nil {
+			return err
+		}
+		args.Tables = append(args.Tables, TableTemplateArgs{
+			Name:                   strings.ToLower(tableName),
+			ModelType:              snaker.SnakeToCamel(tableName),
+			ModelTypeWithPackage:   fmt.Sprintf("%s.%s", gen.packageName, snaker.SnakeToCamel(tableName)),
+			ModelTableName:         snaker.SnakeToCamel(tableName),
+			IsReferenceTable:       isReferenceTable(tableName),
+			ReferenceTableEnumType: getEnumTypeFromReferenceTableName(tableName),
+			Fields:                 fields,
+			Constraints:            constraints,
+		})
 	}
-	enumTemplate := getTemplate(gen.modelTemplateString)
-	return RenderToFile(enumTemplate, gen.modelOutputFile, args)
+	enumTemplate := utils.GetTemplate(gen.templateString)
+	return utils.RenderToFile(enumTemplate, gen.outputFile, args)
 }
 
 func getColumnToTypeMapping(
-	table data.Table,
+	table metadata.Table,
 ) map[string]string {
 	result := make(map[string]string)
 	for _, fk := range table.ForeignKeyConstraints {
 		if isReferenceTable(fk.ForeignTableName) {
-			result[fk.ColumnName] = getReferenceTableEnumType(fk.ForeignTableName)
+			result[fk.ColumnName] = getEnumTypeFromReferenceTableName(fk.ForeignTableName)
 		}
 	}
 	return result
 }
 
 func getFieldArgs(
-	data *data.Data, table data.Table,
+	data *metadata.Data, table metadata.Table,
 ) ([]FieldTemplateArgs, error) {
 	columnToRefTableMapping := getColumnToTypeMapping(table)
 	var results []FieldTemplateArgs
@@ -108,13 +105,15 @@ func getFieldArgs(
 }
 
 func getConstraintArgs(
-	data *data.Data, table data.Table,
-) []ConstraintTemplateArgs {
+	table metadata.Table,
+) ([]ConstraintTemplateArgs, error) {
 	var results []ConstraintTemplateArgs
 	for _, constraint := range table.Constraints {
-		columns := []string{}
+		var columns []string
 		err := json.Unmarshal([]byte(constraint.IndexKeys), &columns)
-		check(err)
+		if err != nil {
+			return nil, err
+		}
 		for index := range columns {
 			column := columns[index]
 			columns[index] = strings.Replace(column, "\"", "\\\"", -1)
@@ -126,7 +125,7 @@ func getConstraintArgs(
 			Predicate: constraint.IndexPredicate,
 		})
 	}
-	return results
+	return results, nil
 }
 
 func isReferenceTable(
@@ -135,7 +134,7 @@ func isReferenceTable(
 	return strings.HasSuffix(tableName, "_reference_table")
 }
 
-func getReferenceTableEnumType(
+func getEnumTypeFromReferenceTableName(
 	tableName string,
 ) string {
 	enumNameSnakeCase := strings.ReplaceAll(tableName, "_reference_table", "")

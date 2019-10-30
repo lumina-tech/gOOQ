@@ -1,10 +1,9 @@
-package data
+package metadata
 
 import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lumina-tech/gooq/pkg/generator/metadata"
 )
 
 const (
@@ -16,25 +15,25 @@ type Data struct {
 	Tables              []Table
 	Enums               []Enum
 	ReferenceTableEnums []Enum
-	Loader              *metadata.DatabaseMetadataLoader
+	Loader              *Loader
 }
 
 type Enum struct {
 	Name               string
-	Values             []metadata.EnumValueMetadata
+	Values             []EnumValueMetadata
 	IsReferenceTable   bool
 	ReferenceTableName string
 }
 
 type Table struct {
-	Table                 metadata.TableMetadata
-	Columns               []metadata.ColumnMetadata
-	Constraints           []metadata.ConstraintMetadata
-	ForeignKeyConstraints []metadata.ForeignKeyConstraintMetadata
+	Table                 TableMetadata
+	Columns               []ColumnMetadata
+	Constraints           []ConstraintMetadata
+	ForeignKeyConstraints []ForeignKeyConstraintMetadata
 }
 
 func NewData(
-	db *sqlx.DB, loader *metadata.DatabaseMetadataLoader,
+	db *sqlx.DB, loader *Loader,
 ) (*Data, error) {
 	schema, err := loader.Schema()
 	if err != nil {
@@ -63,7 +62,7 @@ func NewData(
 
 func getDatabaseEnums(
 	db *sqlx.DB,
-	loader *metadata.DatabaseMetadataLoader,
+	loader *Loader,
 	schema string,
 ) ([]Enum, error) {
 	enums, err := loader.EnumList(db, schema)
@@ -87,7 +86,7 @@ func getDatabaseEnums(
 
 func getReferenceTableEnums(
 	db *sqlx.DB,
-	loader *metadata.DatabaseMetadataLoader,
+	loader *Loader,
 	schema string,
 ) ([]Enum, error) {
 	tables, err := loader.TableList(db, schema)
@@ -116,7 +115,7 @@ func getReferenceTableEnums(
 
 func getDatabaseTables(
 	db *sqlx.DB,
-	loader *metadata.DatabaseMetadataLoader,
+	loader *Loader,
 	schema string,
 ) ([]Table, error) {
 	tables, err := loader.TableList(db, schema)

@@ -1,4 +1,4 @@
-package plugin
+package enumgen
 
 import (
 	"fmt"
@@ -6,7 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lumina-tech/gooq/pkg/generator/data"
+	"github.com/lumina-tech/gooq/pkg/generator/utils"
+
+	"github.com/lumina-tech/gooq/pkg/generator/metadata"
 )
 
 type EnumGenerator struct {
@@ -26,17 +28,17 @@ func NewEnumGenerator(
 }
 
 func (gen *EnumGenerator) GenerateCode(
-	data *data.Data,
+	data *metadata.Data,
 ) error {
 	enums := append(data.Enums, data.ReferenceTableEnums...)
 	sort.SliceStable(enums, func(i, j int) bool {
 		return strings.Compare(enums[i].Name, enums[j].Name) < 0
 	})
-	args := EnumsTemplateArgs{
+	args := templateArgs{
 		Package:   "model",
 		Timestamp: time.Now().Format(time.RFC3339),
 		Enums:     enums,
 	}
-	enumTemplate := getTemplate(gen.modelTemplateString)
-	return RenderToFile(enumTemplate, gen.modelOutputFile, args)
+	enumTemplate := utils.GetTemplate(gen.modelTemplateString)
+	return utils.RenderToFile(enumTemplate, gen.modelOutputFile, args)
 }
