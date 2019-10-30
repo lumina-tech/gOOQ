@@ -25,9 +25,9 @@ CREATE TABLE person(
   birth_year text NOT NULL,
   gender gender NOT NULL,
   home_world text NOT NULL,
-  FOREIGN KEY hair_color REFERENCES color_reference_table(value),
-  FOREIGN KEY skin_color REFERENCES color_reference_table(value),
-  FOREIGN KEY eye_color REFERENCES color_reference_table(value)
+  FOREIGN KEY (hair_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (skin_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (eye_color) REFERENCES color_reference_table(value)
 );
 
 -- type Person struct {

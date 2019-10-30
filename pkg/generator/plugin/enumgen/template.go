@@ -84,13 +84,5 @@ func (enumType *{{ $type }}) Scan(src interface{}) error {
   }
 }
 
-{{ if $enum.IsReferenceTable }}
-var {{ $type }}ReferenceEntriesMap map[{{ $type }}]*{{ snakeToCamel $enum.ReferenceTableModelType }}
-
-func (enumType *{{ $type }}) GetReferenceEntry() *{{ snakeToCamel $enum.ReferenceTableModelType }} {
-  return {{ $type }}ReferenceEntriesMap[*enumType]
-}
-{{end}}
-
 {{ end }}
 `

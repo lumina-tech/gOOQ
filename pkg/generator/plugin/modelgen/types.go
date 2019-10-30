@@ -13,11 +13,11 @@ type TemplateArgs struct {
 }
 
 type TableTemplateArgs struct {
-	Name                   string
-	ModelTableName         string
-	RepositoryName         string
+	TableName              string
+	TableType              string
+	TableSingletonName     string
 	ModelType              string
-	ModelTypeWithPackage   string
+	QualifiedModelType     string
 	ReferenceTableEnumType string
 	IsReferenceTable       bool
 	Fields                 []FieldTemplateArgs

@@ -8,10 +8,10 @@ package {{ .Package }}
 
 import "github.com/lumina-tech/gooq/pkg/gooq"
 
-{{ range $_, $table := .Tables -}}
+{{ range $_, $table := .Tables }}
 type {{ $table.ModelType }} struct {
   {{ range $_, $f := $table.Fields -}}
-  {{ snakeToCamelID $f.Name }} {{ $f.Name }} ` + "`db:\"{{ $f.Name }}\" json:\"{{ $f.Name }}\"`" + `
+  {{ snakeToCamelID $f.Name }} {{ $f.Type }} ` + "`db:\"{{ $f.Name }}\" json:\"{{ $f.Name }}\"`" + `
   {{ end }}
 }
 {{ end }}
@@ -27,26 +27,26 @@ import "github.com/lumina-tech/gooq/pkg/gooq"
 
 {{ range $_, $table := .Tables -}}
 
-type {{ $table.Name }}Constraints struct {
+type {{ $table.TableType }}Constraints struct {
   {{ range $_, $f := $table.Constraints -}}
-  {{ snakeToCamelID $f.Name }} gooq.DatabaseConstraint
+  {{ snakeToCamel $f.Name }} gooq.DatabaseConstraint
   {{ end }}
 }
 
-type {{ $table.Name }} struct {
+type {{ $table.TableType }} struct {
 	gooq.TableImpl
 	Asterisk gooq.StringField
   {{ range $_, $f := $table.Fields -}}
-  {{ snakeToCamelID $f.Name }} gooq.{{ $f.GooqType }}Field
+  {{ snakeToCamel $f.Name }} gooq.{{ $f.GooqType }}Field
   {{ end }}
-  Constraints *{{ $table.Name }}Constraints
+  Constraints *{{ $table.TableType }}Constraints
   alias null.String
 }
 
-func new{{ snakeToCamelID $table.Name }}Constraints() *{{ $table.Name }}Constraints {
-  constraints := &{{ $table.Name }}Constraints{}
+func new{{ capitalize $table.TableType }}Constraints() *{{ $table.TableType }}Constraints {
+  constraints := &{{ $table.TableType }}Constraints{}
   {{ range $_, $f := $table.Constraints -}}
-  constraints.{{ snakeToCamelID $f.Name }} = gooq.DatabaseConstraint{
+  constraints.{{ snakeToCamel $f.Name }} = gooq.DatabaseConstraint{
     Name: "{{$f.Name}}",
     Predicate: null.NewString("{{$f.Predicate.String}}", {{$f.Predicate.Valid}}),
   }
@@ -54,9 +54,9 @@ func new{{ snakeToCamelID $table.Name }}Constraints() *{{ $table.Name }}Constrai
   return constraints
 }
 
-func new{{ $table.ModelType }}() *{{ $table.Name }} {
-  instance := &{{ $table.Name }}{}
-	instance.Initialize("{{ $schema }}", "{{ $table.Name }}")
+func new{{ capitalize $table.TableType }}() *{{ $table.TableType }} {
+  instance := &{{ $table.TableType }}{}
+	instance.Initialize("{{ $schema }}", "{{ $table.TableName }}")
 	instance.Asterisk = gooq.NewStringField(instance, "*")
   {{ range $_, $f := $table.Fields -}}
   instance.{{ snakeToCamelID $f.Name }} = gooq.New{{ $f.GooqType }}Field(instance, "{{ $f.Name }}")
@@ -65,32 +65,32 @@ func new{{ $table.ModelType }}() *{{ $table.Name }} {
   return instance
 }
 
-func (t *{{ $table.Name }}) As(alias string) gooq.Selectable {
+func (t *{{ $table.TableType }}) As(alias string) gooq.Selectable {
   instance := new{{ $table.ModelType }}()
   instance.alias = null.StringFrom(alias)
   return instance
 }
 
-func (t *{{ $table.Name }}) ScanRow(
+func (t *{{ $table.TableType }}) ScanRow(
 	db gooq.DBInterface, stmt gooq.Fetchable,
-) (*{{ $table.ModelTypeWithPackage }}, error) {
-	result := {{ $table.ModelTypeWithPackage }}{}
+) (*{{ $table.QualifiedModelType }}, error) {
+	result := {{ $table.QualifiedModelType }}{}
 	if err := gooq.ScanRow(db, stmt, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
-func (t *{{ $table.Name }}) ScanRows(
+func (t *{{ $table.TableType }}) ScanRows(
 	db gooq.DBInterface, stmt gooq.Fetchable,
-) ([]{{ $table.ModelTypeWithPackage }}, error) {
-	results := []{{ $table.ModelTypeWithPackage }}{}
+) ([]{{ $table.QualifiedModelType }}, error) {
+	results := []{{ $table.QualifiedModelType }}{}
 	if err := gooq.ScanRows(db, stmt, &results); err != nil {
 		return nil, err
 	}
 	return results, nil
 }
 
-var {{ $table.ModelTableName }} = new{{ snakeToCamelID $table.Name }}()
+var {{ $table.TableSingletonName }} = new{{ capitalize $table.TableType }}()
 {{ end }}
 `

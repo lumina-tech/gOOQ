@@ -15,25 +15,28 @@ type ModelGenerator struct {
 	templateString string
 	outputFile     string
 	packageName    string
+	modelPackage   string
 }
 
 func NewModelGenerator(
-	outputFile, packageName string,
+	outputFile, tablePackage, modelPackage string,
 ) *ModelGenerator {
 	return &ModelGenerator{
 		templateString: modelTemplate,
 		outputFile:     outputFile,
-		packageName:    packageName,
+		packageName:    modelPackage,
+		modelPackage:   modelPackage,
 	}
 }
 
 func NewTableGenerator(
-	outputFile, packageName string,
+	outputFile, tablePackage, modelPackage string,
 ) *ModelGenerator {
 	return &ModelGenerator{
 		templateString: tableTemplate,
 		outputFile:     outputFile,
-		packageName:    packageName,
+		packageName:    tablePackage,
+		modelPackage:   modelPackage,
 	}
 }
 
@@ -56,11 +59,13 @@ func (gen *ModelGenerator) GenerateCode(
 		if err != nil {
 			return err
 		}
+		modelType := snaker.SnakeToCamelIdentifier(tableName)
 		args.Tables = append(args.Tables, TableTemplateArgs{
-			Name:                   strings.ToLower(tableName),
-			ModelType:              snaker.SnakeToCamel(tableName),
-			ModelTypeWithPackage:   fmt.Sprintf("%s.%s", gen.packageName, snaker.SnakeToCamel(tableName)),
-			ModelTableName:         snaker.SnakeToCamel(tableName),
+			TableName:              table.Table.TableName,
+			TableType:              snaker.ForceLowerCamelIdentifier(tableName),
+			TableSingletonName:     snaker.SnakeToCamelIdentifier(tableName),
+			ModelType:              modelType,
+			QualifiedModelType:     fmt.Sprintf("%s.%s", gen.modelPackage, modelType),
 			IsReferenceTable:       isReferenceTable(tableName),
 			ReferenceTableEnumType: getEnumTypeFromReferenceTableName(tableName),
 			Fields:                 fields,

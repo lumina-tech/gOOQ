@@ -16,11 +16,13 @@ import (
 
 var (
 	templateFunctions = map[string]interface{}{
-		"capitalize":     capitalize,
-		"dict":           dictionary,
-		"snakeToCamelID": snaker.SnakeToCamelIdentifier,
-		"toLower":        strings.ToLower,
-		"toUpper":        strings.ToUpper,
+		"capitalize":                capitalize,
+		"dict":                      dictionary,
+		"snakeToCamel":              snaker.SnakeToCamel,
+		"snakeToCamelID":            snaker.SnakeToCamelIdentifier,
+		"forceLowerCamelIdentifier": snaker.ForceLowerCamelIdentifier,
+		"toLower":                   strings.ToLower,
+		"toUpper":                   strings.ToUpper,
 	}
 )
 

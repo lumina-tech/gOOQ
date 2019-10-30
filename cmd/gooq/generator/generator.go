@@ -25,9 +25,8 @@ var generateDatabaseModelCommand = &cobra.Command{
 	Use:   "generate-database-model",
 	Short: "generate Go models by introspecting the database",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := loadConfig()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Cannot read configuration file:", err)
+		if err := loadConfig(); err != nil {
+			_, _ = fmt.Fprint(os.Stderr, "cannot read configuration file:", err)
 			os.Exit(1)
 		}
 		config := database.DatabaseConfig{
@@ -76,10 +75,11 @@ func generateModelsForDB(
 	tableOutputFile := fmt.Sprintf("%s/%s_table.generated.go", config.TablePath, config.DatabaseName)
 	err := generator.NewGenerator(
 		enumgen.NewEnumGenerator(enumOutputFile),
-		modelgen.NewModelGenerator(modelOutputFile, "model"),
-		modelgen.NewTableGenerator(tableOutputFile, "table"),
+		modelgen.NewModelGenerator(modelOutputFile, "table", "model"),
+		modelgen.NewTableGenerator(tableOutputFile, "table", "model"),
 	).Run(db)
 	if err != nil {
-		panic(err.Error())
+		_, _ = fmt.Fprint(os.Stderr, "cannot generate code:", err)
+		os.Exit(1)
 	}
 }
