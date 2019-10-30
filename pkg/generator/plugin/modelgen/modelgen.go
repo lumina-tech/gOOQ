@@ -18,26 +18,27 @@ type ModelGenerator struct {
 	modelPackage   string
 }
 
+func NewGenerator(
+	templateString, outputFile, packageName, modelPackage string,
+) *ModelGenerator {
+	return &ModelGenerator{
+		templateString: templateString,
+		outputFile:     outputFile,
+		packageName:    packageName,
+		modelPackage:   modelPackage,
+	}
+}
+
 func NewModelGenerator(
 	outputFile, tablePackage, modelPackage string,
 ) *ModelGenerator {
-	return &ModelGenerator{
-		templateString: modelTemplate,
-		outputFile:     outputFile,
-		packageName:    modelPackage,
-		modelPackage:   modelPackage,
-	}
+	return NewGenerator(modelTemplate, outputFile, modelPackage, modelPackage)
 }
 
 func NewTableGenerator(
 	outputFile, tablePackage, modelPackage string,
 ) *ModelGenerator {
-	return &ModelGenerator{
-		templateString: tableTemplate,
-		outputFile:     outputFile,
-		packageName:    tablePackage,
-		modelPackage:   modelPackage,
-	}
+	return NewGenerator(tableTemplate, outputFile, tablePackage, modelPackage)
 }
 
 func (gen *ModelGenerator) GenerateCode(
