@@ -11,12 +11,12 @@ type ColorReferenceTable struct {
 type Person struct {
 	ID        uuid.UUID `db:"id" json:"id"`
 	Name      string    `db:"name" json:"name"`
-	Height    string    `db:"height" json:"height"`
-	Mass      string    `db:"mass" json:"mass"`
+	Height    float64   `db:"height" json:"height"`
+	Mass      float64   `db:"mass" json:"mass"`
 	HairColor Color     `db:"hair_color" json:"hair_color"`
 	SkinColor Color     `db:"skin_color" json:"skin_color"`
 	EyeColor  Color     `db:"eye_color" json:"eye_color"`
-	BirthYear string    `db:"birth_year" json:"birth_year"`
+	BirthYear int       `db:"birth_year" json:"birth_year"`
 	Gender    Gender    `db:"gender" json:"gender"`
 	HomeWorld string    `db:"home_world" json:"home_world"`
 }

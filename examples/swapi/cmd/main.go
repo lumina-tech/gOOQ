@@ -28,14 +28,14 @@ func main() {
 	stmt := gooq.InsertInto(table.Person).
 		Set(table.Person.ID, uuid.New()).
 		Set(table.Person.Name, "Frank").
-		Set(table.Person.BirthYear, "1998").
-		Set(table.Person.Height, "6'1").
+		Set(table.Person.Height, 170.3).
+		Set(table.Person.Mass, 150.5).
+		Set(table.Person.BirthYear, 1998).
 		Set(table.Person.HomeWorld, "Runescape").
 		Set(table.Person.Gender, model.GenderMale).
 		Set(table.Person.EyeColor, model.ColorBrown).
 		Set(table.Person.HairColor, model.ColorBlack).
 		Set(table.Person.SkinColor, model.ColorOrange).
-		Set(table.Person.Mass, "100").
 		Returning(table.Person.Asterisk)
 
 	builder := gooq.Builder{}

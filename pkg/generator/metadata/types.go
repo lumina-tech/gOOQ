@@ -12,9 +12,9 @@ type DataType struct {
 }
 
 var (
-	DataTypeBool        = DataType{"Bool", "bool", "null.Bool"}
-	DataTypeFloat32     = DataType{Name: "Float32", Literal: "float32", NullableLiteral: "null.Float"}
-	DataTypeFloat64     = DataType{Name: "Float64", Literal: "float64", NullableLiteral: "null.Float"}
+	DataTypeBool        = DataType{Name: "Bool", Literal: "bool", NullableLiteral: "null.Bool"}
+	DataTypeFloat32     = DataType{Name: "Decimal", Literal: "float32", NullableLiteral: "null.Float"}
+	DataTypeFloat64     = DataType{Name: "Decimal", Literal: "float64", NullableLiteral: "null.Float"}
 	DataTypeInt         = DataType{Name: "Int", Literal: "int", NullableLiteral: "null.Int"}
 	DataTypeInt64       = DataType{Name: "Int64", Literal: "int64", NullableLiteral: "null.Int"}
 	DataTypeJSONB       = DataType{Name: "Jsonb", Literal: "[]byte", NullableLiteral: "nullable.Jsonb"}

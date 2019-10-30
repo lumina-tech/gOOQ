@@ -76,12 +76,12 @@ type person struct {
 	Asterisk  gooq.StringField
 	ID        gooq.UUIDField
 	Name      gooq.StringField
-	Height    gooq.StringField
-	Mass      gooq.StringField
+	Height    gooq.DecimalField
+	Mass      gooq.DecimalField
 	HairColor gooq.StringField
 	SkinColor gooq.StringField
 	EyeColor  gooq.StringField
-	BirthYear gooq.StringField
+	BirthYear gooq.IntField
 	Gender    gooq.StringField
 	HomeWorld gooq.StringField
 
@@ -104,12 +104,12 @@ func newPerson() *person {
 	instance.Asterisk = gooq.NewStringField(instance, "*")
 	instance.ID = gooq.NewUUIDField(instance, "id")
 	instance.Name = gooq.NewStringField(instance, "name")
-	instance.Height = gooq.NewStringField(instance, "height")
-	instance.Mass = gooq.NewStringField(instance, "mass")
+	instance.Height = gooq.NewDecimalField(instance, "height")
+	instance.Mass = gooq.NewDecimalField(instance, "mass")
 	instance.HairColor = gooq.NewStringField(instance, "hair_color")
 	instance.SkinColor = gooq.NewStringField(instance, "skin_color")
 	instance.EyeColor = gooq.NewStringField(instance, "eye_color")
-	instance.BirthYear = gooq.NewStringField(instance, "birth_year")
+	instance.BirthYear = gooq.NewIntField(instance, "birth_year")
 	instance.Gender = gooq.NewStringField(instance, "gender")
 	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
 	instance.Constraints = newPersonConstraints()
