@@ -144,12 +144,12 @@ func getConstraintArgs(
 func isReferenceTable(
 	tableName string,
 ) bool {
-	return strings.HasSuffix(tableName, "_reference_table")
+	return strings.HasSuffix(tableName, metadata.ReferenceTableSuffix)
 }
 
 func getEnumTypeFromReferenceTableName(
 	tableName string,
 ) string {
-	enumNameSnakeCase := strings.ReplaceAll(tableName, "_reference_table", "")
+	enumNameSnakeCase := strings.ReplaceAll(tableName, metadata.ReferenceTableSuffix, "")
 	return snaker.SnakeToCamelIdentifier(enumNameSnakeCase)
 }

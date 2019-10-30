@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	referenceTableSuffix = "_reference_table"
+	ReferenceTableSuffix = "_reference_table"
 )
 
 type Data struct {
@@ -95,10 +95,10 @@ func getReferenceTableEnums(
 	}
 	var result []Enum
 	for _, table := range tables {
-		if !strings.HasSuffix(table.TableName, referenceTableSuffix) {
+		if !strings.HasSuffix(table.TableName, ReferenceTableSuffix) {
 			continue
 		}
-		name := strings.ReplaceAll(table.TableName, referenceTableSuffix, "")
+		name := strings.ReplaceAll(table.TableName, ReferenceTableSuffix, "")
 		enumValues, err := loader.ReferenceTableValueList(db, schema, table.TableName)
 		if err != nil {
 			return nil, err
