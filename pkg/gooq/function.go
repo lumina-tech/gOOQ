@@ -112,13 +112,13 @@ func (expr *numericExpressionFunctionImpl) Render(
 }
 
 type stringExpressionFunctionImpl struct {
-	numericExpressionImpl
+	stringExpressionImpl
 	name string
 }
 
 func NewStringExpressionFunction(
 	name string, arguments ...Expression,
-) NumericExpression {
+) StringExpression {
 	function := &stringExpressionFunctionImpl{name: name}
 	function.expressionImpl.initFunctionExpression(function, arguments...)
 	return function
