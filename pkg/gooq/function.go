@@ -2,8 +2,8 @@ package gooq
 
 func Count(
 	expr Expression,
-) Expression {
-	return NewExpressionFunction("COUNT", expr)
+) NumericExpression {
+	return NewNumericExpressionFunction("COUNT", expr)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,6 +57,8 @@ func (expr *filterWhereFunction) Render(
 // Function Expression
 ///////////////////////////////////////////////////////////////////////////////
 
+// TODO(Peter): we should refactor these expressionFunctions
+
 type expressionFunctionImpl struct {
 	expressionImpl
 	name string
@@ -71,6 +73,58 @@ func NewExpressionFunction(
 }
 
 func (expr *expressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	builder.Printf("%s(", expr.name)
+	for index, argument := range expr.expressions {
+		argument.Render(builder)
+		if index != len(expr.expressions)-1 {
+			builder.Print(", ")
+		}
+	}
+	builder.Printf(")")
+}
+
+type numericExpressionFunctionImpl struct {
+	numericExpressionImpl
+	name string
+}
+
+func NewNumericExpressionFunction(
+	name string, arguments ...Expression,
+) NumericExpression {
+	function := &numericExpressionFunctionImpl{name: name}
+	function.expressionImpl.initFunctionExpression(function, arguments...)
+	return function
+}
+
+func (expr *numericExpressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	builder.Printf("%s(", expr.name)
+	for index, argument := range expr.expressions {
+		argument.Render(builder)
+		if index != len(expr.expressions)-1 {
+			builder.Print(", ")
+		}
+	}
+	builder.Printf(")")
+}
+
+type stringExpressionFunctionImpl struct {
+	numericExpressionImpl
+	name string
+}
+
+func NewStringExpressionFunction(
+	name string, arguments ...Expression,
+) NumericExpression {
+	function := &stringExpressionFunctionImpl{name: name}
+	function.expressionImpl.initFunctionExpression(function, arguments...)
+	return function
+}
+
+func (expr *stringExpressionFunctionImpl) Render(
 	builder *Builder,
 ) {
 	builder.Printf("%s(", expr.name)
@@ -107,7 +161,7 @@ func (expr *expressionFunctionImpl) Render(
 func Ascii(
 	input StringExpression,
 ) Expression {
-	return NewExpressionFunction("ASCII", input)
+	return NewStringExpressionFunction("ASCII", input)
 }
 
 func BTrim(
@@ -117,7 +171,7 @@ func BTrim(
 	if characters != nil {
 		expressions = append(expressions, characters[0])
 	}
-	return NewExpressionFunction("BTRIM", expressions...)
+	return NewStringExpressionFunction("BTRIM", expressions...)
 }
 
 func LTrim(
@@ -127,7 +181,7 @@ func LTrim(
 	if characters != nil {
 		expressions = append(expressions, characters[0])
 	}
-	return NewExpressionFunction("LTRIM", expressions...)
+	return NewStringExpressionFunction("LTRIM", expressions...)
 }
 
 func RTrim(
@@ -137,7 +191,7 @@ func RTrim(
 	if characters != nil {
 		expressions = append(expressions, characters[0])
 	}
-	return NewExpressionFunction("RTRIM", expressions...)
+	return NewStringExpressionFunction("RTRIM", expressions...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////

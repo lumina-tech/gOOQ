@@ -23,3 +23,47 @@ const (
 	LeftOuterJoin
 	NotJoined
 )
+
+type LockingType int
+
+const (
+	LockingTypeNone LockingType = iota
+	LockingTypeUpdate
+	LockingTypeNoKeyUpdate
+	LockingTypeShare
+	LockingTypeKeyShare
+)
+
+func (t LockingType) String() string {
+	switch t {
+	case LockingTypeUpdate:
+		return "FOR UPDATE"
+	case LockingTypeNoKeyUpdate:
+		return "FOR NO KEY UPDATE"
+	case LockingTypeShare:
+		return "FOR SHARE"
+	case LockingTypeKeyShare:
+		return "FOR KEY SHARE"
+	default:
+		return ""
+	}
+}
+
+type LockingOption int
+
+const (
+	LockingOptionNone LockingOption = iota
+	LockingOptionNoWait
+	LockingOptionSkipLocked
+)
+
+func (t LockingOption) String() string {
+	switch t {
+	case LockingOptionNoWait:
+		return "NOWAIT"
+	case LockingOptionSkipLocked:
+		return "SKIP LOCKED"
+	default:
+		return ""
+	}
+}

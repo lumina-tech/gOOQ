@@ -142,6 +142,25 @@ var selectTestCases = []TestCase{
 			Join(Table2).On(Table2.Column1.Eq(Table1.Column1)),
 		ExpectedStmt: "SELECT table1.column1, table2.column1 FROM (SELECT table1.column1 FROM public.table1) AS boo JOIN public.table2 ON table2.column1 = table1.column1",
 	},
+	{
+		Constructed:  Select().From(Table1).GroupBy(Table1.Column1).Having(Count(Asterisk).IsGt(5)),
+		ExpectedStmt: "SELECT * FROM public.table1 GROUP BY table1.column1 HAVING COUNT(*) > $1",
+		Arguments:    []interface{}{float64(5)},
+	},
+	{
+		Constructed: Select().From(Table1).
+			Where(Table1.Column1.IsEq("foo")).
+			For(LockingTypeUpdate, LockingOptionNone),
+		ExpectedStmt: "SELECT * FROM public.table1 WHERE table1.column1 = $1 FOR UPDATE",
+		Arguments:    []interface{}{"foo"},
+	},
+	{
+		Constructed: Select().From(Table1).
+			Where(Table1.Column1.IsEq("foo")).
+			For(LockingTypeUpdate, LockingOptionSkipLocked),
+		ExpectedStmt: "SELECT * FROM public.table1 WHERE table1.column1 = $1 FOR UPDATE SKIP LOCKED",
+		Arguments:    []interface{}{"foo"},
+	},
 	//{
 	//	Select(TimeBucket5MinutesField, Table1.Column2.Avg()).From(Table1),
 	//	"SELECT time_bucket('5 minutes', table1.creation_date) AS five_min, AVG(table1.column2) FROM public.table1",
