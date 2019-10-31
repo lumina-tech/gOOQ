@@ -9,6 +9,15 @@ import (
 
 var expressionTestCases = []TestCase{
 	{
+		Constructed:  Count(Table1.Column1),
+		ExpectedStmt: "COUNT(table1.column1)",
+	},
+	{
+		Constructed:  Count(Table1.Column1).IsGt(5),
+		ExpectedStmt: "COUNT(table1.column1) > $1",
+		Arguments:    []interface{}{float64(5)},
+	},
+	{
 		Constructed:  Table1.Column1.Asc(),
 		ExpectedStmt: "table1.column1 ASC",
 	},

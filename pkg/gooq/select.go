@@ -67,6 +67,7 @@ type SelectOffsetStep interface {
 type SelectFinalStep interface {
 	Selectable
 	Fetchable
+	For(LockingType, LockingOption) SelectFinalStep
 	Union(SelectFinalStep) SelectOrderByStep
 }
 
@@ -75,20 +76,22 @@ type SelectFinalStep interface {
 ///////////////////////////////////////////////////////////////////////////////
 
 type selection struct {
-	selection   Selectable
-	projections []Selectable
-	joins       []join
-	joinTarget  Selectable
-	joinType    JoinType
-	predicate   []Expression
-	groups      []Expression
-	havings     []Expression
-	ordering    []Expression
-	unions      []SelectFinalStep
-	alias       null.String
-	isDistinct  bool
-	limit       int
-	offset      int
+	selection     Selectable
+	projections   []Selectable
+	joins         []join
+	joinTarget    Selectable
+	joinType      JoinType
+	predicate     []Expression
+	groups        []Expression
+	havings       []Expression
+	ordering      []Expression
+	unions        []SelectFinalStep
+	alias         null.String
+	isDistinct    bool
+	limit         int
+	offset        int
+	lockingType   LockingType
+	lockingOption LockingOption
 }
 
 func Select(projections ...Selectable) SelectDistinctStep {
@@ -173,6 +176,14 @@ func (s *selection) Limit(limit int) SelectOffsetStep {
 
 func (s *selection) Offset(offset int) SelectFinalStep {
 	s.offset = offset
+	return s
+}
+
+func (s *selection) For(
+	lockingType LockingType, lockingOption LockingOption,
+) SelectFinalStep {
+	s.lockingType = lockingType
+	s.lockingOption = lockingOption
 	return s
 }
 
@@ -268,9 +279,10 @@ func (s *selection) Render(
 		builder.RenderExpressions(s.groups)
 	}
 
-	// render HAVINGS clause
+	// render HAVING clause
 	if len(s.havings) > 0 {
-		panic("having clause is not implemented")
+		builder.Print(" HAVING ")
+		builder.RenderConditions(s.havings)
 	}
 
 	// render UNION clause
@@ -294,6 +306,14 @@ func (s *selection) Render(
 	// render OFFSET clause
 	if s.offset > 0 {
 		builder.Printf(" OFFSET %d", s.offset)
+	}
+
+	// render LOCKING clause
+	if s.lockingType != LockingTypeNone {
+		builder.Printf(" %s", s.lockingType.String())
+		if s.lockingOption != LockingOptionNone {
+			builder.Printf(" %s", s.lockingOption.String())
+		}
 	}
 
 	if hasAlias {
