@@ -160,13 +160,13 @@ func (expr *stringExpressionFunctionImpl) Render(
 
 func Ascii(
 	input StringExpression,
-) Expression {
-	return NewStringExpressionFunction("ASCII", input)
+) NumericExpression {
+	return NewNumericExpressionFunction("ASCII", input)
 }
 
 func BTrim(
 	source StringExpression, characters ...StringExpression,
-) Expression {
+) StringExpression {
 	expressions := []Expression{source}
 	if characters != nil {
 		expressions = append(expressions, characters[0])
@@ -176,7 +176,7 @@ func BTrim(
 
 func LTrim(
 	source StringExpression, characters ...StringExpression,
-) Expression {
+) StringExpression {
 	expressions := []Expression{source}
 	if characters != nil {
 		expressions = append(expressions, characters[0])
@@ -186,7 +186,7 @@ func LTrim(
 
 func RTrim(
 	source StringExpression, characters ...StringExpression,
-) Expression {
+) StringExpression {
 	expressions := []Expression{source}
 	if characters != nil {
 		expressions = append(expressions, characters[0])
