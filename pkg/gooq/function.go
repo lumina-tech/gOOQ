@@ -355,7 +355,7 @@ func Replace(
 }
 
 func Reverse(
-	text Expression,
+	text StringExpression,
 ) StringExpression {
 	return NewStringExpressionFunction("REVERSE", text)
 }
