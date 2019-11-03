@@ -264,6 +264,18 @@ func InitCap(
 	return NewStringExpressionFunction("INITCAP", text)
 }
 
+func Left(
+	text StringExpression, n NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("LEFT", text, n)
+}
+
+func Right(
+	text StringExpression, n NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("RIGHT", text, n)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

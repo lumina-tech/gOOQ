@@ -71,6 +71,14 @@ var functionTestCases = []TestCase{
 		Constructed:  InitCap(String("initCap THIS SenTEnce")),
 		ExpectedStmt: "INITCAP($1)",
 	},
+	{
+		Constructed:  Left(Table1.Column1, Int64(3)),
+		ExpectedStmt: "LEFT(table1.column1, $1)",
+	},
+	{
+		Constructed:  Right(String("take my right chars"), Table1.Column3),
+		ExpectedStmt: "RIGHT($1, table1.column3)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
