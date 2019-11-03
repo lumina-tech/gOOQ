@@ -43,6 +43,10 @@ var functionTestCases = []TestCase{
 		Constructed:  RTrim(String("xyzxyzabcxyz"), Table1.Column1),
 		ExpectedStmt: "RTRIM($1, table1.column1)",
 	},
+	{
+		Constructed:  StartsWith(String("alphabet"), String("alph")),
+		ExpectedStmt: "STARTS_WITH($1, $2)",
+	},
 }
 
 func TestFunctions(t *testing.T) {

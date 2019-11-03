@@ -220,6 +220,12 @@ func RTrim(
 	return NewStringExpressionFunction("RTRIM", expressions...)
 }
 
+func StartsWith(
+	text StringExpression, prefix StringExpression,
+) BoolExpression {
+	return NewBoolExpressionFunction("STARTS_WITH", text, prefix)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions
