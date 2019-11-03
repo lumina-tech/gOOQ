@@ -360,7 +360,36 @@ func Reverse(
 	return NewStringExpressionFunction("REVERSE", text)
 }
 
-// TODO: SplitPart, Strpos, Substr, StartsWith, ToAscii, ToHex, Translate
+func SplitPart(
+	text StringExpression, delimiter StringExpression,
+	field NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("SPLIT_PART", text, delimiter, field)
+}
+
+func Strpos(
+	text StringExpression, substring StringExpression,
+) NumericExpression {
+	return NewNumericExpressionFunction("STRPOS", text, substring)
+}
+
+// TODO: Substr, StartsWith
+
+// TODO: ToAscii
+
+func ToHex(
+	number NumericExpression,
+) StringExpression {
+	// TODO: enforce integer requirement on number
+	// (either int or bigint, but not decimal)
+	return NewStringExpressionFunction("TO_HEX", number)
+}
+
+func Translate(
+	text StringExpression, from StringExpression, to StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("TRANSLATE", text, from, to)
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators

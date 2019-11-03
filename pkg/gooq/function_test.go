@@ -131,6 +131,22 @@ var functionTestCases = []TestCase{
 		Constructed:  Reverse(String("reversable")),
 		ExpectedStmt: "REVERSE($1)",
 	},
+	{
+		Constructed:  SplitPart(String("abc~@~def~@~ghi"), String("~@~"), Int64(2)),
+		ExpectedStmt: "SPLIT_PART($1, $2, $3)",
+	},
+	{
+		Constructed:  Strpos(Table1.Column1, String("ab")),
+		ExpectedStmt: "STRPOS(table1.column1, $1)",
+	},
+	{
+		Constructed:  ToHex(Table1.Column3),
+		ExpectedStmt: "TO_HEX(table1.column3)",
+	},
+	{
+		Constructed:  Translate(String("12345"), String("143"), String("ax")),
+		ExpectedStmt: "TRANSLATE($1, $2, $3)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
