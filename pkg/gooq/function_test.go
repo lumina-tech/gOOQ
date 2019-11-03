@@ -55,6 +55,10 @@ var functionTestCases = []TestCase{
 		Constructed:  Concat(String("xyzxyzabcxyz"), Table1.Column3, Int64(3)),
 		ExpectedStmt: "CONCAT($1, table1.column3, $2)",
 	},
+	{
+		Constructed:  ConcatWs(String("x"), Table1.Column3, Int64(3), String("four")),
+		ExpectedStmt: "CONCAT_WS($1, table1.column3, $2, $3)",
+	},
 }
 
 func TestFunctions(t *testing.T) {

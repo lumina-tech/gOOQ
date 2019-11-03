@@ -240,6 +240,15 @@ func Concat(
 	return NewStringExpressionFunction("CONCAT", expressions...)
 }
 
+func ConcatWs(
+	separator StringExpression,
+	text Expression, moreText ...Expression,
+) StringExpression {
+	expressions := append([]Expression{separator}, text)
+	expressions = append(expressions, moreText...)
+	return NewStringExpressionFunction("CONCAT_WS", expressions...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions
