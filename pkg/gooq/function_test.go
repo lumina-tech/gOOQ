@@ -119,6 +119,18 @@ var functionTestCases = []TestCase{
 		Constructed:  QuoteNullable(Table3.UUIDColumn),
 		ExpectedStmt: "QUOTE_NULLABLE(table3.uuid_column)",
 	},
+	{
+		Constructed:  Repeat(String("abc"), Table1.Column3),
+		ExpectedStmt: "REPEAT($1, table1.column3)",
+	},
+	{
+		Constructed:  Replace(Table1.Column1, String("ab"), String("CD")),
+		ExpectedStmt: "REPLACE(table1.column1, $1, $2)",
+	},
+	{
+		Constructed:  Reverse(String("reversable")),
+		ExpectedStmt: "REVERSE($1)",
+	},
 }
 
 func TestFunctions(t *testing.T) {

@@ -335,6 +335,24 @@ func QuoteNullable(
 	return NewStringExpressionFunction("QUOTE_NULLABLE", value)
 }
 
+func Repeat(
+	text StringExpression, n NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("REPEAT", text, n)
+}
+
+func Replace(
+	text StringExpression, from StringExpression, to StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("REPLACE", text, from, to)
+}
+
+func Reverse(
+	text Expression,
+) StringExpression {
+	return NewStringExpressionFunction("REVERSE", text)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions
