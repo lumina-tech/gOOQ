@@ -275,6 +275,16 @@ func Right(
 	return NewStringExpressionFunction("RIGHT", text, n)
 }
 
+func Length(
+	text StringExpression, encoding ...StringExpression,
+) NumericExpression {
+	arguments := []Expression{text}
+	if encoding != nil {
+		arguments = append(arguments, encoding[0])
+	}
+	return NewNumericExpressionFunction("LENGTH", arguments...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

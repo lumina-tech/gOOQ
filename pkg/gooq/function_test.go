@@ -79,6 +79,14 @@ var functionTestCases = []TestCase{
 		Constructed:  Right(String("take my right chars"), Table1.Column3),
 		ExpectedStmt: "RIGHT($1, table1.column3)",
 	},
+	{
+		Constructed:  Length(Table1.Column1),
+		ExpectedStmt: "LENGTH(table1.column1)",
+	},
+	{
+		Constructed:  Length(String("jose"), String("UTF8")),
+		ExpectedStmt: "LENGTH($1, $2)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
