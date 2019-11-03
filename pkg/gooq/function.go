@@ -249,6 +249,15 @@ func ConcatWs(
 	return NewStringExpressionFunction("CONCAT_WS", expressions...)
 }
 
+func Format(
+	formatStr StringExpression, formatArg ...Expression,
+) StringExpression {
+	// TODO: enforce checking on number of formatArgs
+	// (i.e. make sure is the same as the number of elements to be replaced in formatStr)
+	expressions := append([]Expression{formatStr}, formatArg...)
+	return NewStringExpressionFunction("FORMAT", expressions...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions
