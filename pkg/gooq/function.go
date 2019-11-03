@@ -285,6 +285,28 @@ func Length(
 	return NewNumericExpressionFunction("LENGTH", arguments...)
 }
 
+func LPad(
+	text StringExpression, len NumericExpression,
+	fill ...StringExpression,
+) StringExpression {
+	arguments := []Expression{text, len}
+	if fill != nil {
+		arguments = append(arguments, fill[0])
+	}
+	return NewStringExpressionFunction("LPAD", arguments...)
+}
+
+func RPad(
+	text StringExpression, len NumericExpression,
+	fill ...StringExpression,
+) StringExpression {
+	arguments := []Expression{text, len}
+	if fill != nil {
+		arguments = append(arguments, fill[0])
+	}
+	return NewStringExpressionFunction("RPAD", arguments...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

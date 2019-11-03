@@ -87,6 +87,14 @@ var functionTestCases = []TestCase{
 		Constructed:  Length(String("jose"), String("UTF8")),
 		ExpectedStmt: "LENGTH($1, $2)",
 	},
+	{
+		Constructed:  LPad(String("hi"), Int64(7)),
+		ExpectedStmt: "LPAD($1, $2)",
+	},
+	{
+		Constructed:  RPad(Table1.Column2, Table1.Column3, Table1.Column1),
+		ExpectedStmt: "RPAD(table1.column2, table1.column3, table1.column1)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
