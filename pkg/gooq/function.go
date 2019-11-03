@@ -137,6 +137,32 @@ func (expr *stringExpressionFunctionImpl) Render(
 	builder.Printf(")")
 }
 
+type boolExpressionFunctionImpl struct {
+	boolExpressionImpl
+	name string
+}
+
+func NewBoolExpressionFunction(
+	name string, arguments ...Expression,
+) BoolExpression {
+	function := &boolExpressionFunctionImpl{name: name}
+	function.expressionImpl.initFunctionExpression(function, arguments...)
+	return function
+}
+
+func (expr *boolExpressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	builder.Printf("%s(", expr.name)
+	for index, argument := range expr.expressions {
+		argument.Render(builder)
+		if index != len(expr.expressions)-1 {
+			builder.Print(", ")
+		}
+	}
+	builder.Printf(")")
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.3. Comparison Functions
 // https://www.postgresql.org/docs/11/functions-comparison.html
