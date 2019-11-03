@@ -67,6 +67,10 @@ var functionTestCases = []TestCase{
 		Constructed:  Format(String("no formatting to be done")),
 		ExpectedStmt: "FORMAT($1)",
 	},
+	{
+		Constructed:  InitCap(String("initCap THIS SenTEnce")),
+		ExpectedStmt: "INITCAP($1)",
+	},
 }
 
 func TestFunctions(t *testing.T) {

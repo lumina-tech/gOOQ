@@ -258,6 +258,12 @@ func Format(
 	return NewStringExpressionFunction("FORMAT", expressions...)
 }
 
+func InitCap(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("INITCAP", text)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions
