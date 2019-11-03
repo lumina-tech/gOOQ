@@ -248,6 +248,8 @@ func ConcatWs(
 	return NewStringExpressionFunction("CONCAT_WS", expressions...)
 }
 
+// TODO: Convert, ConvertFrom, ConvertTo, Decode, Encode
+
 func Format(
 	formatStr StringExpression, formatArg ...Expression,
 ) StringExpression {
@@ -313,6 +315,8 @@ func Md5(
 	return NewStringExpressionFunction("MD5", text)
 }
 
+// TODO: ParseIdent
+
 func PgClientEncoding() StringExpression {
 	return NewStringExpressionFunction("PG_CLIENT_ENCODING")
 }
@@ -335,6 +339,9 @@ func QuoteNullable(
 	return NewStringExpressionFunction("QUOTE_NULLABLE", value)
 }
 
+// TODO: RegexpMatch, RegexpMatches, RegexpReplace,
+// 		 RegexpSplitToArray, RegexpSplitToTable
+
 func Repeat(
 	text StringExpression, n NumericExpression,
 ) StringExpression {
@@ -352,6 +359,8 @@ func Reverse(
 ) StringExpression {
 	return NewStringExpressionFunction("REVERSE", text)
 }
+
+// TODO: SplitPart, Strpos, Substr, StartsWith, ToAscii, ToHex, Translate
 
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
