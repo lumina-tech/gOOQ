@@ -228,16 +228,16 @@ func StartsWith(
 
 func Chr(
 	asciiCode NumericExpression,
-) Expression {
+) StringExpression {
 	// TODO: add strict checking on asciiCode (i.e. make sure is not 0)
-	return NewExpressionFunction("CHR", asciiCode)
+	return NewStringExpressionFunction("CHR", asciiCode)
 }
 
 func Concat(
 	text Expression, moreText ...Expression,
-) Expression {
+) StringExpression {
 	expressions := append([]Expression{text}, moreText...)
-	return NewExpressionFunction("CONCAT", expressions...)
+	return NewStringExpressionFunction("CONCAT", expressions...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
