@@ -375,7 +375,16 @@ func Strpos(
 
 // TODO: Substr, StartsWith
 
-// TODO: ToAscii
+func ToAscii(
+	text StringExpression, encoding ...StringExpression,
+) StringExpression {
+	arguments := []Expression{text}
+	if encoding != nil {
+		arguments = append(arguments, encoding[0])
+	}
+	// TODO: enforce encoding to be one of {LATIN1, LATIN2, LATIN9, WIN1250}
+	return NewStringExpressionFunction("TO_ASCII", arguments...)
+}
 
 func ToHex(
 	number NumericExpression,

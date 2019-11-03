@@ -140,6 +140,14 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: "STRPOS(table1.column1, $1)",
 	},
 	{
+		Constructed:  ToAscii(Table1.Column1),
+		ExpectedStmt: "TO_ASCII(table1.column1)",
+	},
+	{
+		Constructed:  ToAscii(String("Karel"), String("WIN1250")),
+		ExpectedStmt: "TO_ASCII($1, $2)",
+	},
+	{
 		Constructed:  ToHex(Table1.Column3),
 		ExpectedStmt: "TO_HEX(table1.column3)",
 	},
