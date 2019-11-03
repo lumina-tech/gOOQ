@@ -307,6 +307,34 @@ func RPad(
 	return NewStringExpressionFunction("RPAD", arguments...)
 }
 
+func Md5(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("MD5", text)
+}
+
+func PgClientEncoding() StringExpression {
+	return NewStringExpressionFunction("PG_CLIENT_ENCODING")
+}
+
+func QuoteIdent(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("QUOTE_IDENT", text)
+}
+
+func QuoteLiteral(
+	value Expression,
+) StringExpression {
+	return NewStringExpressionFunction("QUOTE_LITERAL", value)
+}
+
+func QuoteNullable(
+	value Expression,
+) StringExpression {
+	return NewStringExpressionFunction("QUOTE_NULLABLE", value)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.11. SQL Binary String Functions and Operators
 // Table 9.12. Other Binary String Functions

@@ -95,6 +95,30 @@ var functionTestCases = []TestCase{
 		Constructed:  RPad(Table1.Column2, Table1.Column3, Table1.Column1),
 		ExpectedStmt: "RPAD(table1.column2, table1.column3, table1.column1)",
 	},
+	{
+		Constructed:  Md5(Table1.Column2),
+		ExpectedStmt: "MD5(table1.column2)",
+	},
+	{
+		Constructed:  PgClientEncoding(),
+		ExpectedStmt: "PG_CLIENT_ENCODING()",
+	},
+	{
+		Constructed:  QuoteIdent(String("foo bar")),
+		ExpectedStmt: "QUOTE_IDENT($1)",
+	},
+	{
+		Constructed:  QuoteLiteral(String("foo bar")),
+		ExpectedStmt: "QUOTE_LITERAL($1)",
+	},
+	{
+		Constructed:  QuoteLiteral(Float64(42.5)),
+		ExpectedStmt: "QUOTE_LITERAL($1)",
+	},
+	{
+		Constructed:  QuoteNullable(Table3.UUIDColumn),
+		ExpectedStmt: "QUOTE_NULLABLE(table3.uuid_column)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
