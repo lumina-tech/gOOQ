@@ -244,8 +244,7 @@ func ConcatWs(
 	separator StringExpression,
 	text Expression, moreText ...Expression,
 ) StringExpression {
-	expressions := append([]Expression{separator}, text)
-	expressions = append(expressions, moreText...)
+	expressions := append([]Expression{separator, text}, moreText...)
 	return NewStringExpressionFunction("CONCAT_WS", expressions...)
 }
 
