@@ -59,6 +59,6 @@ func (t *TableImpl) Render(
 ) {
 	builder.Print(t.GetQualifiedName())
 	if t.alias.Valid {
-		builder.Printf(" AS %s", t.alias.String)
+		builder.Printf(" AS \"%s\"", t.alias.String)
 	}
 }

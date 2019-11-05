@@ -84,6 +84,7 @@ type person struct {
 	BirthYear gooq.IntField
 	Gender    gooq.StringField
 	HomeWorld gooq.StringField
+	SpeciesID gooq.UUIDField
 
 	Constraints *personConstraints
 	alias       null.String
@@ -112,6 +113,7 @@ func newPerson() *person {
 	instance.BirthYear = gooq.NewIntField(instance, "birth_year")
 	instance.Gender = gooq.NewStringField(instance, "gender")
 	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
+	instance.SpeciesID = gooq.NewUUIDField(instance, "species_id")
 	instance.Constraints = newPersonConstraints()
 	return instance
 }
@@ -143,3 +145,80 @@ func (t *person) ScanRows(
 }
 
 var Person = newPerson()
+
+type speciesConstraints struct {
+	SpeciesPkey gooq.DatabaseConstraint
+}
+
+type species struct {
+	gooq.TableImpl
+	Asterisk        gooq.StringField
+	ID              gooq.UUIDField
+	Name            gooq.StringField
+	Classification  gooq.StringField
+	AverageHeight   gooq.DecimalField
+	AverageLifespan gooq.DecimalField
+	HairColor       gooq.StringField
+	SkinColor       gooq.StringField
+	EyeColor        gooq.StringField
+	HomeWorld       gooq.StringField
+	Language        gooq.StringField
+
+	Constraints *speciesConstraints
+	alias       null.String
+}
+
+func newSpeciesConstraints() *speciesConstraints {
+	constraints := &speciesConstraints{}
+	constraints.SpeciesPkey = gooq.DatabaseConstraint{
+		Name:      "species_pkey",
+		Predicate: null.NewString("", false),
+	}
+	return constraints
+}
+
+func newSpecies() *species {
+	instance := &species{}
+	instance.Initialize("public", "species")
+	instance.Asterisk = gooq.NewStringField(instance, "*")
+	instance.ID = gooq.NewUUIDField(instance, "id")
+	instance.Name = gooq.NewStringField(instance, "name")
+	instance.Classification = gooq.NewStringField(instance, "classification")
+	instance.AverageHeight = gooq.NewDecimalField(instance, "average_height")
+	instance.AverageLifespan = gooq.NewDecimalField(instance, "average_lifespan")
+	instance.HairColor = gooq.NewStringField(instance, "hair_color")
+	instance.SkinColor = gooq.NewStringField(instance, "skin_color")
+	instance.EyeColor = gooq.NewStringField(instance, "eye_color")
+	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
+	instance.Language = gooq.NewStringField(instance, "language")
+	instance.Constraints = newSpeciesConstraints()
+	return instance
+}
+
+func (t *species) As(alias string) gooq.Selectable {
+	instance := newSpecies()
+	instance.alias = null.StringFrom(alias)
+	return instance
+}
+
+func (t *species) ScanRow(
+	db gooq.DBInterface, stmt gooq.Fetchable,
+) (*model.Species, error) {
+	result := model.Species{}
+	if err := gooq.ScanRow(db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *species) ScanRows(
+	db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]model.Species, error) {
+	results := []model.Species{}
+	if err := gooq.ScanRows(db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+var Species = newSpecies()

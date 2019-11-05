@@ -317,7 +317,7 @@ func (s *selection) Render(
 	}
 
 	if hasAlias {
-		builder.Printf(") AS %s", s.alias.String)
+		builder.Printf(") AS \"%s\"", s.alias.String)
 	}
 
 }

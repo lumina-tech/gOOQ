@@ -28,7 +28,7 @@ func (expr *aliasFunction) Render(
 	builder *Builder,
 ) {
 	builder.RenderExpression(expr.expression)
-	builder.Printf(" AS %s", expr.alias)
+	builder.Printf(" AS \"%s\"", expr.alias)
 }
 
 type filterWhereFunction struct {

@@ -14,6 +14,22 @@ INSERT INTO color_reference_table (value) VALUES
 
 CREATE TYPE gender AS ENUM ('male', 'female');
 
+CREATE TABLE species(
+  id uuid primary key NOT NULL,
+  name text NOT NULL,
+  classification text NOT NULL,
+  average_height decimal NOT NULL,
+  average_lifespan decimal NOT NULL,
+  hair_color text NOT NULL,
+  skin_color text NOT NULL,
+  eye_color text NOT NULL,
+  home_world text NOT NULL,
+  language text NOT NULL,
+  FOREIGN KEY (hair_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (skin_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (eye_color) REFERENCES color_reference_table(value)
+);
+
 CREATE TABLE person(
   id uuid primary key NOT NULL,
   name text NOT NULL,
@@ -25,9 +41,11 @@ CREATE TABLE person(
   birth_year int NOT NULL,
   gender gender NOT NULL,
   home_world text NOT NULL,
+  species_id uuid NOT NULL,
   FOREIGN KEY (hair_color) REFERENCES color_reference_table(value),
   FOREIGN KEY (skin_color) REFERENCES color_reference_table(value),
-  FOREIGN KEY (eye_color) REFERENCES color_reference_table(value)
+  FOREIGN KEY (eye_color) REFERENCES color_reference_table(value),
+  FOREIGN KEY (species_id) REFERENCES species(id)
 );
 
 -- type Person struct {
