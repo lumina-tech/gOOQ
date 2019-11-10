@@ -373,7 +373,18 @@ func Strpos(
 	return NewNumericExpressionFunction("STRPOS", text, substring)
 }
 
-// TODO: Substr, StartsWith
+func Substr(
+	text StringExpression, from NumericExpression,
+	count ...NumericExpression,
+) StringExpression {
+	arguments := []Expression{text, from}
+	if count != nil {
+		arguments = append(arguments, count[0])
+	}
+	return NewStringExpressionFunction("SUBSTR", arguments...)
+}
+
+// TODO: StartsWith
 
 func ToAscii(
 	text StringExpression, encoding ...StringExpression,

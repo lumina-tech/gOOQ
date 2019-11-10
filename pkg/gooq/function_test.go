@@ -140,6 +140,10 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: "STRPOS(table1.column1, $1)",
 	},
 	{
+		Constructed:  Substr(Table1.Column1, Int64(2), Int64(5)),
+		ExpectedStmt: "SUBSTR(table1.column1, $1, $2)",
+	},
+	{
 		Constructed:  ToAscii(Table1.Column1),
 		ExpectedStmt: "TO_ASCII(table1.column1)",
 	},
