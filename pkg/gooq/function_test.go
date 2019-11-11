@@ -43,6 +43,30 @@ var functionTestCases = []TestCase{
 		Constructed:  RTrim(String("xyzxyzabcxyz"), Table1.Column1),
 		ExpectedStmt: "RTRIM($1, table1.column1)",
 	},
+	{
+		Constructed:  LessThan(Int64(10), Int64(2)),
+		ExpectedStmt: "$1 < $2",
+	},
+	{
+		Constructed:  GreaterThan(Int64(10), Int64(2)),
+		ExpectedStmt: "$1 > $2",
+	},
+	{
+		Constructed:  LessOrEqual(Int64(10), Int64(2)),
+		ExpectedStmt: "$1 <= $2",
+	},
+	{
+		Constructed:  GreaterOrEqual(Int64(10), Int64(2)),
+		ExpectedStmt: "$1 >= $2",
+	},
+	{
+		Constructed:  Equal(Int64(10), Int64(2)),
+		ExpectedStmt: "$1 = $2",
+	},
+	{
+		Constructed:  NotEqual(Int64(10), Int64(2)),
+		ExpectedStmt: "$1 <> $2",
+	},
 }
 
 func TestFunctions(t *testing.T) {

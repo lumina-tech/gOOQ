@@ -143,6 +143,65 @@ func (expr *stringExpressionFunctionImpl) Render(
 // [Good First Issue][Help Wanted] TODO: implement remaining
 ///////////////////////////////////////////////////////////////////////////////
 
+type comparisonexpressionFunctionImpl struct {
+	operator string
+	expressionImpl
+}
+
+func NewComparisonExpressionFunction(
+	operator string,
+	operandLeft Expression,
+	operandRight Expression,
+) Expression {
+	function := &comparisonexpressionFunctionImpl{operator: operator}
+	function.expressionImpl.initFunctionExpression(function, operandLeft, operandRight)
+	return function
+}
+
+func (expr *comparisonexpressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	expr.expressions[0].Render(builder)
+	builder.Printf(" %s ", expr.operator)
+	expr.expressions[1].Render(builder)
+}
+
+func LessThan(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewComparisonExpressionFunction("<", exprLeft, exprRight)
+}
+
+func GreaterThan(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewComparisonExpressionFunction(">", exprLeft, exprRight)
+}
+
+func LessOrEqual(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewComparisonExpressionFunction("<=", exprLeft, exprRight)
+}
+
+func GreaterOrEqual(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewComparisonExpressionFunction(">=", exprLeft, exprRight)
+}
+
+func Equal(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewComparisonExpressionFunction("=", exprLeft, exprRight)
+}
+
+func NotEqual(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewComparisonExpressionFunction("<>", exprLeft, exprRight)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.5. Mathematical Functions
 // Table 9.6. Random Functions
