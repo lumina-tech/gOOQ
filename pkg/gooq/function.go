@@ -143,22 +143,22 @@ func (expr *stringExpressionFunctionImpl) Render(
 // [Good First Issue][Help Wanted] TODO: implement remaining
 ///////////////////////////////////////////////////////////////////////////////
 
-type comparisonexpressionFunctionImpl struct {
+type binaryOperatorExpressionFunctionImpl struct {
 	operator string
 	expressionImpl
 }
 
-func NewComparisonExpressionFunction(
+func NewBinaryOperatorExpressionFunction(
 	operator string,
 	operandLeft Expression,
 	operandRight Expression,
 ) Expression {
-	function := &comparisonexpressionFunctionImpl{operator: operator}
+	function := &binaryOperatorExpressionFunctionImpl{operator: operator}
 	function.expressionImpl.initFunctionExpression(function, operandLeft, operandRight)
 	return function
 }
 
-func (expr *comparisonexpressionFunctionImpl) Render(
+func (expr *binaryOperatorExpressionFunctionImpl) Render(
 	builder *Builder,
 ) {
 	expr.expressions[0].Render(builder)
@@ -169,37 +169,37 @@ func (expr *comparisonexpressionFunctionImpl) Render(
 func LessThan(
 	exprLeft Expression, exprRight Expression,
 ) Expression {
-	return NewComparisonExpressionFunction("<", exprLeft, exprRight)
+	return NewBinaryOperatorExpressionFunction("<", exprLeft, exprRight)
 }
 
 func GreaterThan(
 	exprLeft Expression, exprRight Expression,
 ) Expression {
-	return NewComparisonExpressionFunction(">", exprLeft, exprRight)
+	return NewBinaryOperatorExpressionFunction(">", exprLeft, exprRight)
 }
 
 func LessOrEqual(
 	exprLeft Expression, exprRight Expression,
 ) Expression {
-	return NewComparisonExpressionFunction("<=", exprLeft, exprRight)
+	return NewBinaryOperatorExpressionFunction("<=", exprLeft, exprRight)
 }
 
 func GreaterOrEqual(
 	exprLeft Expression, exprRight Expression,
 ) Expression {
-	return NewComparisonExpressionFunction(">=", exprLeft, exprRight)
+	return NewBinaryOperatorExpressionFunction(">=", exprLeft, exprRight)
 }
 
 func Equal(
 	exprLeft Expression, exprRight Expression,
 ) Expression {
-	return NewComparisonExpressionFunction("=", exprLeft, exprRight)
+	return NewBinaryOperatorExpressionFunction("=", exprLeft, exprRight)
 }
 
 func NotEqual(
 	exprLeft Expression, exprRight Expression,
 ) Expression {
-	return NewComparisonExpressionFunction("<>", exprLeft, exprRight)
+	return NewBinaryOperatorExpressionFunction("<>", exprLeft, exprRight)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -259,6 +259,8 @@ func RTrim(
 // https://www.postgresql.org/docs/11/functions-binarystring.html
 // [Good First Issue][Help Wanted] TODO: implement remaining functions (not operators)
 ///////////////////////////////////////////////////////////////////////////////
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.23. Formatting Functions
