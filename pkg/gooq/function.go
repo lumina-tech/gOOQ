@@ -261,6 +261,62 @@ func RTrim(
 ///////////////////////////////////////////////////////////////////////////////
 
 
+func Concat(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction("||", exprLeft, exprRight)
+}
+
+func OctetLength(
+	expr StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("octet_length", expr)
+}
+
+type stringOverlayExpressionFunctionImpl struct {
+	stringExpressionImpl
+	name string
+}
+
+func NewStringOverlayExpressionFunction(
+	arguments ...Expression,
+) StringExpression {
+	function := &stringOverlayExpressionFunctionImpl{name:"overlay"}
+	function.expressionImpl.initFunctionExpression(function, arguments...)
+	return function
+}
+
+// ExpectedStmt: "overlay($1 placing $2 from $3)",
+
+func (expr *stringOverlayExpressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	builder.Printf("%s(", expr.name)
+	expr.expressions[0].Render(builder)
+	builder.Printf(" placing ")
+	expr.expressions[1].Render(builder)
+	builder.Printf(" from ")
+	expr.expressions[2].Render(builder)
+	if (len(expr.expressions) > 3) {
+		builder.Printf(" for ")
+		expr.expressions[3].Render(builder)
+	}
+	builder.Printf(")")
+}
+
+func Overlay(
+	source StringExpression,
+	replacement StringExpression,
+	from Expression,
+	until ...Expression,
+) StringExpression {
+	expressions := []Expression{source, replacement, from}
+	if until != nil {
+		expressions = append(expressions, until[0])
+	}
+	return NewStringOverlayExpressionFunction(expressions...)
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.23. Formatting Functions

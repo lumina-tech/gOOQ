@@ -67,6 +67,22 @@ var functionTestCases = []TestCase{
 		Constructed:  NotEqual(Int64(10), Int64(2)),
 		ExpectedStmt: "$1 <> $2",
 	},
+	{
+		Constructed:  Concat(String("xyzxyzabcxyz"), Int64(2)),
+		ExpectedStmt: "$1 || $2",
+	},
+	{
+		Constructed:  OctetLength(String("xyzxyzabcxyz")),
+		ExpectedStmt: "octet_length($1)",
+	},
+	{
+		Constructed:  Overlay(String("xyzxyzabcxyz"), String("xyz"), Int64(2), Int64(3)),
+		ExpectedStmt: "overlay($1 placing $2 from $3 for $4)",
+	},
+	{
+		Constructed:  Overlay(String("xyzxyzabcxyz"), String("xyz"), Int64(2)),
+		ExpectedStmt: "overlay($1 placing $2 from $3)",
+	},
 }
 
 func TestFunctions(t *testing.T) {
