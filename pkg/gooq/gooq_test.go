@@ -35,7 +35,7 @@ func newTestTable(name string) *testTable {
 	return instance
 }
 
-func (t *testTable) As(alias string) Selectable {
+func (t *testTable) As(alias string) Table {
 	instance := newTestTable(t.name)
 	instance.alias = null.StringFrom(alias)
 	return instance

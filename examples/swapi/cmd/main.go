@@ -3,13 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-
 	"github.com/google/uuid"
 	"github.com/lumina-tech/gooq/examples/swapi/model"
 	"github.com/lumina-tech/gooq/examples/swapi/table"
 	"github.com/lumina-tech/gooq/pkg/database"
 	"github.com/lumina-tech/gooq/pkg/gooq"
+	"os"
 )
 
 func main() {
@@ -66,20 +65,21 @@ func main() {
 		model.Person
 		Species *model.Species `db:"species"`
 	}
+	speciesWithAlias := table.Species.As("species_alias")
 	stmt := gooq.Select(
 		table.Person.Asterisk,
-		table.Species.Name.As("species.name"),
-		table.Species.Classification.As("species.name"),
-		table.Species.AverageHeight.As("species.average_height"),
-		table.Species.AverageLifespan.As("species.average_lifespan"),
-		table.Species.HairColor.As("species.hair_color"),
-		table.Species.SkinColor.As("species.skin_color"),
-		table.Species.EyeColor.As("species.eye_color"),
-		table.Species.HomeWorld.As("species.home_world"),
-		table.Species.Language.As("species.language"),
+		speciesWithAlias.Name.As("species.name"),
+		speciesWithAlias.Classification.As("species.name"),
+		speciesWithAlias.AverageHeight.As("species.average_height"),
+		speciesWithAlias.AverageLifespan.As("species.average_lifespan"),
+		speciesWithAlias.HairColor.As("species.hair_color"),
+		speciesWithAlias.SkinColor.As("species.skin_color"),
+		speciesWithAlias.EyeColor.As("species.eye_color"),
+		speciesWithAlias.HomeWorld.As("species.home_world"),
+		speciesWithAlias.Language.As("species.language"),
 	).From(table.Person).
-		Join(table.Species).
-		On(table.Person.SpeciesID.Eq(table.Species.ID))
+		Join(speciesWithAlias).
+		On(table.Person.SpeciesID.Eq(speciesWithAlias.ID))
 
 	builder := &gooq.Builder{}
 	stmt.Render(builder)

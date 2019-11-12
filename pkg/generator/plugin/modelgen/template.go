@@ -40,7 +40,6 @@ type {{ $table.TableType }} struct {
   {{ snakeToCamel $f.Name }} gooq.{{ $f.GooqType }}Field
   {{ end }}
   Constraints *{{ $table.TableType }}Constraints
-  alias null.String
 }
 
 func new{{ capitalize $table.TableType }}Constraints() *{{ $table.TableType }}Constraints {
@@ -65,9 +64,9 @@ func new{{ capitalize $table.TableType }}() *{{ $table.TableType }} {
   return instance
 }
 
-func (t *{{ $table.TableType }}) As(alias string) gooq.Selectable {
+func (t *{{ $table.TableType }}) As(alias string) *{{ $table.TableType }} {
   instance := new{{ $table.ModelType }}()
-  instance.alias = null.StringFrom(alias)
+  instance.TableImpl.As(alias)
   return instance
 }
 
