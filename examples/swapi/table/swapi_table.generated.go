@@ -18,7 +18,6 @@ type colorReferenceTable struct {
 	Value    gooq.StringField
 
 	Constraints *colorReferenceTableConstraints
-	alias       null.String
 }
 
 func newColorReferenceTableConstraints() *colorReferenceTableConstraints {
@@ -39,9 +38,9 @@ func newColorReferenceTable() *colorReferenceTable {
 	return instance
 }
 
-func (t *colorReferenceTable) As(alias string) gooq.Selectable {
+func (t *colorReferenceTable) As(alias string) *colorReferenceTable {
 	instance := newColorReferenceTable()
-	instance.alias = null.StringFrom(alias)
+	instance.TableImpl.As(alias)
 	return instance
 }
 
@@ -87,7 +86,6 @@ type person struct {
 	SpeciesID gooq.UUIDField
 
 	Constraints *personConstraints
-	alias       null.String
 }
 
 func newPersonConstraints() *personConstraints {
@@ -118,9 +116,9 @@ func newPerson() *person {
 	return instance
 }
 
-func (t *person) As(alias string) gooq.Selectable {
+func (t *person) As(alias string) *person {
 	instance := newPerson()
-	instance.alias = null.StringFrom(alias)
+	instance.TableImpl.As(alias)
 	return instance
 }
 
@@ -165,7 +163,6 @@ type species struct {
 	Language        gooq.StringField
 
 	Constraints *speciesConstraints
-	alias       null.String
 }
 
 func newSpeciesConstraints() *speciesConstraints {
@@ -195,9 +192,9 @@ func newSpecies() *species {
 	return instance
 }
 
-func (t *species) As(alias string) gooq.Selectable {
+func (t *species) As(alias string) *species {
 	instance := newSpecies()
-	instance.alias = null.StringFrom(alias)
+	instance.TableImpl.As(alias)
 	return instance
 }
 

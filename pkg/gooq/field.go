@@ -29,7 +29,7 @@ func (field *fieldImpl) GetQualifiedName() string {
 	switch selectable := field.selectable.(type) {
 	case Table:
 		selectableName = selectable.GetName()
-	default:
+	case *selection:
 		if selectable.GetAlias().Valid {
 			selectableName = selectable.GetAlias().String
 		}

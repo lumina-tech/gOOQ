@@ -11,8 +11,10 @@ import (
 )
 
 type Expression interface {
-	Aliasable
 	Renderable
+
+	As(alias string) Expression
+	GetAlias() null.String
 
 	// https://www.postgresql.org/docs/11/functions-subquery.html
 	In(subquery Selectable) BoolExpression
@@ -185,7 +187,7 @@ func (expr *expressionImpl) apply(
 	return expr
 }
 
-func (expr *expressionImpl) As(alias string) Selectable {
+func (expr *expressionImpl) As(alias string) Expression {
 	return newAliasFunction(expr.original(), alias)
 }
 

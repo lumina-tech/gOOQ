@@ -7,11 +7,6 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-type Aliasable interface {
-	As(alias string) Selectable
-	GetAlias() null.String
-}
-
 type Named interface {
 	GetName() string
 	GetQualifiedName() string
@@ -22,7 +17,6 @@ type Renderable interface {
 }
 
 type Selectable interface {
-	Aliasable
 	Renderable
 }
 
