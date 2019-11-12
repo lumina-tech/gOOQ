@@ -30,7 +30,7 @@ func (t *TableImpl) Initialize(schema, name string) {
 	t.name = name
 }
 
-func (t *TableImpl) As(alias string) Table {
+func (t *TableImpl) As(alias string) *TableImpl {
 	t.alias = null.StringFrom(alias)
 	return t
 }
