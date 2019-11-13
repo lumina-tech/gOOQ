@@ -10,6 +10,7 @@ type Table interface {
 	Named
 	Selectable
 	GetSchema() string
+	GetUnqualifiedName() string
 }
 
 type TableImpl struct {
@@ -43,14 +44,18 @@ func (t TableImpl) GetAlias() null.String {
 }
 
 func (t TableImpl) GetName() string {
-	if t.alias.Valid {
-		return t.alias.String
-	}
 	return t.name
 }
 
 func (t TableImpl) GetQualifiedName() string {
 	return fmt.Sprintf("%s.%s", t.schema, t.name)
+}
+
+func (t TableImpl) GetUnqualifiedName() string {
+	if t.alias.Valid {
+		return t.alias.String
+	}
+	return t.name
 }
 
 func (t TableImpl) GetSchema() string {
