@@ -66,7 +66,7 @@ func new{{ capitalize $table.TableType }}() *{{ $table.TableType }} {
 
 func (t *{{ $table.TableType }}) As(alias string) *{{ $table.TableType }} {
   instance := new{{ $table.ModelType }}()
-  instance.TableImpl.As(alias)
+  instance.TableImpl = *instance.TableImpl.As(alias)
   return instance
 }
 
