@@ -31,8 +31,11 @@ func (t *TableImpl) Initialize(schema, name string) {
 }
 
 func (t *TableImpl) As(alias string) *TableImpl {
-	t.alias = null.StringFrom(alias)
-	return t
+	return &TableImpl{
+		name:   t.name,
+		schema: t.schema,
+		alias:  null.StringFrom(alias),
+	}
 }
 
 func (t TableImpl) GetAlias() null.String {

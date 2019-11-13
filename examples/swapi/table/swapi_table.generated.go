@@ -40,7 +40,7 @@ func newColorReferenceTable() *colorReferenceTable {
 
 func (t *colorReferenceTable) As(alias string) *colorReferenceTable {
 	instance := newColorReferenceTable()
-	instance.TableImpl.As(alias)
+	instance.TableImpl = *instance.TableImpl.As(alias)
 	return instance
 }
 
@@ -118,7 +118,7 @@ func newPerson() *person {
 
 func (t *person) As(alias string) *person {
 	instance := newPerson()
-	instance.TableImpl.As(alias)
+	instance.TableImpl = *instance.TableImpl.As(alias)
 	return instance
 }
 
@@ -194,7 +194,7 @@ func newSpecies() *species {
 
 func (t *species) As(alias string) *species {
 	instance := newSpecies()
-	instance.TableImpl.As(alias)
+	instance.TableImpl = *instance.TableImpl.As(alias)
 	return instance
 }
 
