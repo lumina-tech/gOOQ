@@ -28,7 +28,7 @@ func (field *fieldImpl) GetQualifiedName() string {
 	var selectableName string
 	switch selectable := field.selectable.(type) {
 	case Table:
-		selectableName = selectable.GetName()
+		selectableName = selectable.GetUnqualifiedName()
 	case *selection:
 		if selectable.GetAlias().Valid {
 			selectableName = selectable.GetAlias().String
