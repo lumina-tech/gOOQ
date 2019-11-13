@@ -220,12 +220,6 @@ func RTrim(
 	return NewStringExpressionFunction("RTRIM", expressions...)
 }
 
-func StartsWith(
-	text StringExpression, prefix StringExpression,
-) BoolExpression {
-	return NewBoolExpressionFunction("STARTS_WITH", text, prefix)
-}
-
 func Chr(
 	asciiCode NumericExpression,
 ) StringExpression {
@@ -384,7 +378,11 @@ func Substr(
 	return NewStringExpressionFunction("SUBSTR", arguments...)
 }
 
-// TODO: StartsWith
+func StartsWith(
+	text StringExpression, prefix StringExpression,
+) BoolExpression {
+	return NewBoolExpressionFunction("STARTS_WITH", text, prefix)
+}
 
 func ToAscii(
 	text StringExpression, encoding ...StringExpression,

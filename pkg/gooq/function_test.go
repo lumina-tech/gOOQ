@@ -44,10 +44,6 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: "RTRIM($1, table1.column1)",
 	},
 	{
-		Constructed:  StartsWith(String("alphabet"), String("alph")),
-		ExpectedStmt: "STARTS_WITH($1, $2)",
-	},
-	{
 		Constructed:  Chr(Table1.Column3),
 		ExpectedStmt: "CHR(table1.column3)",
 	},
@@ -142,6 +138,10 @@ var functionTestCases = []TestCase{
 	{
 		Constructed:  Substr(Table1.Column1, Int64(2), Int64(5)),
 		ExpectedStmt: "SUBSTR(table1.column1, $1, $2)",
+	},
+	{
+		Constructed:  StartsWith(String("alphabet"), String("alph")),
+		ExpectedStmt: "STARTS_WITH($1, $2)",
 	},
 	{
 		Constructed:  ToAscii(Table1.Column1),
