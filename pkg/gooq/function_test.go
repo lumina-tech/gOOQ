@@ -4,6 +4,14 @@ import "testing"
 
 var functionTestCases = []TestCase{
 	{
+		Constructed:  And(Table1.Column1.Eq(Table2.Column1), Table1.Column2.Eq(Table2.Column2), Table1.Column2.Eq(Table2.Column2)),
+		ExpectedStmt: "(table1.column1 = table2.column1 AND table1.column2 = table2.column2 AND table1.column2 = table2.column2)",
+	},
+	{
+		Constructed:  Or(Table1.Column1.Eq(Table2.Column1), Table1.Column2.Eq(Table2.Column2), Table1.Column2.Eq(Table2.Column2)),
+		ExpectedStmt: "(table1.column1 = table2.column1 OR table1.column2 = table2.column2 OR table1.column2 = table2.column2)",
+	},
+	{
 		Constructed:  Select(Coalesce(Table1.Column1, Table1.Column2)).From(Table1),
 		ExpectedStmt: "SELECT COALESCE(table1.column1, table1.column2) FROM public.table1",
 	},
@@ -112,8 +120,8 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: "QUOTE_LITERAL($1)",
 	},
 	{
-		Constructed:  QuoteNullable(Table3.UUIDColumn),
-		ExpectedStmt: "QUOTE_NULLABLE(table3.uuid_column)",
+		Constructed:  QuoteNullable(Table3.ID),
+		ExpectedStmt: "QUOTE_NULLABLE(table3.id)",
 	},
 	{
 		Constructed:  Repeat(String("abc"), Table1.Column3),

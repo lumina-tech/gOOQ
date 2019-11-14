@@ -1,6 +1,8 @@
 package gooq
 
 import (
+	"fmt"
+
 	"gopkg.in/guregu/null.v3"
 
 	"github.com/jmoiron/sqlx"
@@ -50,18 +52,19 @@ type SelectHavingStep interface {
 }
 
 type SelectOrderByStep interface {
-	SelectLimitStep
-	OrderBy(...Expression) SelectLimitStep
-}
-
-type SelectLimitStep interface {
 	SelectOffsetStep
-	Limit(limit int) SelectOffsetStep
+	OrderBy(...Expression) SelectOffsetStep
 }
 
 type SelectOffsetStep interface {
+	SelectLimitStep
+	Offset(offset int) SelectLimitStep
+	Seek(v ...interface{}) SelectLimitStep
+}
+
+type SelectLimitStep interface {
 	SelectFinalStep
-	Offset(offset int) SelectFinalStep
+	Limit(limit int) SelectFinalStep
 }
 
 type SelectFinalStep interface {
@@ -91,6 +94,7 @@ type selection struct {
 	isDistinct    bool
 	limit         int
 	offset        int
+	seek          []interface{}
 	lockingType   LockingType
 	lockingOption LockingOption
 }
@@ -165,18 +169,23 @@ func (s *selection) Having(c ...Expression) SelectOrderByStep {
 	return s
 }
 
-func (s *selection) OrderBy(f ...Expression) SelectLimitStep {
+func (s *selection) OrderBy(f ...Expression) SelectOffsetStep {
 	s.ordering = f
 	return s
 }
 
-func (s *selection) Limit(limit int) SelectOffsetStep {
-	s.limit = limit
+func (s *selection) Offset(offset int) SelectLimitStep {
+	s.offset = offset
 	return s
 }
 
-func (s *selection) Offset(offset int) SelectFinalStep {
-	s.offset = offset
+func (s *selection) Seek(v ...interface{}) SelectLimitStep {
+	s.seek = v
+	return s
+}
+
+func (s *selection) Limit(limit int) SelectFinalStep {
+	s.limit = limit
 	return s
 }
 
@@ -264,10 +273,15 @@ func (s *selection) Render(
 		builder.RenderConditions(join.conditions)
 	}
 
+	predicate := s.predicate
+	if len(s.seek) > 0 {
+		predicate = append(predicate, s.getSeekCondition())
+	}
+
 	// render WHERE clause
-	if len(s.predicate) > 0 {
+	if len(predicate) > 0 {
 		builder.Print(" WHERE ")
-		builder.RenderConditions(s.predicate)
+		builder.RenderConditions(predicate)
 	}
 
 	// render GROUP BY clause
@@ -317,4 +331,53 @@ func (s *selection) Render(
 		builder.Printf(") AS \"%s\"", s.alias.String)
 	}
 
+}
+
+// faster and stable pagination based on these two articles
+// https://blog.jooq.org/2013/10/26/faster-sql-paging-with-jooq-using-the-seek-method/
+// https://blog.jooq.org/2013/11/18/faster-sql-pagination-with-keysets-continued/
+// WARNING: seekAfter does not support seeking NULL values or the NULLS FIRST and
+// NULL LAST clauses.
+// e.g. Given the following scenario
+// Select().From(Table1).
+//   OrderBy(Table1.Column1.Desc(), Table1.Column2.Desc(), Table1.Column3.Desc()).
+//   Seek("foo1", "foo2", "foo3"),
+// We should generate the following where clause
+// WHERE ((column1 < "foo1")
+// OR (value1 = "foo1" AND value2 < "foo2")
+// OR (value1 = "foo1" AND value2 = "foo2" AND value3 < "foo3"))
+func (s *selection) getSeekCondition() Expression {
+	if len(s.seek) < len(s.ordering) {
+		panic("number of arguments in seek(...) must be gte number of arguments in orderBy")
+	}
+	// we went with the following approach to deal with mixed ordering
+	var orExpressions []BoolExpression
+	for i, order := range s.ordering {
+		var operand Expression
+		var operator Operator
+		switch order.getOperator() {
+		case OperatorDesc:
+			operand = order.getExpressions()[0]
+			operator = OperatorLt
+		case OperatorAsc:
+			operand = order.getExpressions()[0]
+			operator = OperatorGt
+		case OperatorNil:
+			operand = order
+			operator = OperatorGt
+		default:
+			panic(fmt.Sprintf("seek does not support operator=%s", order.getOperator()))
+		}
+		var andExpressions []BoolExpression
+		for j := 0; j < i; j++ {
+			expr := newBinaryBooleanExpressionImpl(
+				OperatorEq, operand.getOriginal(), newLiteralExpression(s.seek[j]))
+			andExpressions = append(andExpressions, expr)
+		}
+		expr := newBinaryBooleanExpressionImpl(
+			operator, operand.getOriginal(), newLiteralExpression(s.seek[i]))
+		andExpressions = append(andExpressions, expr)
+		orExpressions = append(orExpressions, And(andExpressions...))
+	}
+	return Or(orExpressions...)
 }

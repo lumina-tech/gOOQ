@@ -3,6 +3,8 @@ package gooq
 type Operator string
 
 var (
+	OperatorNil = Operator("")
+
 	OperatorIsNull    = Operator("IS NULL")
 	OperatorIsNotNull = Operator("IS NOT NULL")
 
