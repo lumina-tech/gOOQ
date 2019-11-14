@@ -42,12 +42,12 @@ var expressionTestCases = []TestCase{
 		ExpectedStmt: "(table1.column1 = table2.column1 AND table1.column2 = table2.column2)",
 	},
 	{
-		Constructed:  Table1.Column1.Eq(Table2.Column1).And(Table1.Column2.Eq(Table2.Column2)),
-		ExpectedStmt: "(table1.column1 = table2.column1 AND table1.column2 = table2.column2)",
+		Constructed:  Table1.Column1.Eq(Table2.Column1).And(Table1.Column2.Eq(Table2.Column2)).And(Table1.Column2.Eq(Table2.Column2)),
+		ExpectedStmt: "((table1.column1 = table2.column1 AND table1.column2 = table2.column2) AND table1.column2 = table2.column2)",
 	},
 	{
-		Constructed:  Table1.Column1.Eq(Table2.Column1).And(Table1.Column2.Eq(Table2.Column2)),
-		ExpectedStmt: "(table1.column1 = table2.column1 AND table1.column2 = table2.column2)",
+		Constructed:  Table1.Column1.Eq(Table2.Column1).And(Table1.Column2.Eq(Table2.Column2)).Or(Table1.Column2.Eq(Table2.Column2)),
+		ExpectedStmt: "((table1.column1 = table2.column1 AND table1.column2 = table2.column2) OR table1.column2 = table2.column2)",
 	},
 	{
 		Constructed:  Table1.BoolColumn.IsEq(true),
@@ -134,29 +134,29 @@ var expressionTestCases = []TestCase{
 		ExpectedStmt: "table1.time_column != $1",
 	},
 	{
-		Constructed:  Table1.UUIDColumn.IsEq(uuid.Nil),
-		ExpectedStmt: "table1.uuid_column = $1",
+		Constructed:  Table1.ID.IsEq(uuid.Nil),
+		ExpectedStmt: "table1.id = $1",
 	},
 	{
-		Constructed:  Table1.UUIDColumn.IsNotEq(uuid.Nil),
-		ExpectedStmt: "table1.uuid_column != $1",
+		Constructed:  Table1.ID.IsNotEq(uuid.Nil),
+		ExpectedStmt: "table1.id != $1",
 	},
 	{
-		Constructed:  Table1.UUIDColumn.In(Select().From(Table1)),
-		ExpectedStmt: "table1.uuid_column IN (SELECT * FROM public.table1)",
+		Constructed:  Table1.ID.In(Select().From(Table1)),
+		ExpectedStmt: "table1.id IN (SELECT * FROM public.table1)",
 	},
 	{
-		Constructed:  Table1.UUIDColumn.NotIn(Select().From(Table1)),
-		ExpectedStmt: "table1.uuid_column NOT IN (SELECT * FROM public.table1)",
+		Constructed:  Table1.ID.NotIn(Select().From(Table1)),
+		ExpectedStmt: "table1.id NOT IN (SELECT * FROM public.table1)",
 	},
 	{
-		Constructed:  Table1.UUIDColumn.IsIn(uuid.Nil, uuid.Nil),
-		ExpectedStmt: "table1.uuid_column IN ($1, $2)",
+		Constructed:  Table1.ID.IsIn(uuid.Nil, uuid.Nil),
+		ExpectedStmt: "table1.id IN ($1, $2)",
 		Arguments:    []interface{}{uuid.Nil, uuid.Nil},
 	},
 	{
-		Constructed:  Table1.UUIDColumn.IsNotIn(uuid.Nil, uuid.Nil),
-		ExpectedStmt: "table1.uuid_column NOT IN ($1, $2)",
+		Constructed:  Table1.ID.IsNotIn(uuid.Nil, uuid.Nil),
+		ExpectedStmt: "table1.id NOT IN ($1, $2)",
 		Arguments:    []interface{}{uuid.Nil, uuid.Nil},
 	},
 }
@@ -164,12 +164,3 @@ var expressionTestCases = []TestCase{
 func TestExpressions(t *testing.T) {
 	runTestCases(t, expressionTestCases)
 }
-
-//func TestSingleExpressions(t *testing.T) {
-//	runTestCases(t, []TestCase{
-//		{
-//			Constructed:  Table1.UUIDColumn.inArray(Select().From(Table1)),
-//			ExpectedStmt: "table1.uuid_column IN (SELECT * FROM table1)",
-//		},
-//	})
-//}

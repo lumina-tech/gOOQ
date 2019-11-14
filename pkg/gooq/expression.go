@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"time"
 
-	"gopkg.in/guregu/null.v3"
-
 	"github.com/google/uuid"
 )
 
@@ -14,7 +12,6 @@ type Expression interface {
 	Renderable
 
 	As(alias string) Expression
-	GetAlias() null.String
 
 	// https://www.postgresql.org/docs/11/functions-subquery.html
 	In(subquery Selectable) BoolExpression
@@ -36,15 +33,17 @@ type Expression interface {
 	// https://www.postgresql.org/docs/12/sql-expressions.html
 	Filter(...Expression) Expression
 
-	// IMPORTANT: this is for internal use only.
-	// original returns a reference to the original expression. This allows us to recover
-	// an expression's original type. e.g. when we call TableImpl.column1.Eq(String("foo")
+	// IMPORTANT: these are for internal use only.
+	getExpressions() []Expression
+	getOperator() Operator
+	// getOriginal returns a reference to the getOriginal expression. This allows us to recover
+	// an expression's getOriginal type. e.g. when we call TableImpl.column1.Eq(String("foo")
 	// a newBooleanExpression is created with the operands TableImpl.column1 and
 	// String("foo"). inArray the new boolean expression TableImpl.column1 is stored as a
 	// stringExpressionImpl and has lost its original stringFieldImpl type. When
 	// we render the expression it renders <nil> = 'foo' instead of TableImpl.column1 = 'foo'
 	// because the stringExpressionImpl renderer was used.
-	original() Expression
+	getOriginal() Expression
 }
 
 type ExpressionType int
@@ -59,6 +58,8 @@ const (
 	ExpressionTypeUnaryPrefix
 	ExpressionTypeUnaryPostfix
 	ExpressionTypeBinary
+	// https://en.wikipedia.org/wiki/Plural_quantification
+	ExpressionTypeMultigrade
 )
 
 type expressionImpl struct {
@@ -151,6 +152,15 @@ func (expr *expressionImpl) initLiteralExpression(
 	expr.value = value
 }
 
+func (expr *expressionImpl) initMultigradeExpression(
+	operator Operator, expressions []Expression, options ...ExpressionImplOption,
+) {
+	expr.expressionType = ExpressionTypeMultigrade
+	expr.operator = operator
+	expr.expressions = getOriginalExpressions(expressions)
+	expr.apply(options...)
+}
+
 func (expr *expressionImpl) initBinaryExpression(
 	operator Operator, lhs, rhs Expression, options ...ExpressionImplOption,
 ) {
@@ -188,86 +198,81 @@ func (expr *expressionImpl) apply(
 }
 
 func (expr *expressionImpl) As(alias string) Expression {
-	return newAliasFunction(expr.original(), alias)
-}
-
-// TODO(Peter): this seems wrong
-func (expr *expressionImpl) GetAlias() null.String {
-	return null.String{}
+	return newAliasFunction(expr.getOriginal(), alias)
 }
 
 func (expr *expressionImpl) lt(rhs Expression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorLt, expr.original(), rhs)
+	return newBinaryBooleanExpressionImpl(OperatorLt, expr.getOriginal(), rhs)
 }
 
 func (expr *expressionImpl) lte(rhs Expression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorLte, expr.original(), rhs)
+	return newBinaryBooleanExpressionImpl(OperatorLte, expr.getOriginal(), rhs)
 }
 
 func (expr *expressionImpl) gt(rhs Expression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorGt, expr.original(), rhs)
+	return newBinaryBooleanExpressionImpl(OperatorGt, expr.getOriginal(), rhs)
 }
 
 func (expr *expressionImpl) gte(rhs Expression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorGte, expr.original(), rhs)
+	return newBinaryBooleanExpressionImpl(OperatorGte, expr.getOriginal(), rhs)
 }
 
 func (expr *expressionImpl) eq(rhs Expression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorEq, expr.original(), rhs)
+	return newBinaryBooleanExpressionImpl(OperatorEq, expr.getOriginal(), rhs)
 }
 
 func (expr *expressionImpl) notEq(rhs Expression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorNotEq, expr.original(), rhs)
+	return newBinaryBooleanExpressionImpl(OperatorNotEq, expr.getOriginal(), rhs)
 }
 
 func (expr *expressionImpl) inArray(
 	value []Expression,
 ) BoolExpression {
 	return newBinaryBooleanExpressionImpl(OperatorIn,
-		expr.original(), newExpressionArray(value))
+		expr.getOriginal(), newExpressionArray(value))
 }
 
 func (expr *expressionImpl) notInArray(
 	value []Expression,
 ) BoolExpression {
 	return newBinaryBooleanExpressionImpl(OperatorNotIn,
-		expr.original(), newExpressionArray(value))
+		expr.getOriginal(), newExpressionArray(value))
 }
 
 func (expr *expressionImpl) In(
 	subquery Selectable,
 ) BoolExpression {
 	return newBinaryBooleanExpressionImpl(OperatorIn,
-		expr.original(), newSubquery(subquery, HasParentheses(true)))
+		expr.getOriginal(), newSubquery(subquery, HasParentheses(true)))
 }
 
 func (expr *expressionImpl) NotIn(
 	subquery Selectable,
 ) BoolExpression {
 	return newBinaryBooleanExpressionImpl(OperatorNotIn,
-		expr.original(), newSubquery(subquery, HasParentheses(true)))
+		expr.getOriginal(), newSubquery(subquery, HasParentheses(true)))
 }
 
 func (expr *expressionImpl) IsNull() BoolExpression {
-	return newUnaryPostfixBooleanExpressionImpl(OperatorIsNull, expr.original())
+	return newUnaryPostfixBooleanExpressionImpl(OperatorIsNull, expr.getOriginal())
 }
 
 func (expr *expressionImpl) IsNotNull() BoolExpression {
-	return newUnaryPostfixBooleanExpressionImpl(OperatorIsNotNull, expr.original())
+	return newUnaryPostfixBooleanExpressionImpl(OperatorIsNotNull, expr.getOriginal())
 }
 
 func (expr *expressionImpl) Asc() Expression {
-	return newUnaryPostfixExpression(OperatorAsc, expr.original())
+	return newUnaryPostfixExpression(OperatorAsc, expr.getOriginal())
 }
 
 func (expr *expressionImpl) Desc() Expression {
-	return newUnaryPostfixExpression(OperatorDesc, expr.original())
+	return newUnaryPostfixExpression(OperatorDesc, expr.getOriginal())
 }
 
 func (expr *expressionImpl) Filter(
 	expressions ...Expression,
 ) Expression {
-	return newFilterWhereFunction(expr.original(), expressions...)
+	return newFilterWhereFunction(expr.getOriginal(), expressions...)
 }
 
 func (expr *expressionImpl) Render(
@@ -300,6 +305,14 @@ func (expr *expressionImpl) Render(
 		builder.RenderExpression(lhs).
 			Print(" ").Print(expr.operator.String()).Print(" ").
 			RenderExpression(rhs)
+	case ExpressionTypeMultigrade:
+		for index, expression := range expr.expressions {
+			isLast := index == len(expr.expressions)-1
+			builder.RenderExpression(expression)
+			if !isLast {
+				builder.Print(" ").Print(expr.operator.String()).Print(" ")
+			}
+		}
 	default:
 		panic(fmt.Errorf("invalid operatorType=%v", expr.operator))
 	}
@@ -308,11 +321,19 @@ func (expr *expressionImpl) Render(
 	}
 }
 
-func (expr *expressionImpl) original() Expression {
+func (expr *expressionImpl) getExpressions() []Expression {
+	return expr.expressions
+}
+
+func (expr *expressionImpl) getOriginal() Expression {
 	if expr.originalExpression != nil {
 		return expr.originalExpression
 	}
 	return expr
+}
+
+func (expr *expressionImpl) getOperator() Operator {
+	return expr.operator
 }
 
 func getOriginalExpressions(
@@ -320,7 +341,7 @@ func getOriginalExpressions(
 ) []Expression {
 	var results []Expression
 	for _, expr := range expressions {
-		results = append(results, expr.original())
+		results = append(results, expr.getOriginal())
 	}
 	return results
 }
@@ -368,6 +389,14 @@ func newBinaryBooleanExpressionImpl(
 	return instance
 }
 
+func newMultigradeBooleanExpressionImpl(
+	operator Operator, expressions []Expression, options ...ExpressionImplOption,
+) *boolExpressionImpl {
+	instance := &boolExpressionImpl{}
+	instance.expressionImpl.initMultigradeExpression(operator, expressions, options...)
+	return instance
+}
+
 func newUnaryPostfixBooleanExpressionImpl(
 	operator Operator, expr Expression,
 ) *boolExpressionImpl {
@@ -376,13 +405,13 @@ func newUnaryPostfixBooleanExpressionImpl(
 	return instance
 }
 
-func (expr *boolExpressionImpl) And(expression BoolExpression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorAnd, expr, expression,
+func (expr *boolExpressionImpl) And(rhs BoolExpression) BoolExpression {
+	return newBinaryBooleanExpressionImpl(OperatorAnd, expr, rhs,
 		HasParentheses(true))
 }
 
-func (expr *boolExpressionImpl) Or(expression BoolExpression) BoolExpression {
-	return newBinaryBooleanExpressionImpl(OperatorOr, expr, expression,
+func (expr *boolExpressionImpl) Or(rhs BoolExpression) BoolExpression {
+	return newBinaryBooleanExpressionImpl(OperatorOr, expr, rhs,
 		HasParentheses(true))
 }
 

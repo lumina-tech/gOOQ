@@ -9,6 +9,7 @@ import (
 
 type testTable struct {
 	TableImpl
+	ID            UUIDField
 	Column1       StringField
 	Column2       StringField
 	Column3       IntField
@@ -17,12 +18,12 @@ type testTable struct {
 	DecimalColumn DecimalField
 	StringColumn  StringField
 	TimeColumn    TimeField
-	UUIDColumn    UUIDField
 }
 
 func newTestTable(name string) *testTable {
 	instance := &testTable{}
 	instance.TableImpl.Initialize("public", name)
+	instance.ID = NewUUIDField(instance, "id")
 	instance.Column1 = NewStringField(instance, "column1")
 	instance.Column2 = NewStringField(instance, "column2")
 	instance.Column3 = NewIntField(instance, "column3")
@@ -31,7 +32,6 @@ func newTestTable(name string) *testTable {
 	instance.DecimalColumn = NewDecimalField(instance, "decimal_column")
 	instance.StringColumn = NewStringField(instance, "string_column")
 	instance.TimeColumn = NewTimeField(instance, "time_column")
-	instance.UUIDColumn = NewUUIDField(instance, "uuid_column")
 	return instance
 }
 

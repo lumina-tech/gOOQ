@@ -163,6 +163,33 @@ func (expr *boolExpressionFunctionImpl) Render(
 	builder.Printf(")")
 }
 
+// Multigrade AND, OR expressions
+// And(expr1, expr2, expr3) produces (expr1 AND expr2 AND expr3)
+// where as expr1.And(expr2).And(expr3) produces ((expr1 AND expr2) AND expr3)
+// They are equivalent since AND and OR are associative but in some cases the
+// parentheses causes confusions
+func And(
+	boolExpressions ...BoolExpression,
+) BoolExpression {
+	var expressions []Expression
+	for _, expr := range boolExpressions {
+		expressions = append(expressions, expr)
+	}
+	return newMultigradeBooleanExpressionImpl(OperatorAnd, expressions,
+		HasParentheses(true))
+}
+
+func Or(
+	boolExpressions ...BoolExpression,
+) BoolExpression {
+	var expressions []Expression
+	for _, expr := range boolExpressions {
+		expressions = append(expressions, expr)
+	}
+	return newMultigradeBooleanExpressionImpl(OperatorOr, expressions,
+		HasParentheses(true))
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.3. Comparison Functions
 // https://www.postgresql.org/docs/11/functions-comparison.html

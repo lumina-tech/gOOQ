@@ -96,6 +96,31 @@ var selectTestCases = []TestCase{
 		ExpectedStmt: `SELECT * FROM public.table1 ORDER BY table1.column1 DESC`,
 	},
 	{
+		Constructed:  Select().From(Table1).OrderBy(Table1.Column1, Table1.ID).Seek("foo", "bar"),
+		ExpectedStmt: `SELECT * FROM public.table1 WHERE ((table1.column1 > $1) OR (table1.column1 = $2 AND table1.id > $3)) ORDER BY table1.column1, table1.id`,
+		Arguments:    []interface{}{"foo", "foo", "bar"},
+	},
+	{
+		Constructed:  Select().From(Table1).OrderBy(Table1.Column1.Desc(), Table1.ID.Desc()).Seek("foo", "bar"),
+		ExpectedStmt: `SELECT * FROM public.table1 WHERE ((table1.column1 < $1) OR (table1.column1 = $2 AND table1.id < $3)) ORDER BY table1.column1 DESC, table1.id DESC`,
+		Arguments:    []interface{}{"foo", "foo", "bar"},
+	},
+	{
+		Constructed:  Select().From(Table1).OrderBy(Table1.Column1.Asc(), Table1.ID.Desc()).Seek("foo", "bar"),
+		ExpectedStmt: `SELECT * FROM public.table1 WHERE ((table1.column1 > $1) OR (table1.column1 = $2 AND table1.id < $3)) ORDER BY table1.column1 ASC, table1.id DESC`,
+		Arguments:    []interface{}{"foo", "foo", "bar"},
+	},
+	{
+		Constructed:  Select().From(Table1).OrderBy(Table1.Column1.Desc(), Table1.ID.Asc()).Seek("foo", "bar"),
+		ExpectedStmt: `SELECT * FROM public.table1 WHERE ((table1.column1 < $1) OR (table1.column1 = $2 AND table1.id > $3)) ORDER BY table1.column1 DESC, table1.id ASC`,
+		Arguments:    []interface{}{"foo", "foo", "bar"},
+	},
+	{
+		Constructed:  Select().From(Table1).OrderBy(Table1.Column1.Desc(), Table1.Column2.Desc(), Table1.ID.Asc()).Seek("foo", "bar", "baz"),
+		ExpectedStmt: `SELECT * FROM public.table1 WHERE ((table1.column1 < $1) OR (table1.column1 = $2 AND table1.column2 < $3) OR (table1.column1 = $4 AND table1.column2 = $5 AND table1.id > $6)) ORDER BY table1.column1 DESC, table1.column2 DESC, table1.id ASC`,
+		Arguments:    []interface{}{"foo", "foo", "bar", "foo", "bar", "baz"},
+	},
+	{
 		Constructed:  Select().From(Table1).GroupBy(Table1.Column1),
 		ExpectedStmt: `SELECT * FROM public.table1 GROUP BY table1.column1`,
 	},
