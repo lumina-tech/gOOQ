@@ -67,6 +67,7 @@ type SelectOffsetStep interface {
 type SelectFinalStep interface {
 	Selectable
 	Fetchable
+	As(alias string) Selectable
 	For(LockingType, LockingOption) SelectFinalStep
 	Union(SelectFinalStep) SelectOrderByStep
 }
