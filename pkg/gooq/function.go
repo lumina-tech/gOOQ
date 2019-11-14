@@ -220,10 +220,193 @@ func RTrim(
 	return NewStringExpressionFunction("RTRIM", expressions...)
 }
 
+func Chr(
+	asciiCode NumericExpression,
+) StringExpression {
+	// TODO: add strict checking on asciiCode (i.e. make sure is not 0)
+	return NewStringExpressionFunction("CHR", asciiCode)
+}
+
+func Concat(
+	text Expression, moreText ...Expression,
+) StringExpression {
+	expressions := append([]Expression{text}, moreText...)
+	return NewStringExpressionFunction("CONCAT", expressions...)
+}
+
+func ConcatWs(
+	separator StringExpression,
+	text Expression, moreText ...Expression,
+) StringExpression {
+	expressions := append([]Expression{separator, text}, moreText...)
+	return NewStringExpressionFunction("CONCAT_WS", expressions...)
+}
+
+// TODO: Convert, ConvertFrom, ConvertTo, Decode, Encode
+
+func Format(
+	formatStr StringExpression, formatArg ...Expression,
+) StringExpression {
+	// TODO: enforce checking on number of formatArgs
+	// (i.e. make sure is the same as the number of elements to be replaced in formatStr)
+	expressions := append([]Expression{formatStr}, formatArg...)
+	return NewStringExpressionFunction("FORMAT", expressions...)
+}
+
+func InitCap(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("INITCAP", text)
+}
+
+func Left(
+	text StringExpression, n NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("LEFT", text, n)
+}
+
+func Right(
+	text StringExpression, n NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("RIGHT", text, n)
+}
+
+func Length(
+	text StringExpression, encoding ...StringExpression,
+) NumericExpression {
+	arguments := []Expression{text}
+	if encoding != nil {
+		arguments = append(arguments, encoding[0])
+	}
+	return NewNumericExpressionFunction("LENGTH", arguments...)
+}
+
+func LPad(
+	text StringExpression, len NumericExpression,
+	fill ...StringExpression,
+) StringExpression {
+	arguments := []Expression{text, len}
+	if fill != nil {
+		arguments = append(arguments, fill[0])
+	}
+	return NewStringExpressionFunction("LPAD", arguments...)
+}
+
+func RPad(
+	text StringExpression, len NumericExpression,
+	fill ...StringExpression,
+) StringExpression {
+	arguments := []Expression{text, len}
+	if fill != nil {
+		arguments = append(arguments, fill[0])
+	}
+	return NewStringExpressionFunction("RPAD", arguments...)
+}
+
+func Md5(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("MD5", text)
+}
+
+// TODO: ParseIdent
+
+func PgClientEncoding() StringExpression {
+	return NewStringExpressionFunction("PG_CLIENT_ENCODING")
+}
+
+func QuoteIdent(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("QUOTE_IDENT", text)
+}
+
+func QuoteLiteral(
+	value Expression,
+) StringExpression {
+	return NewStringExpressionFunction("QUOTE_LITERAL", value)
+}
+
+func QuoteNullable(
+	value Expression,
+) StringExpression {
+	return NewStringExpressionFunction("QUOTE_NULLABLE", value)
+}
+
+// TODO: RegexpMatch, RegexpMatches, RegexpReplace,
+// 		 RegexpSplitToArray, RegexpSplitToTable
+
+func Repeat(
+	text StringExpression, n NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("REPEAT", text, n)
+}
+
+func Replace(
+	text StringExpression, from StringExpression, to StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("REPLACE", text, from, to)
+}
+
+func Reverse(
+	text StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("REVERSE", text)
+}
+
+func SplitPart(
+	text StringExpression, delimiter StringExpression,
+	field NumericExpression,
+) StringExpression {
+	return NewStringExpressionFunction("SPLIT_PART", text, delimiter, field)
+}
+
+func Strpos(
+	text StringExpression, substring StringExpression,
+) NumericExpression {
+	return NewNumericExpressionFunction("STRPOS", text, substring)
+}
+
+func Substr(
+	text StringExpression, from NumericExpression,
+	count ...NumericExpression,
+) StringExpression {
+	arguments := []Expression{text, from}
+	if count != nil {
+		arguments = append(arguments, count[0])
+	}
+	return NewStringExpressionFunction("SUBSTR", arguments...)
+}
+
 func StartsWith(
 	text StringExpression, prefix StringExpression,
 ) BoolExpression {
 	return NewBoolExpressionFunction("STARTS_WITH", text, prefix)
+}
+
+func ToAscii(
+	text StringExpression, encoding ...StringExpression,
+) StringExpression {
+	arguments := []Expression{text}
+	if encoding != nil {
+		arguments = append(arguments, encoding[0])
+	}
+	// TODO: enforce encoding to be one of {LATIN1, LATIN2, LATIN9, WIN1250}
+	return NewStringExpressionFunction("TO_ASCII", arguments...)
+}
+
+func ToHex(
+	number NumericExpression,
+) StringExpression {
+	// TODO: enforce integer requirement on number
+	// (either int or bigint, but not decimal)
+	return NewStringExpressionFunction("TO_HEX", number)
+}
+
+func Translate(
+	text StringExpression, from StringExpression, to StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("TRANSLATE", text, from, to)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
