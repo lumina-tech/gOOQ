@@ -353,31 +353,37 @@ func (s *selection) getSeekCondition() Expression {
 	// we went with the following approach to deal with mixed ordering
 	var orExpressions []BoolExpression
 	for i, order := range s.ordering {
-		var operand Expression
 		var operator Operator
 		switch order.getOperator() {
 		case OperatorDesc:
-			operand = order.getExpressions()[0]
 			operator = OperatorLt
 		case OperatorAsc:
-			operand = order.getExpressions()[0]
 			operator = OperatorGt
 		case OperatorNil:
-			operand = order
 			operator = OperatorGt
 		default:
 			panic(fmt.Sprintf("seek does not support operator=%s", order.getOperator()))
 		}
+
 		var andExpressions []BoolExpression
 		for j := 0; j < i; j++ {
 			expr := newBinaryBooleanExpressionImpl(
-				OperatorEq, operand.getOriginal(), newLiteralExpression(s.seek[j]))
+				OperatorEq, s.getOrderByField(s.ordering[j]), newLiteralExpression(s.seek[j]))
 			andExpressions = append(andExpressions, expr)
 		}
 		expr := newBinaryBooleanExpressionImpl(
-			operator, operand.getOriginal(), newLiteralExpression(s.seek[i]))
+			operator, s.getOrderByField(order), newLiteralExpression(s.seek[i]))
 		andExpressions = append(andExpressions, expr)
 		orExpressions = append(orExpressions, And(andExpressions...))
 	}
 	return Or(orExpressions...)
+}
+
+func (s *selection) getOrderByField(
+	order Expression,
+) Expression {
+	if order.getOperator() == OperatorNil {
+		return order.getOriginal()
+	}
+	return order.getExpressions()[0].getOriginal()
 }
