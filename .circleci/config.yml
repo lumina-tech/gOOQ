@@ -45,7 +45,6 @@ jobs: # basic units of work in a run
             CONTACTS_DB_MIGRATIONS: /go/src/github.com/lumina-tech/gooq/examples/swapi/migrations
           # Store the results of our tests in the $TEST_RESULTS directory
           command: |
-            trap "go-junit-report <${TEST_RESULTS}/go-test.out > ${TEST_RESULTS}/go-test-report.xml" EXIT
             go test -v ./... | tee ${TEST_RESULTS}/go-test.out
 
       - run: make # pull and build dependencies for the project
