@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/lumina-tech/gOOQ.svg?style=svg)](https://circleci.com/gh/lumina-tech/gOOQ)
+
 Golang Object Oriented Querying
 
 - inspired by JOOQ - https://www.jooq.org/
