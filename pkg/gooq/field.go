@@ -38,7 +38,7 @@ func (field *fieldImpl) GetQualifiedName() string {
 	if selectableName == "" {
 		return field.name
 	} else {
-		return fmt.Sprintf("%s.%s", selectableName, field.name)
+		return fmt.Sprintf("\"%s\".%s", selectableName, field.name)
 	}
 }
 
