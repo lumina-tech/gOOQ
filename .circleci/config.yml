@@ -47,8 +47,6 @@ jobs: # basic units of work in a run
           command: |
             go test -v ./... | tee ${TEST_RESULTS}/go-test.out
 
-      - run: make # pull and build dependencies for the project
-
       - save_cache: # Store cache in the /go/pkg directory
           key: v1-pkg-cache
           paths:
