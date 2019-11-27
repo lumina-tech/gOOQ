@@ -84,6 +84,7 @@ type person struct {
 	Gender    gooq.StringField
 	HomeWorld gooq.StringField
 	SpeciesID gooq.UUIDField
+	WeaponID  gooq.UUIDField
 
 	Constraints *personConstraints
 }
@@ -112,6 +113,7 @@ func newPerson() *person {
 	instance.Gender = gooq.NewStringField(instance, "gender")
 	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
 	instance.SpeciesID = gooq.NewUUIDField(instance, "species_id")
+	instance.WeaponID = gooq.NewUUIDField(instance, "weapon_id")
 	instance.Constraints = newPersonConstraints()
 	return instance
 }
@@ -219,3 +221,65 @@ func (t *species) ScanRows(
 }
 
 var Species = newSpecies()
+
+type weaponConstraints struct {
+	WeaponPkey gooq.DatabaseConstraint
+}
+
+type weapon struct {
+	gooq.TableImpl
+	Asterisk gooq.StringField
+	ID       gooq.UUIDField
+	Damage   gooq.IntField
+	Price    gooq.IntField
+
+	Constraints *weaponConstraints
+}
+
+func newWeaponConstraints() *weaponConstraints {
+	constraints := &weaponConstraints{}
+	constraints.WeaponPkey = gooq.DatabaseConstraint{
+		Name:      "weapon_pkey",
+		Predicate: null.NewString("", false),
+	}
+	return constraints
+}
+
+func newWeapon() *weapon {
+	instance := &weapon{}
+	instance.Initialize("public", "weapon")
+	instance.Asterisk = gooq.NewStringField(instance, "*")
+	instance.ID = gooq.NewUUIDField(instance, "id")
+	instance.Damage = gooq.NewIntField(instance, "damage")
+	instance.Price = gooq.NewIntField(instance, "price")
+	instance.Constraints = newWeaponConstraints()
+	return instance
+}
+
+func (t *weapon) As(alias string) *weapon {
+	instance := newWeapon()
+	instance.TableImpl = *instance.TableImpl.As(alias)
+	return instance
+}
+
+func (t *weapon) ScanRow(
+	db gooq.DBInterface, stmt gooq.Fetchable,
+) (*model.Weapon, error) {
+	result := model.Weapon{}
+	if err := gooq.ScanRow(db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *weapon) ScanRows(
+	db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]model.Weapon, error) {
+	results := []model.Weapon{}
+	if err := gooq.ScanRows(db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+var Weapon = newWeapon()

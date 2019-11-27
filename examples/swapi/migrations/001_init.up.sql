@@ -30,6 +30,12 @@ CREATE TABLE species(
   FOREIGN KEY (eye_color) REFERENCES color_reference_table(value)
 );
 
+CREATE TABLE weapon(
+  id uuid primary key NOT NULL,
+  damage int NOT NULL,
+  price int NOT NULL
+);
+
 CREATE TABLE person(
   id uuid primary key NOT NULL,
   name text NOT NULL,
@@ -42,11 +48,14 @@ CREATE TABLE person(
   gender gender NOT NULL,
   home_world text NOT NULL,
   species_id uuid NOT NULL,
+  weapon_id uuid,
   FOREIGN KEY (hair_color) REFERENCES color_reference_table(value),
   FOREIGN KEY (skin_color) REFERENCES color_reference_table(value),
   FOREIGN KEY (eye_color) REFERENCES color_reference_table(value),
-  FOREIGN KEY (species_id) REFERENCES species(id)
+  FOREIGN KEY (species_id) REFERENCES species(id),
+  FOREIGN KEY (weapon_id) REFERENCES weapon(id)
 );
+
 
 -- type Person struct {
 -- 	Name      string   `json:"name"`

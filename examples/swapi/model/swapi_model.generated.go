@@ -2,24 +2,28 @@
 
 package model
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/lumina-tech/gooq/pkg/nullable"
+)
 
 type ColorReferenceTable struct {
 	Value string `db:"value" json:"value"`
 }
 
 type Person struct {
-	ID        uuid.UUID `db:"id" json:"id"`
-	Name      string    `db:"name" json:"name"`
-	Height    float64   `db:"height" json:"height"`
-	Mass      float64   `db:"mass" json:"mass"`
-	HairColor Color     `db:"hair_color" json:"hair_color"`
-	SkinColor Color     `db:"skin_color" json:"skin_color"`
-	EyeColor  Color     `db:"eye_color" json:"eye_color"`
-	BirthYear int       `db:"birth_year" json:"birth_year"`
-	Gender    Gender    `db:"gender" json:"gender"`
-	HomeWorld string    `db:"home_world" json:"home_world"`
-	SpeciesID uuid.UUID `db:"species_id" json:"species_id"`
+	ID        uuid.UUID     `db:"id" json:"id"`
+	Name      string        `db:"name" json:"name"`
+	Height    float64       `db:"height" json:"height"`
+	Mass      float64       `db:"mass" json:"mass"`
+	HairColor Color         `db:"hair_color" json:"hair_color"`
+	SkinColor Color         `db:"skin_color" json:"skin_color"`
+	EyeColor  Color         `db:"eye_color" json:"eye_color"`
+	BirthYear int           `db:"birth_year" json:"birth_year"`
+	Gender    Gender        `db:"gender" json:"gender"`
+	HomeWorld string        `db:"home_world" json:"home_world"`
+	SpeciesID uuid.UUID     `db:"species_id" json:"species_id"`
+	WeaponID  nullable.UUID `db:"weapon_id" json:"weapon_id"`
 }
 
 type Species struct {
@@ -33,4 +37,10 @@ type Species struct {
 	EyeColor        Color     `db:"eye_color" json:"eye_color"`
 	HomeWorld       string    `db:"home_world" json:"home_world"`
 	Language        string    `db:"language" json:"language"`
+}
+
+type Weapon struct {
+	ID     uuid.UUID `db:"id" json:"id"`
+	Damage int       `db:"damage" json:"damage"`
+	Price  int       `db:"price" json:"price"`
 }
