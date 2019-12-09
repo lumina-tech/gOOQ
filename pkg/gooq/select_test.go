@@ -23,6 +23,10 @@ var selectTestCases = []TestCase{
 		ExpectedStmt: `SELECT DISTINCT * FROM public.table1`,
 	},
 	{
+		Constructed:  Select(Table1.Column1).DistinctOn(Table1.Column2, Table1.Column3).From(Table1),
+		ExpectedStmt: `SELECT DISTINCT ON ("table1".column2, "table1".column3) "table1".column1 FROM public.table1`,
+	},
+	{
 		Constructed:  Select(Table1.Column1).From(Table1),
 		ExpectedStmt: `SELECT "table1".column1 FROM public.table1`,
 	},
