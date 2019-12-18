@@ -17,6 +17,7 @@ type join struct {
 type SelectDistinctStep interface {
 	SelectWhereStep
 	Distinct() SelectFromStep
+	DistinctOn(...Selectable) SelectFromStep
 	From(Selectable) SelectJoinStep
 }
 
@@ -82,6 +83,7 @@ type SelectFinalStep interface {
 type selection struct {
 	selection     Selectable
 	projections   []Selectable
+	distinctOn    []Selectable
 	joins         []join
 	joinTarget    Selectable
 	joinType      JoinType
@@ -111,6 +113,11 @@ func SelectCount() SelectDistinctStep {
 
 func (s *selection) Distinct() SelectFromStep {
 	s.isDistinct = true
+	return s
+}
+
+func (s *selection) DistinctOn(selectable ...Selectable) SelectFromStep {
+	s.distinctOn = selectable
 	return s
 }
 
@@ -238,6 +245,10 @@ func (s *selection) Render(
 
 	if s.isDistinct {
 		builder.Print("DISTINCT ")
+	} else if len(s.distinctOn) > 0 {
+		builder.Print("DISTINCT ON (")
+		builder.RenderProjections(s.distinctOn)
+		builder.Print(") ")
 	}
 
 	projections := s.projections

@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/google/uuid"
 	"github.com/lumina-tech/gooq/examples/swapi/model"
 	"github.com/lumina-tech/gooq/examples/swapi/table"
 	"github.com/lumina-tech/gooq/pkg/database"
 	"github.com/lumina-tech/gooq/pkg/gooq"
-	"os"
 )
 
 func main() {
@@ -91,5 +92,21 @@ func main() {
 		return
 	}
 	bytes, _ := json.Marshal(results)
+	fmt.Println(string(bytes))
+
+	var distinctResult []model.Person
+	distinctStmt := gooq.Select().DistinctOn(table.Person.Name, table.Person.BirthYear).
+		From(table.Person).
+		OrderBy(table.Person.Name.Desc()).
+		Limit(10)
+
+	builder = &gooq.Builder{}
+	distinctStmt.Render(builder)
+	fmt.Println(builder.String())
+	if err := gooq.ScanRows(dockerDB.DB, distinctStmt, &distinctResult); err != nil {
+		fmt.Fprint(os.Stderr, err.Error())
+		return
+	}
+	bytes, _ = json.Marshal(distinctResult)
 	fmt.Println(string(bytes))
 }

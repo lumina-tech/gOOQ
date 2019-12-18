@@ -186,6 +186,14 @@ var selectTestCases = []TestCase{
 		ExpectedStmt: `SELECT * FROM public.table1 WHERE "table1".column1 = $1 FOR UPDATE SKIP LOCKED`,
 		Arguments:    []interface{}{"foo"},
 	},
+	{
+		Constructed: Select(Table1.Column1, Table1.Column2).
+			DistinctOn(Table1.Column2).
+			From(Table1).
+			Where(Table1.Column1.IsEq("foo")),
+		ExpectedStmt: `SELECT DISTINCT ON ("table1".column2) "table1".column1, "table1".column2 FROM public.table1 WHERE "table1".column1 = $1`,
+		Arguments:    []interface{}{"foo"},
+	},
 	//{
 	//	Select(TimeBucket5MinutesField, Table1.Column2.Avg()).From(Table1),
 	//	"SELECT time_bucket('5 minutes', "table1".creation_date) AS five_min, AVG("table1".column2) FROM public.table1",
