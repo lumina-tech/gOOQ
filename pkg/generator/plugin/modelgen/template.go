@@ -70,6 +70,14 @@ func (t *{{ $table.TableType }}) As(alias string) *{{ $table.TableType }} {
   return instance
 }
 
+func (t *{{ $table.TableType }}) GetColumns() []gooq.Expression {
+	return []gooq.Expression{
+  {{ range $_, $f := $table.Fields -}}
+  t.{{ snakeToCamelID $f.Name }},
+  {{ end -}}
+  }
+}
+
 func (t *{{ $table.TableType }}) ScanRow(
 	db gooq.DBInterface, stmt gooq.Fetchable,
 ) (*{{ $table.QualifiedModelType }}, error) {

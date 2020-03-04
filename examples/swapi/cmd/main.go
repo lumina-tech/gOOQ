@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/google/uuid"
 	"github.com/lumina-tech/gooq/examples/swapi/model"
 	"github.com/lumina-tech/gooq/examples/swapi/table"
 	"github.com/lumina-tech/gooq/pkg/database"
 	"github.com/lumina-tech/gooq/pkg/gooq"
-	"os"
 )
 
 func main() {
@@ -65,31 +66,70 @@ func main() {
 		model.Person
 		Species *model.Species `db:"species"`
 	}
-	speciesWithAlias := table.Species.As("species_alias")
-	stmt := gooq.Select(
-		table.Person.Asterisk,
-		speciesWithAlias.Name.As("species.name"),
-		speciesWithAlias.Classification.As("species.name"),
-		speciesWithAlias.AverageHeight.As("species.average_height"),
-		speciesWithAlias.AverageLifespan.As("species.average_lifespan"),
-		speciesWithAlias.HairColor.As("species.hair_color"),
-		speciesWithAlias.SkinColor.As("species.skin_color"),
-		speciesWithAlias.EyeColor.As("species.eye_color"),
-		speciesWithAlias.HomeWorld.As("species.home_world"),
-		speciesWithAlias.Language.As("species.language"),
-	).From(table.Person).
-		Join(speciesWithAlias).
-		On(table.Person.SpeciesID.Eq(speciesWithAlias.ID))
 
-	builder := &gooq.Builder{}
-	stmt.Render(builder)
-	fmt.Println(builder.String())
+	{
+		speciesWithAlias := table.Species.As("species_alias")
+		stmt := gooq.Select(
+			table.Person.Asterisk,
+			speciesWithAlias.Name.As("species.name"),
+			speciesWithAlias.Classification.As("species.name"),
+			speciesWithAlias.AverageHeight.As("species.average_height"),
+			speciesWithAlias.AverageLifespan.As("species.average_lifespan"),
+			speciesWithAlias.HairColor.As("species.hair_color"),
+			speciesWithAlias.SkinColor.As("species.skin_color"),
+			speciesWithAlias.EyeColor.As("species.eye_color"),
+			speciesWithAlias.HomeWorld.As("species.home_world"),
+			speciesWithAlias.Language.As("species.language"),
+		).From(table.Person).
+			Join(speciesWithAlias).
+			On(table.Person.SpeciesID.Eq(speciesWithAlias.ID))
 
-	var results []PersonWithSpecies
-	if err := gooq.ScanRows(dockerDB.DB, stmt, &results); err != nil {
-		fmt.Fprint(os.Stderr, err.Error())
-		return
+		builder := &gooq.Builder{}
+		stmt.Render(builder)
+		fmt.Println(builder.String())
+
+		var results []PersonWithSpecies
+		if err := gooq.ScanRows(dockerDB.DB, stmt, &results); err != nil {
+			fmt.Fprint(os.Stderr, err.Error())
+			return
+		}
+		bytes, _ := json.Marshal(results)
+		fmt.Println(string(bytes))
 	}
-	bytes, _ := json.Marshal(results)
-	fmt.Println(string(bytes))
+
+	// same as above but we don't have to manually enumerate all the column in species
+	// inside the projection
+	{
+		selection := []gooq.Selectable{table.Person.Asterisk}
+		selection = append(selection,
+			getColumnsWithPrefix("species", table.Species.GetColumns())...)
+		stmt := gooq.Select(selection...).From(table.Person).
+			Join(table.Species).
+			On(table.Person.SpeciesID.Eq(table.Species.ID))
+
+		builder := &gooq.Builder{}
+		stmt.Render(builder)
+		fmt.Println(builder.String())
+
+		var results []PersonWithSpecies
+		if err := gooq.ScanRows(dockerDB.DB, stmt, &results); err != nil {
+			fmt.Fprint(os.Stderr, err.Error())
+			return
+		}
+		bytes, _ := json.Marshal(results)
+		fmt.Println(string(bytes))
+	}
+}
+
+func getColumnsWithPrefix(
+	prefix string, expressions []gooq.Expression,
+) []gooq.Selectable {
+	results := make([]gooq.Selectable, 0)
+	for _, exp := range expressions {
+		if field, ok := exp.(gooq.Field); ok {
+			alias := fmt.Sprintf("%s.%s", prefix, field.GetName())
+			results = append(results, exp.As(alias))
+		}
+	}
+	return results
 }

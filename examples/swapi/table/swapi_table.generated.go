@@ -44,6 +44,12 @@ func (t *colorReferenceTable) As(alias string) *colorReferenceTable {
 	return instance
 }
 
+func (t *colorReferenceTable) GetColumns() []gooq.Expression {
+	return []gooq.Expression{
+		t.Value,
+	}
+}
+
 func (t *colorReferenceTable) ScanRow(
 	db gooq.DBInterface, stmt gooq.Fetchable,
 ) (*model.ColorReferenceTable, error) {
@@ -124,6 +130,23 @@ func (t *person) As(alias string) *person {
 	return instance
 }
 
+func (t *person) GetColumns() []gooq.Expression {
+	return []gooq.Expression{
+		t.ID,
+		t.Name,
+		t.Height,
+		t.Mass,
+		t.HairColor,
+		t.SkinColor,
+		t.EyeColor,
+		t.BirthYear,
+		t.Gender,
+		t.HomeWorld,
+		t.SpeciesID,
+		t.WeaponID,
+	}
+}
+
 func (t *person) ScanRow(
 	db gooq.DBInterface, stmt gooq.Fetchable,
 ) (*model.Person, error) {
@@ -200,6 +223,21 @@ func (t *species) As(alias string) *species {
 	return instance
 }
 
+func (t *species) GetColumns() []gooq.Expression {
+	return []gooq.Expression{
+		t.ID,
+		t.Name,
+		t.Classification,
+		t.AverageHeight,
+		t.AverageLifespan,
+		t.HairColor,
+		t.SkinColor,
+		t.EyeColor,
+		t.HomeWorld,
+		t.Language,
+	}
+}
+
 func (t *species) ScanRow(
 	db gooq.DBInterface, stmt gooq.Fetchable,
 ) (*model.Species, error) {
@@ -260,6 +298,14 @@ func (t *weapon) As(alias string) *weapon {
 	instance := newWeapon()
 	instance.TableImpl = *instance.TableImpl.As(alias)
 	return instance
+}
+
+func (t *weapon) GetColumns() []gooq.Expression {
+	return []gooq.Expression{
+		t.ID,
+		t.Damage,
+		t.Price,
+	}
 }
 
 func (t *weapon) ScanRow(
