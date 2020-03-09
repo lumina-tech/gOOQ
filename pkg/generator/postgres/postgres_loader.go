@@ -121,6 +121,8 @@ func parseType(
 		typ = metadata.DataTypeInt
 	case "bigint":
 		typ = metadata.DataTypeInt64
+	case "json":
+		typ = metadata.DataTypeString
 	case "jsonb":
 		typ = metadata.DataTypeJSONB
 	case "float":
