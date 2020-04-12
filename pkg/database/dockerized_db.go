@@ -52,7 +52,7 @@ func NewDockerizedDB(
 		port := hostPort[1]
 		connStr := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
 			config.Username, config.Password, host, port, config.DatabaseName, config.SSLMode)
-		fmt.Printf(connStr)
+		fmt.Println(connStr)
 		db, err := sqlx.Open("postgres", connStr)
 		if err != nil {
 			return err

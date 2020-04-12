@@ -60,6 +60,10 @@ func (gen *ModelGenerator) GenerateCode(
 		if err != nil {
 			return err
 		}
+		foreignKeyConstraints, err := getForeignKeyConstraintArgs(table)
+		if err != nil {
+			return err
+		}
 		modelType := snaker.SnakeToCamelIdentifier(tableName)
 		args.Tables = append(args.Tables, TableTemplateArgs{
 			TableName:              table.Table.TableName,
@@ -71,6 +75,7 @@ func (gen *ModelGenerator) GenerateCode(
 			ReferenceTableEnumType: getEnumTypeFromReferenceTableName(tableName),
 			Fields:                 fields,
 			Constraints:            constraints,
+			ForeignKeyConstraints:  foreignKeyConstraints,
 		})
 	}
 	enumTemplate := utils.GetTemplate(gen.templateString)
@@ -137,6 +142,21 @@ func getConstraintArgs(
 			Name:      constraint.IndexName,
 			Columns:   columnsString,
 			Predicate: constraint.IndexPredicate,
+		})
+	}
+	return results, nil
+}
+
+func getForeignKeyConstraintArgs(
+	table metadata.Table,
+) ([]ForeignKeyConstraintTemplateArgs, error) {
+	var results []ForeignKeyConstraintTemplateArgs
+	for _, constraint := range table.ForeignKeyConstraints {
+		results = append(results, ForeignKeyConstraintTemplateArgs{
+			Name:              constraint.ConstraintName,
+			ColumnName:        constraint.ColumnName,
+			ForeignTableName:  constraint.ForeignTableName,
+			ForeignColumnName: constraint.ForeignColumnName,
 		})
 	}
 	return results, nil
