@@ -110,6 +110,14 @@ var expressionTestCases = []TestCase{
 		ExpectedStmt: `"table1".string_column != $1`,
 	},
 	{
+		Constructed:  Table1.StringColumn.Like("foo%"),
+		ExpectedStmt: `"table1".string_column LIKE $1`,
+	},
+	{
+		Constructed:  Table1.StringColumn.ILike("%foo%"),
+		ExpectedStmt: `"table1".string_column ILIKE $1`,
+	},
+	{
 		Constructed:  Table1.TimeColumn.IsGt(time.Now()),
 		ExpectedStmt: `"table1".time_column > $1`,
 	},

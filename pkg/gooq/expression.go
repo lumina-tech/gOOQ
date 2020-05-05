@@ -225,6 +225,14 @@ func (expr *expressionImpl) notEq(rhs Expression) BoolExpression {
 	return newBinaryBooleanExpressionImpl(OperatorNotEq, expr.getOriginal(), rhs)
 }
 
+func (expr *expressionImpl) like(rhs Expression) BoolExpression {
+	return newBinaryBooleanExpressionImpl(OperatorLike, expr.getOriginal(), rhs)
+}
+
+func (expr *expressionImpl) iLike(rhs Expression) BoolExpression {
+	return newBinaryBooleanExpressionImpl(OperatorILike, expr.getOriginal(), rhs)
+}
+
 func (expr *expressionImpl) inArray(
 	value []Expression,
 ) BoolExpression {
@@ -590,6 +598,9 @@ type StringExpression interface {
 	IsEq(rhs string) BoolExpression
 	IsNotEq(rhs string) BoolExpression
 
+	Like(value string) BoolExpression
+	ILike(value string) BoolExpression
+
 	// https://www.postgresql.org/docs/11/functions-comparisons.html
 	// [Good First Issue][Help Wanted] TODO: implement remaining operators relevant for expression
 	IsIn(value ...string) BoolExpression
@@ -614,6 +625,14 @@ func (expr *stringExpressionImpl) IsEq(rhs string) BoolExpression {
 
 func (expr *stringExpressionImpl) IsNotEq(rhs string) BoolExpression {
 	return expr.expressionImpl.notEq(String(rhs))
+}
+
+func (expr *stringExpressionImpl) Like(value string) BoolExpression {
+	return expr.expressionImpl.like(String(value))
+}
+
+func (expr *stringExpressionImpl) ILike(value string) BoolExpression {
+	return expr.expressionImpl.iLike(String(value))
 }
 
 func (expr *stringExpressionImpl) IsIn(value ...string) BoolExpression {
