@@ -25,6 +25,8 @@ var (
 	OperatorGte   = Operator(">=")
 	OperatorEq    = Operator("=")
 	OperatorNotEq = Operator("!=")
+	OperatorLike  = Operator("LIKE")
+	OperatorILike = Operator("ILIKE")
 
 	// mathematical operators
 	// https://www.postgresql.org/docs/11/functions-math.html
