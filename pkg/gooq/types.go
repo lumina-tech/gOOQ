@@ -1,6 +1,7 @@
 package gooq
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
@@ -27,10 +28,12 @@ type DatabaseConstraint struct {
 }
 
 type DBInterface interface {
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	Prepare(query string) (*sql.Stmt, error)
-	Queryx(query string, args ...interface{}) (*sqlx.Rows, error)
-	QueryRowx(query string, args ...interface{}) *sqlx.Row
+	sqlx.Execer
+	sqlx.ExecerContext
+	sqlx.Preparer
+	sqlx.PreparerContext
+	sqlx.Queryer
+	sqlx.QueryerContext
 }
 
 type TxInterface interface {
@@ -41,9 +44,12 @@ type TxInterface interface {
 
 type Executable interface {
 	Exec(Dialect, DBInterface) (sql.Result, error)
+	ExecWithContext(context.Context, Dialect, DBInterface) (sql.Result, error)
 }
 
 type Fetchable interface {
 	Fetch(Dialect, DBInterface) (*sqlx.Rows, error)
 	FetchRow(Dialect, DBInterface) *sqlx.Row
+	FetchWithContext(context.Context, Dialect, DBInterface) (*sqlx.Rows, error)
+	FetchRowWithContext(context.Context, Dialect, DBInterface) *sqlx.Row
 }

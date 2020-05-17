@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -23,6 +24,7 @@ func main() {
 	}, "11.4-alpine")
 	defer dockerDB.Close()
 
+	ctx := context.Background()
 	database.MigrateDatabase(dockerDB.DB.DB, "migrations")
 
 	speciesStmt := gooq.InsertInto(table.Species).
@@ -37,7 +39,7 @@ func main() {
 		Set(table.Species.HomeWorld, "Earth").
 		Set(table.Species.Language, "English").
 		Returning(table.Species.Asterisk)
-	species, err := table.Species.ScanRow(dockerDB.DB, speciesStmt)
+	species, err := table.Species.ScanRowWithContext(ctx, dockerDB.DB, speciesStmt)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error())
 		return
@@ -56,7 +58,7 @@ func main() {
 		Set(table.Person.SkinColor, model.ColorOrange).
 		Set(table.Person.SpeciesID, species.ID).
 		Returning(table.Person.Asterisk)
-	_, err = table.Person.ScanRow(dockerDB.DB, personStmt)
+	_, err = table.Person.ScanRowWithContext(ctx, dockerDB.DB, personStmt)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error())
 		return
@@ -89,7 +91,7 @@ func main() {
 		fmt.Println(builder.String())
 
 		var results []PersonWithSpecies
-		if err := gooq.ScanRows(dockerDB.DB, stmt, &results); err != nil {
+		if err := gooq.ScanRowsWithContext(ctx, dockerDB.DB, stmt, &results); err != nil {
 			fmt.Fprint(os.Stderr, err.Error())
 			return
 		}
@@ -112,7 +114,7 @@ func main() {
 		fmt.Println(builder.String())
 
 		var results []PersonWithSpecies
-		if err := gooq.ScanRows(dockerDB.DB, stmt, &results); err != nil {
+		if err := gooq.ScanRowsWithContext(ctx, dockerDB.DB, stmt, &results); err != nil {
 			fmt.Fprint(os.Stderr, err.Error())
 			return
 		}

@@ -1,6 +1,7 @@
 package gooq
 
 import (
+	"context"
 	"fmt"
 
 	"gopkg.in/guregu/null.v3"
@@ -220,6 +221,18 @@ func (s *selection) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
 func (s *selection) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
 	builder := s.Build(dl)
 	return db.QueryRowx(builder.String(), builder.arguments...)
+}
+
+func (s *selection) FetchWithContext(
+	ctx context.Context, dl Dialect, db DBInterface) (*sqlx.Rows, error) {
+	builder := s.Build(dl)
+	return db.QueryxContext(ctx, builder.String(), builder.arguments...)
+}
+
+func (s *selection) FetchRowWithContext(
+	ctx context.Context, dl Dialect, db DBInterface) *sqlx.Row {
+	builder := s.Build(dl)
+	return db.QueryRowxContext(ctx, builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////

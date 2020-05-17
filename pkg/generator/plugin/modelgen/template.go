@@ -98,6 +98,26 @@ func (t *{{ $table.TableType }}) ScanRows(
 	return results, nil
 }
 
+func (t *{{ $table.TableType }}) ScanRowWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) (*{{ $table.QualifiedModelType }}, error) {
+	result := {{ $table.QualifiedModelType }}{}
+	if err := gooq.ScanRowWithContext(ctx, db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *{{ $table.TableType }}) ScanRowsWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]{{ $table.QualifiedModelType }}, error) {
+	results := []{{ $table.QualifiedModelType }}{}
+	if err := gooq.ScanRowsWithContext(ctx, db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 var {{ $table.TableSingletonName }} = new{{ capitalize $table.TableType }}()
 {{ end }}
 `
