@@ -3,6 +3,8 @@
 package table
 
 import (
+	"context"
+
 	"github.com/lumina-tech/gooq/examples/swapi/model"
 	"github.com/lumina-tech/gooq/pkg/gooq"
 	"gopkg.in/guregu/null.v3"
@@ -65,6 +67,26 @@ func (t *colorReferenceTable) ScanRows(
 ) ([]model.ColorReferenceTable, error) {
 	results := []model.ColorReferenceTable{}
 	if err := gooq.ScanRows(db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+func (t *colorReferenceTable) ScanRowWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) (*model.ColorReferenceTable, error) {
+	result := model.ColorReferenceTable{}
+	if err := gooq.ScanRowWithContext(ctx, db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *colorReferenceTable) ScanRowsWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]model.ColorReferenceTable, error) {
+	results := []model.ColorReferenceTable{}
+	if err := gooq.ScanRowsWithContext(ctx, db, stmt, &results); err != nil {
 		return nil, err
 	}
 	return results, nil
@@ -167,6 +189,26 @@ func (t *person) ScanRows(
 	return results, nil
 }
 
+func (t *person) ScanRowWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) (*model.Person, error) {
+	result := model.Person{}
+	if err := gooq.ScanRowWithContext(ctx, db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *person) ScanRowsWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]model.Person, error) {
+	results := []model.Person{}
+	if err := gooq.ScanRowsWithContext(ctx, db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 var Person = newPerson()
 
 type speciesConstraints struct {
@@ -258,6 +300,26 @@ func (t *species) ScanRows(
 	return results, nil
 }
 
+func (t *species) ScanRowWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) (*model.Species, error) {
+	result := model.Species{}
+	if err := gooq.ScanRowWithContext(ctx, db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *species) ScanRowsWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]model.Species, error) {
+	results := []model.Species{}
+	if err := gooq.ScanRowsWithContext(ctx, db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 var Species = newSpecies()
 
 type weaponConstraints struct {
@@ -323,6 +385,26 @@ func (t *weapon) ScanRows(
 ) ([]model.Weapon, error) {
 	results := []model.Weapon{}
 	if err := gooq.ScanRows(db, stmt, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+func (t *weapon) ScanRowWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) (*model.Weapon, error) {
+	result := model.Weapon{}
+	if err := gooq.ScanRowWithContext(ctx, db, stmt, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (t *weapon) ScanRowsWithContext(
+	ctx context.Context, db gooq.DBInterface, stmt gooq.Fetchable,
+) ([]model.Weapon, error) {
+	results := []model.Weapon{}
+	if err := gooq.ScanRowsWithContext(ctx, db, stmt, &results); err != nil {
 		return nil, err
 	}
 	return results, nil

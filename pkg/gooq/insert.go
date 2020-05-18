@@ -1,6 +1,7 @@
 package gooq
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
@@ -143,6 +144,12 @@ func (i *insert) Exec(dl Dialect, db DBInterface) (sql.Result, error) {
 	return db.Exec(builder.String(), builder.arguments...)
 }
 
+func (i *insert) ExecWithContext(
+	ctx context.Context, dl Dialect, db DBInterface) (sql.Result, error) {
+	builder := i.Build(dl)
+	return db.ExecContext(ctx, builder.String(), builder.arguments...)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Fetchable
 ///////////////////////////////////////////////////////////////////////////////
@@ -155,6 +162,18 @@ func (i *insert) Fetch(dl Dialect, db DBInterface) (*sqlx.Rows, error) {
 func (i *insert) FetchRow(dl Dialect, db DBInterface) *sqlx.Row {
 	builder := i.Build(dl)
 	return db.QueryRowx(builder.String(), builder.arguments...)
+}
+
+func (i *insert) FetchWithContext(
+	ctx context.Context, dl Dialect, db DBInterface) (*sqlx.Rows, error) {
+	builder := i.Build(dl)
+	return db.QueryxContext(ctx, builder.String(), builder.arguments...)
+}
+
+func (i *insert) FetchRowWithContext(
+	ctx context.Context, dl Dialect, db DBInterface) *sqlx.Row {
+	builder := i.Build(dl)
+	return db.QueryRowxContext(ctx, builder.String(), builder.arguments...)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
