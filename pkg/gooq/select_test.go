@@ -190,6 +190,12 @@ var selectTestCases = []TestCase{
 		ExpectedStmt: `SELECT * FROM public.table1 WHERE "table1".column1 = $1 FOR UPDATE SKIP LOCKED`,
 		Arguments:    []interface{}{"foo"},
 	},
+	{
+		Constructed: With("temp",
+			Update(Table1).Set(Table1.Column1, "Foo").Returning(Asterisk)).
+			Select().From(NewTable("", "temp")).OrderBy(NewStringField(nil, "column2")),
+		ExpectedStmt: `WITH temp AS (UPDATE public.table1 SET column1 = $1 RETURNING *) SELECT * FROM temp ORDER BY column2`,
+	},
 	//{
 	//	Select(TimeBucket5MinutesField, Table1.Column2.Avg()).From(Table1),
 	//	"SELECT time_bucket('5 minutes', "table1".creation_date) AS five_min, AVG("table1".column2) FROM public.table1",

@@ -145,7 +145,7 @@ type defaultStringField struct {
 }
 
 func NewStringField(
-	table Table, name string,
+	table Selectable, name string,
 ) StringField {
 	field := &defaultStringField{}
 	field.expressionImpl.initFieldExpressionImpl(field)

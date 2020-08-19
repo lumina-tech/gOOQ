@@ -15,6 +15,11 @@ type join struct {
 	conditions []Expression
 }
 
+type SelectWithStep interface {
+	SelectFromStep
+	Select(projections ...Selectable) SelectFromStep
+}
+
 type SelectDistinctStep interface {
 	SelectWhereStep
 	Distinct() SelectFromStep
@@ -82,6 +87,8 @@ type SelectFinalStep interface {
 ///////////////////////////////////////////////////////////////////////////////
 
 type selection struct {
+	with          Selectable
+	withAlias     null.String
 	selection     Selectable
 	distinctOn    []Expression
 	projections   []Selectable
@@ -110,6 +117,19 @@ func SelectCount() SelectDistinctStep {
 	return &selection{
 		projections: []Selectable{Count(Asterisk)},
 	}
+}
+
+func With(withAlias string, t Selectable) SelectWithStep {
+	s := &selection{
+		withAlias: null.StringFrom(withAlias),
+		with:      t,
+	}
+	return s
+}
+
+func (s *selection) Select(projections ...Selectable) SelectFromStep {
+	s.projections = projections
+	return s
 }
 
 func (s *selection) Distinct() SelectFromStep {
@@ -252,6 +272,12 @@ func (s *selection) Render(
 	hasAlias := s.alias.Valid
 	if hasAlias {
 		builder.Print("(")
+	}
+
+	if s.withAlias.Valid {
+		builder.Printf("WITH %s AS (", s.withAlias.String)
+		s.with.Render(builder)
+		builder.Print(") ")
 	}
 
 	builder.Print("SELECT ")

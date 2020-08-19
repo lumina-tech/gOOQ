@@ -48,6 +48,9 @@ func (t TableImpl) GetName() string {
 }
 
 func (t TableImpl) GetQualifiedName() string {
+	if t.schema == "" {
+		return t.name
+	}
 	return fmt.Sprintf("%s.%s", t.schema, t.name)
 }
 
