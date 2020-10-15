@@ -167,6 +167,10 @@ var functionTestCases = []TestCase{
 		Constructed:  Translate(String("12345"), String("143"), String("ax")),
 		ExpectedStmt: `TRANSLATE($1, $2, $3)`,
 	},
+	{
+		Constructed:  TryAdvisoryLock(Int64(43)),
+		ExpectedStmt: `pg_try_advisory_lock($1)`,
+	},
 }
 
 func TestFunctions(t *testing.T) {

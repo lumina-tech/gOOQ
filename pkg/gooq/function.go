@@ -533,3 +533,15 @@ func NullIf(
 // https://www.postgresql.org/docs/11/typeconv-func.html
 // [Help Wanted] TODO: implement remaining functions
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Advisory Lock Functions
+// https://www.postgresql.org/docs/11/functions-admin.html
+// [Help Wanted] TODO: implement remaining functions
+///////////////////////////////////////////////////////////////////////////////
+
+func TryAdvisoryLock(
+	number NumericExpression,
+) BoolExpression {
+	return NewBoolExpressionFunction("pg_try_advisory_lock", number)
+}
