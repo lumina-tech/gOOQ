@@ -545,3 +545,9 @@ func TryAdvisoryLock(
 ) BoolExpression {
 	return NewBoolExpressionFunction("pg_try_advisory_lock", number)
 }
+
+func ReleaseAdvisoryLock(
+	number NumericExpression,
+) BoolExpression {
+	return NewBoolExpressionFunction("pg_advisory_unlock", number)
+}

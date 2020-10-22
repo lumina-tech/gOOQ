@@ -171,6 +171,10 @@ var functionTestCases = []TestCase{
 		Constructed:  TryAdvisoryLock(Int64(43)),
 		ExpectedStmt: `pg_try_advisory_lock($1)`,
 	},
+	{
+		Constructed: ReleaseAdvisoryLock(Int64(52)),
+		ExpectedStmt: `pg_advisory_unlock($1)`,
+	},
 }
 
 func TestFunctions(t *testing.T) {
