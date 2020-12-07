@@ -11,7 +11,8 @@ import (
 
 var (
 	nilJSON       = []byte(`"00000000-0000-0000-0000-000000000000"`)
-	uuidJSON      = []byte(`"4925be64-f5dc-4a49-a682-98134ca5286d"`)
+	uuidJSON1     = []byte(`"4925be64-f5dc-4a49-a682-98134ca5286d"`)
+	uuidJSON2     = []byte(`"4925be64-f5dc-4a49-a682-98134ca5286d"`)
 	blankUUIDJSON = []byte(`""`)
 	nullJSON      = []byte(`null`)
 	invalidJSON   = []byte(`:)`)
@@ -52,7 +53,7 @@ func TestUnmarshalUUID(t *testing.T) {
 	expected, _ := uuid.Parse("4925be64-f5dc-4a49-a682-98134ca5286d")
 
 	var u nullable.UUID
-	err := json.Unmarshal(uuidJSON, &u)
+	err := json.Unmarshal(uuidJSON1, &u)
 	require.NoError(t, err)
 	require.True(t, u.Valid)
 	require.Equal(t, expected, u.UUID)
