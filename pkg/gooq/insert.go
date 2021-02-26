@@ -253,7 +253,7 @@ func (i *insert) renderColumnsAndValues(
 		}
 		builder.Print(")")
 		if arrayIndex != len(values)-1 {
-			builder.Print(" ")
+			builder.Print(", ")
 		}
 	}
 	return builder
