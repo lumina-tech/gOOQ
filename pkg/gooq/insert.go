@@ -215,7 +215,9 @@ func (i *insert) Render(
 			}
 			builder.Printf(")")
 		}
-		if i.conflictAction == ConflictActionDoUpdate {
+		if i.conflictAction == ConflictActionDoNothing {
+			builder.Print(" DO NOTHING")
+		} else if i.conflictAction == ConflictActionDoUpdate {
 			builder.Printf(" %s SET ", i.conflictAction)
 			builder.RenderSetPredicates(i.conflictSetPredicates)
 		}
