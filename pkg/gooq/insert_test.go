@@ -50,6 +50,12 @@ var insertTestCases = []TestCase{
 			SetUpdateColumns(Table1.Column2),
 		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ("table1".column1) DO UPDATE SET column2 = "EXCLUDED".column2`,
 	},
+	{
+		Constructed: InsertInto(Table1).
+			Set(Table1.Column1, "foo").Set(Table1.Column2, "bar").
+			OnConflictDoNothing(),
+		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+	},
 }
 
 func TestInsert(t *testing.T) {
