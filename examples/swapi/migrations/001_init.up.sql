@@ -30,6 +30,8 @@ CREATE TABLE species(
   FOREIGN KEY (eye_color) REFERENCES color_reference_table(value)
 );
 
+CREATE UNIQUE INDEX species_uniqueness_constraint ON species (name, classification);
+
 CREATE TABLE weapon(
   id uuid primary key NOT NULL,
   damage int NOT NULL,

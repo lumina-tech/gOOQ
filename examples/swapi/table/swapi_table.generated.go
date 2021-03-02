@@ -22,10 +22,14 @@ type colorReferenceTable struct {
 	Constraints *colorReferenceTableConstraints
 }
 
-func newColorReferenceTableConstraints() *colorReferenceTableConstraints {
+func newColorReferenceTableConstraints(
+	instance *colorReferenceTable,
+) *colorReferenceTableConstraints {
 	constraints := &colorReferenceTableConstraints{}
 	constraints.ColorReferenceTablePkey = gooq.DatabaseConstraint{
-		Name:      "color_reference_table_pkey",
+		Name: "color_reference_table_pkey",
+		Columns: []gooq.Field{
+			instance.Value},
 		Predicate: null.NewString("", false),
 	}
 	return constraints
@@ -36,7 +40,7 @@ func newColorReferenceTable() *colorReferenceTable {
 	instance.Initialize("public", "color_reference_table")
 	instance.Asterisk = gooq.NewStringField(instance, "*")
 	instance.Value = gooq.NewStringField(instance, "value")
-	instance.Constraints = newColorReferenceTableConstraints()
+	instance.Constraints = newColorReferenceTableConstraints(instance)
 	return instance
 }
 
@@ -117,10 +121,14 @@ type person struct {
 	Constraints *personConstraints
 }
 
-func newPersonConstraints() *personConstraints {
+func newPersonConstraints(
+	instance *person,
+) *personConstraints {
 	constraints := &personConstraints{}
 	constraints.PersonPkey = gooq.DatabaseConstraint{
-		Name:      "person_pkey",
+		Name: "person_pkey",
+		Columns: []gooq.Field{
+			instance.ID},
 		Predicate: null.NewString("", false),
 	}
 	return constraints
@@ -142,7 +150,7 @@ func newPerson() *person {
 	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
 	instance.SpeciesID = gooq.NewUUIDField(instance, "species_id")
 	instance.WeaponID = gooq.NewUUIDField(instance, "weapon_id")
-	instance.Constraints = newPersonConstraints()
+	instance.Constraints = newPersonConstraints(instance)
 	return instance
 }
 
@@ -212,7 +220,8 @@ func (t *person) ScanRowsWithContext(
 var Person = newPerson()
 
 type speciesConstraints struct {
-	SpeciesPkey gooq.DatabaseConstraint
+	SpeciesPkey                 gooq.DatabaseConstraint
+	SpeciesUniquenessConstraint gooq.DatabaseConstraint
 }
 
 type species struct {
@@ -232,10 +241,20 @@ type species struct {
 	Constraints *speciesConstraints
 }
 
-func newSpeciesConstraints() *speciesConstraints {
+func newSpeciesConstraints(
+	instance *species,
+) *speciesConstraints {
 	constraints := &speciesConstraints{}
 	constraints.SpeciesPkey = gooq.DatabaseConstraint{
-		Name:      "species_pkey",
+		Name: "species_pkey",
+		Columns: []gooq.Field{
+			instance.ID},
+		Predicate: null.NewString("", false),
+	}
+	constraints.SpeciesUniquenessConstraint = gooq.DatabaseConstraint{
+		Name: "species_uniqueness_constraint",
+		Columns: []gooq.Field{
+			instance.Name, instance.Classification},
 		Predicate: null.NewString("", false),
 	}
 	return constraints
@@ -255,7 +274,7 @@ func newSpecies() *species {
 	instance.EyeColor = gooq.NewStringField(instance, "eye_color")
 	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
 	instance.Language = gooq.NewStringField(instance, "language")
-	instance.Constraints = newSpeciesConstraints()
+	instance.Constraints = newSpeciesConstraints(instance)
 	return instance
 }
 
@@ -336,10 +355,14 @@ type weapon struct {
 	Constraints *weaponConstraints
 }
 
-func newWeaponConstraints() *weaponConstraints {
+func newWeaponConstraints(
+	instance *weapon,
+) *weaponConstraints {
 	constraints := &weaponConstraints{}
 	constraints.WeaponPkey = gooq.DatabaseConstraint{
-		Name:      "weapon_pkey",
+		Name: "weapon_pkey",
+		Columns: []gooq.Field{
+			instance.ID},
 		Predicate: null.NewString("", false),
 	}
 	return constraints
@@ -352,7 +375,7 @@ func newWeapon() *weapon {
 	instance.ID = gooq.NewUUIDField(instance, "id")
 	instance.Damage = gooq.NewIntField(instance, "damage")
 	instance.Price = gooq.NewIntField(instance, "price")
-	instance.Constraints = newWeaponConstraints()
+	instance.Constraints = newWeaponConstraints(instance)
 	return instance
 }
 

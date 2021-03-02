@@ -41,14 +41,14 @@ var insertTestCases = []TestCase{
 			Set(Table1.Column1, "foo").Set(Table1.Column2, "bar").
 			OnConflictDoUpdate(&Table1Constraint).
 			SetUpdates(Table1.Column2, String("bar")),
-		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT DO UPDATE ("table1".column1) SET column2 = $3`,
+		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ("table1".column1) DO UPDATE SET column2 = $3`,
 	},
 	{
 		Constructed: InsertInto(Table1).
 			Set(Table1.Column1, "foo").Set(Table1.Column2, "bar").
 			OnConflictDoUpdate(&Table1Constraint).
 			SetUpdateColumns(Table1.Column2),
-		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT DO UPDATE ("table1".column1) SET column2 = "EXCLUDED".column2`,
+		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ("table1".column1) DO UPDATE SET column2 = "EXCLUDED".column2`,
 	},
 }
 

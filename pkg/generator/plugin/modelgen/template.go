@@ -42,11 +42,16 @@ type {{ $table.TableType }} struct {
   Constraints *{{ $table.TableType }}Constraints
 }
 
-func new{{ capitalize $table.TableType }}Constraints() *{{ $table.TableType }}Constraints {
+func new{{ capitalize $table.TableType }}Constraints(
+  instance *{{ $table.TableType }},
+) *{{ $table.TableType }}Constraints {
   constraints := &{{ $table.TableType }}Constraints{}
   {{ range $_, $f := $table.Constraints -}}
   constraints.{{ snakeToCamel $f.Name }} = gooq.DatabaseConstraint{
     Name: "{{$f.Name}}",
+    Columns: []gooq.Field{
+      {{ range $f.Columns -}}instance.{{ snakeToCamel . }},{{ end -}}
+    },
     Predicate: null.NewString("{{$f.Predicate.String}}", {{$f.Predicate.Valid}}),
   }
   {{ end -}}
@@ -60,7 +65,7 @@ func new{{ capitalize $table.TableType }}() *{{ $table.TableType }} {
   {{ range $_, $f := $table.Fields -}}
   instance.{{ snakeToCamelID $f.Name }} = gooq.New{{ $f.GooqType }}Field(instance, "{{ $f.Name }}")
   {{ end -}}
-  instance.Constraints = new{{ $table.ModelType }}Constraints()
+  instance.Constraints = new{{ $table.ModelType }}Constraints(instance)
   return instance
 }
 
