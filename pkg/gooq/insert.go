@@ -120,7 +120,8 @@ func (i *insert) SetUpdates(
 func (i *insert) SetUpdateColumns(
 	fields ...Field,
 ) InsertOnConflictSetStep {
-	excludedTable := NewTable("", "EXCLUDED")
+	// NOTE: excluded has to be lowercase
+	excludedTable := NewTable("", "excluded")
 	for _, field := range fields {
 		i.conflictSetPredicates = append(i.conflictSetPredicates, setPredicate{
 			field: field,
@@ -206,14 +207,7 @@ func (i *insert) Render(
 	if i.conflictAction != ConflictActionNil {
 		builder.Printf(" ON CONFLICT")
 		if i.conflictConstraint != nil {
-			builder.Printf(" (")
-			for index, column := range i.conflictConstraint.Columns {
-				builder.Print(column.GetQualifiedName())
-				if index != len(i.conflictConstraint.Columns)-1 {
-					builder.Printf(", ")
-				}
-			}
-			builder.Printf(")")
+			builder.Printf(" ON CONSTRAINT %s", i.conflictConstraint.Name)
 		}
 		if i.conflictAction == ConflictActionDoNothing {
 			builder.Print(" DO NOTHING")

@@ -29,10 +29,6 @@ var insertTestCases = []TestCase{
 		ExpectedStmt: `INSERT INTO public.table1 (SELECT "table1".column1 FROM public.table1)`,
 	},
 	{
-		Constructed:  InsertInto(Table1).Set(Table1.Column1, "foo").OnConflictDoNothing(),
-		ExpectedStmt: `INSERT INTO public.table1 (column1) VALUES ($1) ON CONFLICT DO NOTHING`,
-	},
-	{
 		Constructed:  InsertInto(Table1).Set(Table1.Column1, "foo").Returning(Table1.Column1),
 		ExpectedStmt: `INSERT INTO public.table1 (column1) VALUES ($1) RETURNING "table1".column1`,
 	},
@@ -41,20 +37,18 @@ var insertTestCases = []TestCase{
 			Set(Table1.Column1, "foo").Set(Table1.Column2, "bar").
 			OnConflictDoUpdate(&Table1Constraint).
 			SetUpdates(Table1.Column2, String("bar")),
-		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ("table1".column1) DO UPDATE SET column2 = $3`,
+		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ON CONSTRAINT table1_pkey DO UPDATE SET column2 = $3`,
 	},
 	{
 		Constructed: InsertInto(Table1).
 			Set(Table1.Column1, "foo").Set(Table1.Column2, "bar").
 			OnConflictDoUpdate(&Table1Constraint).
 			SetUpdateColumns(Table1.Column2),
-		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ("table1".column1) DO UPDATE SET column2 = "EXCLUDED".column2`,
+		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT ON CONSTRAINT table1_pkey DO UPDATE SET column2 = "excluded".column2`,
 	},
 	{
-		Constructed: InsertInto(Table1).
-			Set(Table1.Column1, "foo").Set(Table1.Column2, "bar").
-			OnConflictDoNothing(),
-		ExpectedStmt: `INSERT INTO public.table1 (column1, column2) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+		Constructed:  InsertInto(Table1).Set(Table1.Column1, "foo").OnConflictDoNothing(),
+		ExpectedStmt: `INSERT INTO public.table1 (column1) VALUES ($1) ON CONFLICT DO NOTHING`,
 	},
 }
 
