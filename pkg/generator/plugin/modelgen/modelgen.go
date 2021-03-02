@@ -3,6 +3,7 @@ package modelgen
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -135,7 +136,11 @@ func getConstraintArgs(
 		}
 		for index := range columns {
 			column := columns[index]
-			columns[index] = strings.Replace(column, "\"", "\\\"", -1)
+			// some of the constraint columns have quotes we should unquote them
+			if strings.ContainsAny(column, "\"") {
+				unquotedColumn, _ := strconv.Unquote(column)
+				columns[index] = unquotedColumn
+			}
 		}
 		results = append(results, ConstraintTemplateArgs{
 			Name:      constraint.IndexName,
