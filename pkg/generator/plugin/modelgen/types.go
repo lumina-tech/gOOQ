@@ -22,19 +22,19 @@ type TableTemplateArgs struct {
 	IsReferenceTable       bool
 	Fields                 []FieldTemplateArgs
 	Constraints            []ConstraintTemplateArgs
-	ForeignKeyConstraints []ForeignKeyConstraintTemplateArgs
+	ForeignKeyConstraints  []ForeignKeyConstraintTemplateArgs
 }
 
 type ConstraintTemplateArgs struct {
 	Name      string
-	Columns   string
+	Columns   []string
 	Predicate null.String
 }
 
 type ForeignKeyConstraintTemplateArgs struct {
-	Name string
-	ColumnName string
-	ForeignTableName string
+	Name              string
+	ColumnName        string
+	ForeignTableName  string
 	ForeignColumnName string
 }
 

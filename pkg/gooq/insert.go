@@ -204,7 +204,7 @@ func (i *insert) Render(
 
 	// [ ON CONFLICT conflict_action ]
 	if i.conflictAction != ConflictActionNil {
-		builder.Printf(" ON CONFLICT %s", i.conflictAction)
+		builder.Printf(" ON CONFLICT")
 		if i.conflictConstraint != nil {
 			builder.Printf(" (")
 			for index, column := range i.conflictConstraint.Columns {
@@ -216,7 +216,7 @@ func (i *insert) Render(
 			builder.Printf(")")
 		}
 		if i.conflictAction == ConflictActionDoUpdate {
-			builder.Print(" SET ")
+			builder.Printf(" %s SET ", i.conflictAction)
 			builder.RenderSetPredicates(i.conflictSetPredicates)
 		}
 	}

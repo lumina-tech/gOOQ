@@ -137,10 +137,9 @@ func getConstraintArgs(
 			column := columns[index]
 			columns[index] = strings.Replace(column, "\"", "\\\"", -1)
 		}
-		columnsString := fmt.Sprintf("{\"%s\"}", strings.Join(columns, "\",\""))
 		results = append(results, ConstraintTemplateArgs{
 			Name:      constraint.IndexName,
-			Columns:   columnsString,
+			Columns:   columns,
 			Predicate: constraint.IndexPredicate,
 		})
 	}
