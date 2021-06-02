@@ -27,6 +27,7 @@ var (
 	OperatorNotEq = Operator("!=")
 	OperatorLike  = Operator("LIKE")
 	OperatorILike = Operator("ILIKE")
+	OperatorIsDistinctFrom = Operator("IS DISTINCT FROM")
 
 	// mathematical operators
 	// https://www.postgresql.org/docs/11/functions-math.html
