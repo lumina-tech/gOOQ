@@ -167,6 +167,10 @@ var expressionTestCases = []TestCase{
 		ExpectedStmt: `"table1".id NOT IN ($1, $2)`,
 		Arguments:    []interface{}{uuid.Nil, uuid.Nil},
 	},
+	{
+		Constructed: Coalesce(Sum(Table1.Column1).Filter(Table1.Column2.IsDistinctFrom("str1")), Float64(0)).As("new_name"),
+		ExpectedStmt: `COALESCE(SUM("table1".column1) FILTER (WHERE "table1".column2 IS DISTINCT FROM $1), $2) AS "new_name"`,
+	},
 }
 
 func TestExpressions(t *testing.T) {
