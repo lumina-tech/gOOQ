@@ -233,6 +233,10 @@ func (expr *expressionImpl) iLike(rhs Expression) BoolExpression {
 	return newBinaryBooleanExpressionImpl(OperatorILike, expr.getOriginal(), rhs)
 }
 
+func (expr *expressionImpl) isDistinctFrom(rhs Expression) BoolExpression {
+	return newBinaryBooleanExpressionImpl(OperatorIsDistinctFrom, expr.getOriginal(), rhs)
+}
+
 func (expr *expressionImpl) inArray(
 	value []Expression,
 ) BoolExpression {
@@ -601,6 +605,8 @@ type StringExpression interface {
 	Like(value string) BoolExpression
 	ILike(value string) BoolExpression
 
+	IsDistinctFrom(value string) BoolExpression
+
 	// https://www.postgresql.org/docs/11/functions-comparisons.html
 	// [Good First Issue][Help Wanted] TODO: implement remaining operators relevant for expression
 	IsIn(value ...string) BoolExpression
@@ -633,6 +639,10 @@ func (expr *stringExpressionImpl) Like(value string) BoolExpression {
 
 func (expr *stringExpressionImpl) ILike(value string) BoolExpression {
 	return expr.expressionImpl.iLike(String(value))
+}
+
+func (expr *stringExpressionImpl) IsDistinctFrom(value string) BoolExpression {
+	return expr.expressionImpl.isDistinctFrom(String(value))
 }
 
 func (expr *stringExpressionImpl) IsIn(value ...string) BoolExpression {
