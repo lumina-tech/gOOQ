@@ -15,7 +15,7 @@ type InsertSetStep interface {
 type InsertSetMoreStep interface {
 	InsertValuesStep
 	Set(f Field, v interface{}) InsertSetMoreStep
-	Columns(f Field, rest ...Field) InsertValuesStep
+	Columns(fields ...Field) InsertValuesStep
 }
 
 type InsertValuesStep interface {
@@ -30,7 +30,7 @@ type InsertOnConflictStep interface {
 }
 
 type InsertOnConflictSetStep interface {
-	InsertFinalStep
+	InsertReturningStep
 	SetUpdates(f Field, v interface{}) InsertOnConflictSetStep
 	SetUpdateColumns(f ...Field) InsertOnConflictSetStep
 }
@@ -76,8 +76,8 @@ func (i *insert) Select(s Selectable) InsertOnConflictStep {
 	return i
 }
 
-func (i *insert) Columns(f Field, rest ...Field) InsertValuesStep {
-	i.columns = append([]Field{f}, rest...)
+func (i *insert) Columns(fields ...Field) InsertValuesStep {
+	i.columns = fields
 	return i
 }
 
