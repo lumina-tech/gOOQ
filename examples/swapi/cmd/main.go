@@ -58,11 +58,34 @@ func main() {
 		Set(table.Person.SkinColor, model.ColorOrange).
 		Set(table.Person.SpeciesID, species.ID).
 		Returning(table.Person.Asterisk)
-	_, err = table.Person.ScanRowWithContext(ctx, dockerDB.DB, personStmt)
+	frank, err := table.Person.ScanRowWithContext(ctx, dockerDB.DB, personStmt)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error())
 		return
 	}
+
+	personStmtUpdate := gooq.InsertInto(table.Person).
+		Set(table.Person.ID, uuid.New()).
+		Set(table.Person.Name, "Frank").
+		Set(table.Person.Height, 170.3).
+		Set(table.Person.Mass, 150.5).
+		Set(table.Person.BirthYear, 1998).
+		Set(table.Person.HomeWorld, "Runescape").
+		Set(table.Person.Gender, model.GenderMale).
+		Set(table.Person.EyeColor, model.ColorBrown).
+		Set(table.Person.HairColor, model.ColorBlue).
+		Set(table.Person.SkinColor, model.ColorOrange).
+		Set(table.Person.SpeciesID, species.ID).
+		OnConflictDoUpdate(&table.Person.Constraints.NameBirthyearConstraint).
+		SetUpdateColumns(table.Person.HairColor).
+		Returning(table.Person.Asterisk)
+	frankUpdated, err := table.Person.ScanRowWithContext(ctx, dockerDB.DB, personStmtUpdate)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		return
+	}
+	fmt.Fprintf(os.Stderr, "frank updated haircolor: %s to %s\n", frank.HairColor, frankUpdated.HairColor)
+	fmt.Fprintf(os.Stderr, "frank did not update eyecolor: %s to %s\n", frank.EyeColor, frankUpdated.EyeColor)
 
 	type PersonWithSpecies struct {
 		model.Person

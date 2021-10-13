@@ -24,6 +24,7 @@ type Person struct {
 	HomeWorld string        `db:"home_world" json:"home_world"`
 	SpeciesID uuid.UUID     `db:"species_id" json:"species_id"`
 	WeaponID  nullable.UUID `db:"weapon_id" json:"weapon_id"`
+	Status    string        `db:"status" json:"status"`
 }
 
 type Species struct {

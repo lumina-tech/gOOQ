@@ -51,12 +51,17 @@ CREATE TABLE person(
   home_world text NOT NULL,
   species_id uuid NOT NULL,
   weapon_id uuid,
+  status varchar not null default 'alive',
   FOREIGN KEY (hair_color) REFERENCES color_reference_table(value),
   FOREIGN KEY (skin_color) REFERENCES color_reference_table(value),
   FOREIGN KEY (eye_color) REFERENCES color_reference_table(value),
   FOREIGN KEY (species_id) REFERENCES species(id),
   FOREIGN KEY (weapon_id) REFERENCES weapon(id)
 );
+
+-- example to show partial unique index
+CREATE UNIQUE INDEX name_birthyear_constraint ON person (name, birth_year) WHERE status != 'dead';
+
 
 
 -- type Person struct {

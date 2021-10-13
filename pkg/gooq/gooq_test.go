@@ -49,6 +49,11 @@ var (
 		Name:    "table1_pkey",
 		Columns: []Field{Table1.Column1},
 	}
+	Table2Constraint = DatabaseConstraint{
+		Name:      "table2_partial_key",
+		Columns:   []Field{Table2.Column1, Table2.Column2},
+		Predicate: null.NewString("((bool_column)::bool <> 'true'::bool)", true),
+	}
 	//TimeBucket5MinutesField = TimeBucket("5 minutes", Table1.CreationDate).As("five_min")
 )
 
