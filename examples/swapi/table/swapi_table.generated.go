@@ -99,7 +99,8 @@ func (t *colorReferenceTable) ScanRowsWithContext(
 var ColorReferenceTable = newColorReferenceTable()
 
 type personConstraints struct {
-	PersonPkey gooq.DatabaseConstraint
+	NameBirthyearConstraint gooq.DatabaseConstraint
+	PersonPkey              gooq.DatabaseConstraint
 }
 
 type person struct {
@@ -117,6 +118,7 @@ type person struct {
 	HomeWorld gooq.StringField
 	SpeciesID gooq.UUIDField
 	WeaponID  gooq.UUIDField
+	Status    gooq.StringField
 
 	Constraints *personConstraints
 }
@@ -125,6 +127,12 @@ func newPersonConstraints(
 	instance *person,
 ) *personConstraints {
 	constraints := &personConstraints{}
+	constraints.NameBirthyearConstraint = gooq.DatabaseConstraint{
+		Name: "name_birthyear_constraint",
+		Columns: []gooq.Field{
+			instance.Name, instance.BirthYear},
+		Predicate: null.NewString("((status)::text <> 'dead'::text)", true),
+	}
 	constraints.PersonPkey = gooq.DatabaseConstraint{
 		Name: "person_pkey",
 		Columns: []gooq.Field{
@@ -150,6 +158,7 @@ func newPerson() *person {
 	instance.HomeWorld = gooq.NewStringField(instance, "home_world")
 	instance.SpeciesID = gooq.NewUUIDField(instance, "species_id")
 	instance.WeaponID = gooq.NewUUIDField(instance, "weapon_id")
+	instance.Status = gooq.NewStringField(instance, "status")
 	instance.Constraints = newPersonConstraints(instance)
 	return instance
 }
@@ -174,6 +183,7 @@ func (t *person) GetColumns() []gooq.Expression {
 		t.HomeWorld,
 		t.SpeciesID,
 		t.WeaponID,
+		t.Status,
 	}
 }
 

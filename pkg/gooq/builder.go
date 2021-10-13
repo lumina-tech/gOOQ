@@ -61,6 +61,19 @@ func (builder *Builder) RenderExpressionArray(
 	builder.Print(")")
 }
 
+func (builder *Builder) RenderFieldArray(
+	fields []Field,
+) {
+	builder.Print("(")
+	for index, field := range fields {
+		builder.Print(field.GetName())
+		if index != len(fields)-1 {
+			builder.Print(", ")
+		}
+	}
+	builder.Print(")")
+}
+
 func (builder *Builder) RenderConditions(
 	conditions []Expression,
 ) {
