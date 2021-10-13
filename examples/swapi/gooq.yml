@@ -7,3 +7,7 @@ sslmode: "disable"
 migrationPath: "migrations"
 modelPath: "model"
 tablePath: "table"
+modelOverrides:
+  species.average_lifespan: numeric
+tableOverrides:
+  species.average_lifespan: numeric

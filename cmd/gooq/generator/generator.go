@@ -29,16 +29,19 @@ var generateDatabaseModelCommand = &cobra.Command{
 			_, _ = fmt.Fprint(os.Stderr, "cannot read configuration file:", err)
 			os.Exit(1)
 		}
+		//overrides := viper.GetStringMapString()
 		config := database.DatabaseConfig{
-			Host:          viper.GetString("host"),
-			Port:          viper.GetInt64("port"),
-			Username:      viper.GetString("username"),
-			Password:      viper.GetString("password"),
-			DatabaseName:  viper.GetString("databaseName"),
-			SSLMode:       viper.GetString("sslmode"),
-			MigrationPath: viper.GetString("migrationPath"),
-			ModelPath:     viper.GetString("modelPath"),
-			TablePath:     viper.GetString("tablePath"),
+			Host:           viper.GetString("host"),
+			Port:           viper.GetInt64("port"),
+			Username:       viper.GetString("username"),
+			Password:       viper.GetString("password"),
+			DatabaseName:   viper.GetString("databaseName"),
+			SSLMode:        viper.GetString("sslmode"),
+			MigrationPath:  viper.GetString("migrationPath"),
+			ModelPath:      viper.GetString("modelPath"),
+			TablePath:      viper.GetString("tablePath"),
+			ModelOverrides: viper.GetStringMapString("modelOverrides"),
+			TableOverrides: viper.GetStringMapString("TableOverrides"),
 		}
 		if generateDatabaseModelCommandUseDocker {
 			db := database.NewDockerizedDB(&config, viper.GetString("dockerTag"))
@@ -75,8 +78,8 @@ func generateModelsForDB(
 	tableOutputFile := fmt.Sprintf("%s/%s_table.generated.go", config.TablePath, config.DatabaseName)
 	err := generator.NewGenerator(
 		enumgen.NewEnumGenerator(enumOutputFile),
-		modelgen.NewModelGenerator(modelOutputFile, "table", "model"),
-		modelgen.NewTableGenerator(tableOutputFile, "table", "model"),
+		modelgen.NewModelGenerator(modelOutputFile, "table", "model", config.ModelOverrides),
+		modelgen.NewTableGenerator(tableOutputFile, "table", "model", config.TableOverrides),
 	).Run(db)
 	if err != nil {
 		_, _ = fmt.Fprint(os.Stderr, "cannot generate code:", err)

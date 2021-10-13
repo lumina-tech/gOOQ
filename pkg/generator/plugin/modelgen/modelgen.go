@@ -17,29 +17,31 @@ type ModelGenerator struct {
 	outputFile     string
 	packageName    string
 	modelPackage   string
+	overrides      map[string]string
 }
 
 func NewGenerator(
-	templateString, outputFile, packageName, modelPackage string,
+	templateString, outputFile, packageName, modelPackage string, overrides map[string]string,
 ) *ModelGenerator {
 	return &ModelGenerator{
 		templateString: templateString,
 		outputFile:     outputFile,
 		packageName:    packageName,
 		modelPackage:   modelPackage,
+		overrides:      overrides,
 	}
 }
 
 func NewModelGenerator(
-	outputFile, tablePackage, modelPackage string,
+	outputFile, tablePackage, modelPackage string, overrides map[string]string,
 ) *ModelGenerator {
-	return NewGenerator(modelTemplate, outputFile, modelPackage, modelPackage)
+	return NewGenerator(modelTemplate, outputFile, modelPackage, modelPackage, overrides)
 }
 
 func NewTableGenerator(
-	outputFile, tablePackage, modelPackage string,
+	outputFile, tablePackage, modelPackage string, overrides map[string]string,
 ) *ModelGenerator {
-	return NewGenerator(tableTemplate, outputFile, tablePackage, modelPackage)
+	return NewGenerator(tableTemplate, outputFile, tablePackage, modelPackage, overrides)
 }
 
 func (gen *ModelGenerator) GenerateCode(
@@ -53,7 +55,7 @@ func (gen *ModelGenerator) GenerateCode(
 	}
 	for _, table := range data.Tables {
 		tableName := table.Table.TableName
-		fields, err := getFieldArgs(data, table)
+		fields, err := getFieldArgs(data, table, gen.overrides)
 		if err != nil {
 			return err
 		}
@@ -96,12 +98,19 @@ func getColumnToTypeMapping(
 }
 
 func getFieldArgs(
-	data *metadata.Data, table metadata.Table,
+	data *metadata.Data, table metadata.Table, overrides map[string]string,
 ) ([]FieldTemplateArgs, error) {
 	columnToRefTableMapping := getColumnToTypeMapping(table)
 	var results []FieldTemplateArgs
 	for _, column := range table.Columns {
-		dataType, err := data.Loader.GetDataType(column.DataType)
+		overrideKey := fmt.Sprintf("%s.%s", table.Table.TableName, column.ColumnName)
+		var dataType metadata.DataType
+		var err error
+		if dataTypeKey, ok := overrides[overrideKey]; ok {
+			//dataType, err = data.Loader.GetTypeByName(dataTypeKey)
+		} else {
+			dataType, err = data.Loader.GetDataType(column.DataType)
+		}
 		if err != nil {
 			return nil, err
 		}

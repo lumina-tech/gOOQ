@@ -25,6 +25,20 @@ var (
 	DataTypeTime        = DataType{Name: "Time", Literal: "time.Time", NullableLiteral: "null.Time"}
 	DataTypeUUID        = DataType{Name: "UUID", Literal: "uuid.UUID", NullableLiteral: "nullable.UUID"}
 )
+var NameToType = map[string]DataType{
+	DataTypeBool.Name:        DataTypeBool,
+	DataTypeFloat32.Name:     DataTypeFloat32,
+	DataTypeFloat64.Name:     DataTypeFloat64,
+	DataTypeInt.Name:         DataTypeInt,
+	DataTypeInt64.Name:       DataTypeInt64,
+	DataTypeBigInt.Name:      DataTypeBigInt,
+	DataTypeBigFloat.Name:    DataTypeBigFloat,
+	DataTypeJSONB.Name:       DataTypeJSONB,
+	DataTypeString.Name:      DataTypeString,
+	DataTypeStringArray.Name: DataTypeStringArray,
+	DataTypeTime.Name:        DataTypeTime,
+	DataTypeUUID.Name:        DataTypeUUID,
+}
 
 type EnumMetadata struct {
 	EnumName string `db:"enum_name"`

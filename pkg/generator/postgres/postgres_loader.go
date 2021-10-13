@@ -104,6 +104,16 @@ func getColumns(
 	return columns, nil
 }
 
+func GetTypeByName(
+	typeName string,
+) (metadata.DataType, error) {
+	dataType, ok := metadata.NameToType[typeName]
+	if !ok {
+		return metadata.DataType{}, fmt.Errorf("type with name %s does not exist", typeName)
+	}
+	return dataType, nil
+}
+
 func parseType(
 	dataType string,
 ) (metadata.DataType, error) {
@@ -125,10 +135,8 @@ func parseType(
 		typ = metadata.DataTypeJSONB
 	case "float":
 		typ = metadata.DataTypeFloat32
-	case "decimal", "double precision": // TODO: decimal should be be big.Float
+	case "decimal", "double precision", "numeric":
 		typ = metadata.DataTypeFloat64
-	case "numeric":
-		typ = metadata.DataTypeBigFloat
 	case "date", "timestamp with time zone", "time with time zone", "time without time zone", "timestamp without time zone":
 		typ = metadata.DataTypeTime
 	case "uuid":
