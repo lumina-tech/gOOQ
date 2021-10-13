@@ -209,7 +209,7 @@ func (i *insert) Render(
 		if i.conflictConstraint != nil {
 			if i.conflictConstraint.Predicate.Valid {
 				builder.Print(" ")
-				builder.RenderFields(i.conflictConstraint.Columns)
+				builder.RenderFieldArray(i.conflictConstraint.Columns)
 				builder.Printf(" WHERE %s", i.conflictConstraint.Predicate.String)
 			} else {
 				builder.Printf(" ON CONSTRAINT %s", i.conflictConstraint.Name)

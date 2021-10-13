@@ -57,7 +57,7 @@ var insertTestCases = []TestCase{
 			Set(Table2.Column3, 1).
 			OnConflictDoUpdate(&Table2Constraint).
 			SetUpdateColumns(Table2.Column3),
-		ExpectedStmt: `INSERT INTO public.table2 (column1, column2, column3) VALUES ($1, $2, $3) ON CONFLICT ( column1, column2 ) WHERE ((bool_column)::bool <> 'true'::bool) DO UPDATE SET column3 = "excluded".column3`,
+		ExpectedStmt: `INSERT INTO public.table2 (column1, column2, column3) VALUES ($1, $2, $3) ON CONFLICT (column1, column2) WHERE ((bool_column)::bool <> 'true'::bool) DO UPDATE SET column3 = "excluded".column3`,
 	},
 }
 
