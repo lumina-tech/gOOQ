@@ -28,16 +28,16 @@ type Person struct {
 }
 
 type Species struct {
-	ID              uuid.UUID `db:"id" json:"id"`
-	Name            string    `db:"name" json:"name"`
-	Classification  string    `db:"classification" json:"classification"`
-	AverageHeight   float64   `db:"average_height" json:"average_height"`
-	AverageLifespan float64   `db:"average_lifespan" json:"average_lifespan"`
-	HairColor       Color     `db:"hair_color" json:"hair_color"`
-	SkinColor       Color     `db:"skin_color" json:"skin_color"`
-	EyeColor        Color     `db:"eye_color" json:"eye_color"`
-	HomeWorld       string    `db:"home_world" json:"home_world"`
-	Language        string    `db:"language" json:"language"`
+	ID              uuid.UUID         `db:"id" json:"id"`
+	Name            string            `db:"name" json:"name"`
+	Classification  string            `db:"classification" json:"classification"`
+	AverageHeight   float64           `db:"average_height" json:"average_height"`
+	AverageLifespan nullable.BigFloat `db:"average_lifespan" json:"average_lifespan"`
+	HairColor       Color             `db:"hair_color" json:"hair_color"`
+	SkinColor       Color             `db:"skin_color" json:"skin_color"`
+	EyeColor        Color             `db:"eye_color" json:"eye_color"`
+	HomeWorld       string            `db:"home_world" json:"home_world"`
+	Language        string            `db:"language" json:"language"`
 }
 
 type Weapon struct {

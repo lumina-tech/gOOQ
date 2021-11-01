@@ -15,15 +15,16 @@ type DockerizedDB struct {
 }
 
 type DatabaseConfig struct {
-	Host          string
-	Port          int64
-	Username      string
-	Password      string
-	DatabaseName  string
-	SSLMode       string
-	MigrationPath string
-	ModelPath     string
-	TablePath     string
+	Host           string
+	Port           int64
+	Username       string
+	Password       string
+	DatabaseName   string
+	SSLMode        string
+	MigrationPath  string
+	ModelPath      string
+	TablePath      string
+	ModelOverrides map[string]interface{}
 }
 
 func NewDockerizedDB(

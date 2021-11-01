@@ -19,7 +19,7 @@ CREATE TABLE species(
   name text NOT NULL,
   classification text NOT NULL,
   average_height decimal NOT NULL,
-  average_lifespan decimal NOT NULL,
+  average_lifespan numeric,
   hair_color text NOT NULL,
   skin_color text NOT NULL,
   eye_color text NOT NULL,
