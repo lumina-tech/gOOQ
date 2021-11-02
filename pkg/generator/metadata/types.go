@@ -17,12 +17,28 @@ var (
 	DataTypeFloat64     = DataType{Name: "Decimal", Literal: "float64", NullableLiteral: "null.Float"}
 	DataTypeInt         = DataType{Name: "Int", Literal: "int", NullableLiteral: "null.Int"}
 	DataTypeInt64       = DataType{Name: "Int64", Literal: "int64", NullableLiteral: "null.Int"}
+	DataTypeBigInt      = DataType{Name: "BigInt", Literal: "big.Int", NullableLiteral: "big.Int"}
+	DataTypeBigFloat    = DataType{Name: "BigFloat", Literal: "big.Float", NullableLiteral: "nullable.BigFloat"}
 	DataTypeJSONB       = DataType{Name: "Jsonb", Literal: "[]byte", NullableLiteral: "nullable.Jsonb"}
 	DataTypeString      = DataType{Name: "String", Literal: "string", NullableLiteral: "null.String"}
 	DataTypeStringArray = DataType{Name: "StringArray", Literal: "pq.StringArray", NullableLiteral: "pq.StringArray"}
 	DataTypeTime        = DataType{Name: "Time", Literal: "time.Time", NullableLiteral: "null.Time"}
 	DataTypeUUID        = DataType{Name: "UUID", Literal: "uuid.UUID", NullableLiteral: "nullable.UUID"}
 )
+var NameToType = map[string]DataType{
+	DataTypeBool.Name:        DataTypeBool,
+	DataTypeFloat32.Name:     DataTypeFloat32,
+	DataTypeFloat64.Name:     DataTypeFloat64,
+	DataTypeInt.Name:         DataTypeInt,
+	DataTypeInt64.Name:       DataTypeInt64,
+	DataTypeBigInt.Name:      DataTypeBigInt,
+	DataTypeBigFloat.Name:    DataTypeBigFloat,
+	DataTypeJSONB.Name:       DataTypeJSONB,
+	DataTypeString.Name:      DataTypeString,
+	DataTypeStringArray.Name: DataTypeStringArray,
+	DataTypeTime.Name:        DataTypeTime,
+	DataTypeUUID.Name:        DataTypeUUID,
+}
 
 type EnumMetadata struct {
 	EnumName string `db:"enum_name"`
@@ -77,4 +93,5 @@ type Loader struct {
 	EnumValueList            func(*sqlx.DB, string, string) ([]EnumValueMetadata, error)
 	ReferenceTableValueList  func(*sqlx.DB, string, string) ([]EnumValueMetadata, error)
 	GetDataType              func(string) (DataType, error)
+	GetTypeByName            func(string) (DataType, error)
 }

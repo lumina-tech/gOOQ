@@ -32,7 +32,7 @@ func main() {
 		Set(table.Species.Name, "Human").
 		Set(table.Species.Classification, "Mammal").
 		Set(table.Species.AverageHeight, 160.5).
-		Set(table.Species.AverageLifespan, 70).
+		Set(table.Species.AverageLifespan, 1000000000).
 		Set(table.Species.HairColor, model.ColorBlack).
 		Set(table.Species.SkinColor, model.ColorOrange).
 		Set(table.Species.EyeColor, model.ColorBrown).

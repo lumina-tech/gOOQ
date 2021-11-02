@@ -19,6 +19,7 @@ func NewPostgresLoader() *metadata.Loader {
 		TableList:                getTable,
 		ColumnList:               getColumns,
 		GetDataType:              parseType,
+		GetTypeByName:            getTypeByName,
 	}
 }
 
@@ -102,6 +103,16 @@ func getColumns(
 		return nil, err
 	}
 	return columns, nil
+}
+
+func getTypeByName(
+	typeName string,
+) (metadata.DataType, error) {
+	dataType, ok := metadata.NameToType[typeName]
+	if !ok {
+		return metadata.DataType{}, fmt.Errorf("type with name %s does not exist", typeName)
+	}
+	return dataType, nil
 }
 
 func parseType(
