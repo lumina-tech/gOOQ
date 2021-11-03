@@ -200,7 +200,9 @@ func getOverrideDataType(
 	columnName string,
 	overrides map[string]interface{},
 ) (string, bool) {
-
+	if len(overrides) == 0 {
+		return "", false
+	}
 	models := overrides[OverrideModelsConfig]
 	if models != nil {
 		if fieldsMap, ok := models.(map[string]interface{})[tableName]; ok {
