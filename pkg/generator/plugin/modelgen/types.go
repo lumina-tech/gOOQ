@@ -5,6 +5,18 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
+type ModelOverride struct {
+	Models map[string]ModelOverrideModel `yaml:"models"`
+}
+
+type ModelOverrideModel struct {
+	Fields map[string]ModelOverrideModelField `yaml:"fields"`
+}
+
+type ModelOverrideModelField struct {
+	OverrideType string `yaml:"overrideType"`
+}
+
 type TemplateArgs struct {
 	Timestamp string
 	Package   string
