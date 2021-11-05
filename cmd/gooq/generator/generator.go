@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/lumina-tech/gooq/pkg/generator/plugin/modelgen"
-
-	"github.com/lumina-tech/gooq/pkg/generator/plugin/enumgen"
-
-	"github.com/spf13/viper"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/lumina-tech/gooq/pkg/database"
 	"github.com/lumina-tech/gooq/pkg/generator"
+	"github.com/lumina-tech/gooq/pkg/generator/plugin/enumgen"
+	"github.com/lumina-tech/gooq/pkg/generator/plugin/modelgen"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -30,17 +27,10 @@ var generateDatabaseModelCommand = &cobra.Command{
 			os.Exit(1)
 		}
 
-		config := database.DatabaseConfig{
-			Host:           viper.GetString("host"),
-			Port:           viper.GetInt64("port"),
-			Username:       viper.GetString("username"),
-			Password:       viper.GetString("password"),
-			DatabaseName:   viper.GetString("databaseName"),
-			SSLMode:        viper.GetString("sslmode"),
-			MigrationPath:  viper.GetString("migrationPath"),
-			ModelPath:      viper.GetString("modelPath"),
-			TablePath:      viper.GetString("tablePath"),
-			ModelOverrides: viper.GetStringMap("modelOverrides"),
+		var config database.DatabaseConfig
+		if err := viper.Unmarshal(&config); err != nil {
+			_, _ = fmt.Fprint(os.Stderr, "cannot decode configuration file:", err)
+			os.Exit(1)
 		}
 		if generateDatabaseModelCommandUseDocker {
 			db := database.NewDockerizedDB(&config, viper.GetString("dockerTag"))
@@ -77,7 +67,7 @@ func generateModelsForDB(
 	tableOutputFile := fmt.Sprintf("%s/%s_table.generated.go", config.TablePath, config.DatabaseName)
 	err := generator.NewGenerator(
 		enumgen.NewEnumGenerator(enumOutputFile),
-		modelgen.NewModelGenerator(modelOutputFile, "table", "model", config.ModelOverrides),
+		modelgen.NewModelGenerator(modelOutputFile, "table", "model", &config.ModelOverrides),
 		modelgen.NewTableGenerator(tableOutputFile, "table", "model", nil),
 	).Run(db)
 	if err != nil {

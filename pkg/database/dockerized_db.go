@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/lumina-tech/gooq/pkg/generator/plugin/modelgen"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/ory/dockertest"
 )
@@ -24,7 +26,7 @@ type DatabaseConfig struct {
 	MigrationPath  string
 	ModelPath      string
 	TablePath      string
-	ModelOverrides map[string]interface{}
+	ModelOverrides modelgen.ModelOverride
 }
 
 func NewDockerizedDB(

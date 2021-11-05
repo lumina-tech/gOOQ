@@ -17,17 +17,11 @@ type ModelGenerator struct {
 	outputFile     string
 	packageName    string
 	modelPackage   string
-	overrides      map[string]interface{}
+	overrides      *ModelOverride
 }
 
-const (
-	OverrideModelsConfig = "models"
-	OverrideFieldsConfig = "fields"
-	OverrideTypeConfig   = "overridetype"
-)
-
 func NewGenerator(
-	templateString, outputFile, packageName, modelPackage string, overrides map[string]interface{},
+	templateString, outputFile, packageName, modelPackage string, overrides *ModelOverride,
 ) *ModelGenerator {
 	return &ModelGenerator{
 		templateString: templateString,
@@ -39,13 +33,13 @@ func NewGenerator(
 }
 
 func NewModelGenerator(
-	outputFile, tablePackage, modelPackage string, overrides map[string]interface{},
+	outputFile, tablePackage, modelPackage string, overrides *ModelOverride,
 ) *ModelGenerator {
 	return NewGenerator(modelTemplate, outputFile, modelPackage, modelPackage, overrides)
 }
 
 func NewTableGenerator(
-	outputFile, tablePackage, modelPackage string, overrides map[string]interface{},
+	outputFile, tablePackage, modelPackage string, overrides *ModelOverride,
 ) *ModelGenerator {
 	return NewGenerator(tableTemplate, outputFile, tablePackage, modelPackage, overrides)
 }
@@ -104,7 +98,7 @@ func getColumnToTypeMapping(
 }
 
 func getFieldArgs(
-	data *metadata.Data, table metadata.Table, overrides map[string]interface{},
+	data *metadata.Data, table metadata.Table, overrides *ModelOverride,
 ) ([]FieldTemplateArgs, error) {
 	columnToRefTableMapping := getColumnToTypeMapping(table)
 	var results []FieldTemplateArgs
@@ -198,20 +192,14 @@ func getEnumTypeFromReferenceTableName(
 func getOverrideDataType(
 	tableName string,
 	columnName string,
-	overrides map[string]interface{},
+	overrides *ModelOverride,
 ) (string, bool) {
-	if len(overrides) == 0 {
+	if overrides == nil {
 		return "", false
 	}
-	models := overrides[OverrideModelsConfig]
-	if models != nil {
-		if fieldsMap, ok := models.(map[string]interface{})[tableName]; ok {
-			fields := fieldsMap.(map[string]interface{})[OverrideFieldsConfig]
-			if _, ok := fields.(map[string]interface{})[columnName]; ok {
-				overrideTypeMap := fields.(map[string]interface{})[columnName]
-				overrideType := overrideTypeMap.(map[string]interface{})[OverrideTypeConfig]
-				return fmt.Sprintf("%v", overrideType), true
-			}
+	if model, ok := overrides.Models[tableName]; ok {
+		if field, ok := model.Fields[columnName]; ok {
+			return field.OverrideType, true
 		}
 	}
 	return "", false
