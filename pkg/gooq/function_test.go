@@ -20,8 +20,16 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: `SELECT COALESCE("table1".column1, $1) FROM public.table1`,
 	},
 	{
+		Constructed:  Select(Count()).From(Table1),
+		ExpectedStmt: `SELECT COUNT(*) FROM public.table1`,
+	},
+	{
 		Constructed:  Select(Count(Asterisk)).From(Table1),
 		ExpectedStmt: `SELECT COUNT(*) FROM public.table1`,
+	},
+	{
+		Constructed:  Select(Distinct(Table1.Column1)).From(Table1),
+		ExpectedStmt: `SELECT DISTINCT("table1".column1) FROM public.table1`,
 	},
 	{
 		Constructed:  Greatest(Int64(10), Int64(2), Int64(23)),
@@ -172,7 +180,7 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: `pg_try_advisory_lock($1)`,
 	},
 	{
-		Constructed: ReleaseAdvisoryLock(Int64(52)),
+		Constructed:  ReleaseAdvisoryLock(Int64(52)),
 		ExpectedStmt: `pg_advisory_unlock($1)`,
 	},
 }

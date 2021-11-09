@@ -1,9 +1,19 @@
 package gooq
 
 func Count(
-	expr Expression,
+	expr ...Expression,
 ) NumericExpression {
-	return NewNumericExpressionFunction("COUNT", expr)
+	expression := Asterisk
+	if len(expr) == 1 {
+		expression = expr[0]
+	} else if len(expr) > 1 {
+		panic("only support 1 arg")
+	}
+	return NewNumericExpressionFunction("COUNT", expression)
+}
+
+func Distinct(expr Expression) Expression {
+	return NewExpressionFunction("DISTINCT", expr)
 }
 
 func Sum(
