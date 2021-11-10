@@ -32,6 +32,10 @@ var functionTestCases = []TestCase{
 		ExpectedStmt: `SELECT DISTINCT("table1".column1) FROM public.table1`,
 	},
 	{
+		Constructed:  ArrayAgg(Table1.Column1),
+		ExpectedStmt: `ARRAY_AGG("table1".column1)`,
+	},
+	{
 		Constructed:  Greatest(Int64(10), Int64(2), Int64(23)),
 		ExpectedStmt: `GREATEST($1, $2, $3)`,
 	},

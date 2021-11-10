@@ -16,6 +16,12 @@ func Distinct(expr Expression) Expression {
 	return NewExpressionFunction("DISTINCT", expr)
 }
 
+func Min(
+	expr Expression,
+) NumericExpression {
+	return NewNumericExpressionFunction("MIN", expr)
+}
+
 func Sum(
 	expr Expression,
 ) NumericExpression {
@@ -513,6 +519,10 @@ func NullIf(
 // https://www.postgresql.org/docs/11/functions-array.html
 // [Help Wanted] TODO: implement remaining functions
 ///////////////////////////////////////////////////////////////////////////////
+
+func ArrayAgg(expr Expression) Expression {
+	return NewExpressionFunction("ARRAY_AGG", expr)
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Range Functions and Operators
