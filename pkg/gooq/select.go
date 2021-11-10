@@ -9,10 +9,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type join struct {
-	target     Selectable
-	joinType   JoinType
-	conditions []Expression
+type JoinClause struct {
+	Target     Selectable
+	JoinType   JoinType
+	Conditions []Expression
 }
 
 type SelectWithStep interface {
@@ -92,7 +92,7 @@ type selection struct {
 	selection     Selectable
 	distinctOn    []Expression
 	projections   []Selectable
-	joins         []join
+	joins         []JoinClause
 	joinTarget    Selectable
 	joinType      JoinType
 	predicate     []Expression
@@ -166,10 +166,10 @@ func (s *selection) Union(t SelectFinalStep) SelectOrderByStep {
 }
 
 func (s *selection) On(c ...Expression) SelectJoinStep {
-	j := join{
-		target:     s.joinTarget,
-		joinType:   s.joinType,
-		conditions: c,
+	j := JoinClause{
+		Target:     s.joinTarget,
+		JoinType:   s.joinType,
+		Conditions: c,
 	}
 	s.joinTarget = nil
 	s.joinType = NotJoined
@@ -310,7 +310,7 @@ func (s *selection) Render(
 	// render JOIN/ON clause
 	for _, join := range s.joins {
 		var joinString string
-		switch join.joinType {
+		switch join.JoinType {
 		case LeftOuterJoin:
 			joinString = "LEFT OUTER JOIN"
 		case Join:
@@ -318,9 +318,9 @@ func (s *selection) Render(
 		}
 
 		builder.Printf(" %s ", joinString)
-		join.target.Render(builder)
+		join.Target.Render(builder)
 		builder.Print(" ON ")
-		builder.RenderConditions(join.conditions)
+		builder.RenderConditions(join.Conditions)
 	}
 
 	predicate := s.predicate
