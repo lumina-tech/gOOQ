@@ -785,8 +785,16 @@ type UUIDExpression interface {
 
 	// comparison operators helper methods
 	// https://www.postgresql.org/docs/11/functions-comparison.html
+	Lt(rhs UUIDExpression) BoolExpression
+	Lte(rhs UUIDExpression) BoolExpression
+	Gt(rhs UUIDExpression) BoolExpression
+	Gte(rhs UUIDExpression) BoolExpression
 	Eq(rhs UUIDExpression) BoolExpression
 	NotEq(rhs UUIDExpression) BoolExpression
+	IsLt(rhs uuid.UUID) BoolExpression
+	IsLte(rhs uuid.UUID) BoolExpression
+	IsGt(rhs uuid.UUID) BoolExpression
+	IsGte(rhs uuid.UUID) BoolExpression
 	IsEq(rhs uuid.UUID) BoolExpression
 	IsNotEq(rhs uuid.UUID) BoolExpression
 
@@ -800,12 +808,44 @@ type uuidExpressionImpl struct {
 	expressionImpl
 }
 
+func (expr *uuidExpressionImpl) Lt(rhs UUIDExpression) BoolExpression {
+	return expr.expressionImpl.lt(rhs)
+}
+
+func (expr *uuidExpressionImpl) Lte(rhs UUIDExpression) BoolExpression {
+	return expr.expressionImpl.lte(rhs)
+}
+
+func (expr *uuidExpressionImpl) Gt(rhs UUIDExpression) BoolExpression {
+	return expr.expressionImpl.gt(rhs)
+}
+
+func (expr *uuidExpressionImpl) Gte(rhs UUIDExpression) BoolExpression {
+	return expr.expressionImpl.gte(rhs)
+}
+
 func (expr *uuidExpressionImpl) Eq(rhs UUIDExpression) BoolExpression {
 	return expr.expressionImpl.eq(rhs)
 }
 
 func (expr *uuidExpressionImpl) NotEq(rhs UUIDExpression) BoolExpression {
 	return expr.expressionImpl.notEq(rhs)
+}
+
+func (expr *uuidExpressionImpl) IsLt(rhs uuid.UUID) BoolExpression {
+	return expr.expressionImpl.lt(UUID(rhs))
+}
+
+func (expr *uuidExpressionImpl) IsLte(rhs uuid.UUID) BoolExpression {
+	return expr.expressionImpl.lte(UUID(rhs))
+}
+
+func (expr *uuidExpressionImpl) IsGt(rhs uuid.UUID) BoolExpression {
+	return expr.expressionImpl.gt(UUID(rhs))
+}
+
+func (expr *uuidExpressionImpl) IsGte(rhs uuid.UUID) BoolExpression {
+	return expr.expressionImpl.gte(UUID(rhs))
 }
 
 func (expr *uuidExpressionImpl) IsEq(rhs uuid.UUID) BoolExpression {
