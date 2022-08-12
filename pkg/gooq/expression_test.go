@@ -102,6 +102,46 @@ var expressionTestCases = []TestCase{
 		ExpectedStmt: `|/ "table1".decimal_column`,
 	},
 	{
+		Constructed:  Table1.StringColumn.Lt(Table2.StringColumn),
+		ExpectedStmt: `"table1".string_column < "table2".string_column`,
+	},
+	{
+		Constructed:  Table1.StringColumn.Lte(Table2.StringColumn),
+		ExpectedStmt: `"table1".string_column <= "table2".string_column`,
+	},
+	{
+		Constructed:  Table1.StringColumn.Gt(Table2.StringColumn),
+		ExpectedStmt: `"table1".string_column > "table2".string_column`,
+	},
+	{
+		Constructed:  Table1.StringColumn.Gte(Table2.StringColumn),
+		ExpectedStmt: `"table1".string_column >= "table2".string_column`,
+	},
+	{
+		Constructed:  Table1.StringColumn.Eq(Table2.StringColumn),
+		ExpectedStmt: `"table1".string_column = "table2".string_column`,
+	},
+	{
+		Constructed:  Table1.StringColumn.NotEq(Table2.StringColumn),
+		ExpectedStmt: `"table1".string_column != "table2".string_column`,
+	},
+	{
+		Constructed:  Table1.StringColumn.IsLt("foo"),
+		ExpectedStmt: `"table1".string_column < $1`,
+	},
+	{
+		Constructed:  Table1.StringColumn.IsLte("foo"),
+		ExpectedStmt: `"table1".string_column <= $1`,
+	},
+	{
+		Constructed:  Table1.StringColumn.IsGt("foo"),
+		ExpectedStmt: `"table1".string_column > $1`,
+	},
+	{
+		Constructed:  Table1.StringColumn.IsGte("foo"),
+		ExpectedStmt: `"table1".string_column >= $1`,
+	},
+	{
 		Constructed:  Table1.StringColumn.IsEq("foo"),
 		ExpectedStmt: `"table1".string_column = $1`,
 	},
@@ -168,7 +208,7 @@ var expressionTestCases = []TestCase{
 		Arguments:    []interface{}{uuid.Nil, uuid.Nil},
 	},
 	{
-		Constructed: Coalesce(Sum(Table1.Column1).Filter(Table1.Column2.IsDistinctFrom("str1")), Float64(0)).As("new_name"),
+		Constructed:  Coalesce(Sum(Table1.Column1).Filter(Table1.Column2.IsDistinctFrom("str1")), Float64(0)).As("new_name"),
 		ExpectedStmt: `COALESCE(SUM("table1".column1) FILTER (WHERE "table1".column2 IS DISTINCT FROM $1), $2) AS "new_name"`,
 	},
 }

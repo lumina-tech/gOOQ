@@ -373,8 +373,10 @@ type BoolExpression interface {
 
 	// comparison operators helper methods
 	// https://www.postgresql.org/docs/11/functions-comparison.html
+
 	Eq(rhs BoolExpression) BoolExpression
 	NotEq(rhs BoolExpression) BoolExpression
+
 	IsEq(rhs bool) BoolExpression
 	IsNotEq(rhs bool) BoolExpression
 
@@ -597,8 +599,16 @@ type StringExpression interface {
 
 	// comparison operators helper methods
 	// https://www.postgresql.org/docs/11/functions-comparison.html
+	Lt(rhs StringExpression) BoolExpression
+	Lte(rhs StringExpression) BoolExpression
+	Gt(rhs StringExpression) BoolExpression
+	Gte(rhs StringExpression) BoolExpression
 	Eq(rhs StringExpression) BoolExpression
 	NotEq(rhs StringExpression) BoolExpression
+	IsLt(rhs string) BoolExpression
+	IsLte(rhs string) BoolExpression
+	IsGt(rhs string) BoolExpression
+	IsGte(rhs string) BoolExpression
 	IsEq(rhs string) BoolExpression
 	IsNotEq(rhs string) BoolExpression
 
@@ -617,12 +627,44 @@ type stringExpressionImpl struct {
 	expressionImpl
 }
 
+func (expr *stringExpressionImpl) Lt(rhs StringExpression) BoolExpression {
+	return expr.expressionImpl.lt(rhs)
+}
+
+func (expr *stringExpressionImpl) Lte(rhs StringExpression) BoolExpression {
+	return expr.expressionImpl.lte(rhs)
+}
+
+func (expr *stringExpressionImpl) Gt(rhs StringExpression) BoolExpression {
+	return expr.expressionImpl.gt(rhs)
+}
+
+func (expr *stringExpressionImpl) Gte(rhs StringExpression) BoolExpression {
+	return expr.expressionImpl.gte(rhs)
+}
+
 func (expr *stringExpressionImpl) Eq(rhs StringExpression) BoolExpression {
 	return expr.expressionImpl.eq(rhs)
 }
 
 func (expr *stringExpressionImpl) NotEq(rhs StringExpression) BoolExpression {
 	return expr.expressionImpl.notEq(rhs)
+}
+
+func (expr *stringExpressionImpl) IsLt(rhs string) BoolExpression {
+	return expr.expressionImpl.lt(String(rhs))
+}
+
+func (expr *stringExpressionImpl) IsLte(rhs string) BoolExpression {
+	return expr.expressionImpl.lte(String(rhs))
+}
+
+func (expr *stringExpressionImpl) IsGt(rhs string) BoolExpression {
+	return expr.expressionImpl.gt(String(rhs))
+}
+
+func (expr *stringExpressionImpl) IsGte(rhs string) BoolExpression {
+	return expr.expressionImpl.gte(String(rhs))
 }
 
 func (expr *stringExpressionImpl) IsEq(rhs string) BoolExpression {
