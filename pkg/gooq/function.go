@@ -212,6 +212,65 @@ func Or(
 // [Good First Issue][Help Wanted] TODO: implement remaining
 ///////////////////////////////////////////////////////////////////////////////
 
+type binaryOperatorExpressionFunctionImpl struct {
+	operator string
+	expressionImpl
+}
+
+func NewBinaryOperatorExpressionFunction(
+	operator string,
+	operandLeft Expression,
+	operandRight Expression,
+) Expression {
+	function := &binaryOperatorExpressionFunctionImpl{operator: operator}
+	function.expressionImpl.initFunctionExpression(function, operandLeft, operandRight)
+	return function
+}
+
+func (expr *binaryOperatorExpressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	expr.expressions[0].Render(builder)
+	builder.Printf(" %s ", expr.operator)
+	expr.expressions[1].Render(builder)
+}
+
+func LessThan(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction("<", exprLeft, exprRight)
+}
+
+func GreaterThan(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction(">", exprLeft, exprRight)
+}
+
+func LessOrEqual(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction("<=", exprLeft, exprRight)
+}
+
+func GreaterOrEqual(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction(">=", exprLeft, exprRight)
+}
+
+func Equal(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction("=", exprLeft, exprRight)
+}
+
+func NotEqual(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction("<>", exprLeft, exprRight)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.5. Mathematical Functions
 // Table 9.6. Random Functions
@@ -458,6 +517,64 @@ func Translate(
 // https://www.postgresql.org/docs/11/functions-binarystring.html
 // [Good First Issue][Help Wanted] TODO: implement remaining functions (not operators)
 ///////////////////////////////////////////////////////////////////////////////
+
+
+func Concat(
+	exprLeft Expression, exprRight Expression,
+) Expression {
+	return NewBinaryOperatorExpressionFunction("||", exprLeft, exprRight)
+}
+
+func OctetLength(
+	expr StringExpression,
+) StringExpression {
+	return NewStringExpressionFunction("octet_length", expr)
+}
+
+type stringOverlayExpressionFunctionImpl struct {
+	stringExpressionImpl
+	name string
+}
+
+func NewStringOverlayExpressionFunction(
+	arguments ...Expression,
+) StringExpression {
+	function := &stringOverlayExpressionFunctionImpl{name:"overlay"}
+	function.expressionImpl.initFunctionExpression(function, arguments...)
+	return function
+}
+
+// ExpectedStmt: "overlay($1 placing $2 from $3)",
+
+func (expr *stringOverlayExpressionFunctionImpl) Render(
+	builder *Builder,
+) {
+	builder.Printf("%s(", expr.name)
+	expr.expressions[0].Render(builder)
+	builder.Printf(" placing ")
+	expr.expressions[1].Render(builder)
+	builder.Printf(" from ")
+	expr.expressions[2].Render(builder)
+	if (len(expr.expressions) > 3) {
+		builder.Printf(" for ")
+		expr.expressions[3].Render(builder)
+	}
+	builder.Printf(")")
+}
+
+func Overlay(
+	source StringExpression,
+	replacement StringExpression,
+	from Expression,
+	until ...Expression,
+) StringExpression {
+	expressions := []Expression{source, replacement, from}
+	if until != nil {
+		expressions = append(expressions, until[0])
+	}
+	return NewStringOverlayExpressionFunction(expressions...)
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Table 9.23. Formatting Functions
