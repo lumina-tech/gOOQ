@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/containerd/containerd v1.5.6 // indirect
+	github.com/containerd/containerd v1.5.18 // indirect
 	github.com/docker/docker v20.10.8+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/golang-migrate/migrate v3.5.4+incompatible
@@ -22,7 +22,7 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
-	golang.org/x/tools v0.0.0-20210106214847-113979e3529a
+	golang.org/x/tools v0.1.5
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/grpc v1.41.0 // indirect
 	gopkg.in/guregu/null.v3 v3.4.0
